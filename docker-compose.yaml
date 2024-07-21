@@ -1,10 +1,14 @@
-version '3.8'
+version: '3.8'
+
 services:
-  frontend:
-
-  backend:
-
   db:
+    image: postgres:16.3
+    hostname: postgres
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
 
 networks:
   transcendence_network:
