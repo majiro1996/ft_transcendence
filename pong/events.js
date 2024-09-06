@@ -6,6 +6,8 @@ function event_resize()
 	if (!(player1 == undefined || player2 == undefined || ball == undefined))
 	{
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		player1.xpos = 50;
+		player2.xpos = canvas.width - 50;
 		player1.ypos = (canvas.height / 2) - player1.height / 2;
 		player2.ypos = (canvas.height / 2) - player2.height / 2;
 		player1.draw();
