@@ -9,6 +9,18 @@ services:
       - .env
     volumes:
       - ./db/data:/var/lib/postgresql/data
+  web:
+    build:
+      context: ./backend
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    environment:
+      - DEBUG=True
+    ports:
+      - "8000:8000"
 
 networks:
   transcendence_network:
