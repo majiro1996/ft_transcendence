@@ -1,0 +1,301 @@
+@font-face {
+    font-family: "Jetbrains Mono";
+    src: url(../media/fonts/JetBrainsMono-Regular.woff2);
+}
+
+@font-face {
+    font-family: "Jetbrains Mono";
+    font-weight: bold;
+    src: url(../media/fonts/JetBrainsMono-Bold.woff2);
+}
+
+a {
+    text-decoration: none;
+}
+
+hr {
+    color: white;
+    margin-top: 250px;
+    margin-bottom: 25px;
+    margin-left: 170px;
+}
+
+.tr_header {
+    height: 75px;
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+}
+.h_basic {
+    font-family: "Jetbrains Mono", serif;
+    color: white;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+.game_card {
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    border: 1px solid white;
+    margin: 10px;
+    width: 350px;
+    height: 400px;
+}
+.game_card:hover {
+    background-color: #1873d5;
+    border-color: #1873d5;
+}
+
+.game_image {
+    background-color: grey;
+    width: 305px;
+    height: 300px;
+    margin: 20px;
+    margin-bottom: 10px;
+    align-self: center;
+}
+
+.game_title {
+    font-family: "JetBrains Mono";
+    font-weight: bold;
+    font-size: 12pt;
+    color: white;
+    margin-left: 20px;
+}
+
+.game_subtitle {
+    font-family: "JetBrains Mono";
+    font-size: 10pt;
+    color: white;
+    margin-left: 20px;
+}
+
+.form_container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 150px;
+    width: 100%;
+    justify-content: center;
+}
+
+.form_body {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: "JetBrains Mono";
+    background-color: black;
+    width: 550px;
+    height: 650px;
+    border: 1px solid white;
+}
+
+.form_body_xl {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: "JetBrains Mono";
+    background-color: black;
+    width: 550px;
+    height: 750px;
+    border: 1px solid white;
+}
+
+.form_title {
+    font-weight: bold;
+    font-size: 16pt;
+    text-align: center;
+    margin: 15px;
+}
+
+.form_field {
+    font-size: 16pt;
+    width: 75%;
+    margin-left: 12.5%;
+    color: white;
+    padding: 8px;
+    padding-left: 12px;
+    border: 1px solid white;
+    background-color: black;
+}
+
+.form_label {
+    margin-top: 25px;
+    font-size: 16pt;
+    font-weight: bold;
+    margin-left: 12.5%;
+}
+
+.form_main_button {
+    font-size: 16pt;
+    width: 75%;
+    margin-left: 12.5%;
+    margin-top: 75px;
+    padding: 8px;
+    color: white;
+    border-style: solid;
+    border-color: #ff4eff;
+    border-width: 1px;
+    background-color: #ff4eff;
+}
+
+.form_main_button:hover {
+    background-color: #f095f2;
+    border-color: #f095f2;
+}
+
+.form_bottom {
+    margin-top: 100px;
+    font-size: 14pt;
+    text-align: center;
+}
+
+.form_link {
+    font-size: 11pt;
+    text-align: center;
+    color: #9FC2D5;
+}
+
+.form_link:hover {
+    font-weight: bold;
+}
+
+#bg_video {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+}
+
+#h_logo {
+    font-family: "JetBrains Mono";
+    margin-left: 25px;
+    color: white;
+    flex-grow: 2;
+}
+
+#logo_link_override {
+    color: white;
+}
+
+#h_register {
+    font-family: "JetBrains Mono";
+    color: white;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-left: 25px;
+    margin-right: 25px;
+    border-style: solid;
+    border-color: white;
+    border-width: 1px;
+}
+
+#h_login {
+    font-family: "JetBrains Mono";
+    color: white;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-right: 25px;
+    border-style: solid;
+    border-color: #ff4eff;
+    border-width: 1px;
+    background-color: #ff4eff;
+    text-decoration: none;
+}
+
+#h_login:hover {
+    background-color: #f095f2;
+    border-color: #f095f2;
+}
+
+#splash_panel {
+    font-family: "JetBrains Mono";
+    position: relative;
+    margin-top: 225px;
+    margin-left: 170px;
+    font-size: 32pt;
+    color: white;
+}
+
+#splash_subtitle {
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    margin-top: 40px;
+    color: #ff4eff;
+}
+
+#splash_subtitle:hover {
+    color: #f095f2;
+}
+
+#splash_center_panel {
+    display: flex;
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    margin-top: 300px;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+#games_header {
+    display: flex;
+    font-family: "JetBrains Mono";
+    font-size: 24pt;
+    margin-top: 300px;
+    width: 100%;
+    justify-content: center;
+    color: white;
+}
+
+#games_textbox {
+    display: flex;
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    width: 100%;
+    justify-content: center;
+    color: white;
+}
+
+#games_container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 50px;
+    width: 100%;
+    justify-content: center;
+}
+
+#footer_container {
+    display: flex;
+    flex-direction: row;
+    margin-left: 170px;
+    justify-content: left;
+    width: 80%;
+}
+
+#footer_logo {
+    height: 300px;
+    width: 300px;
+}
+
+#footer_credits {
+    font-family: "JetBrains Mono";
+    font-size: 12pt;
+    color: white;
+    margin-left: 50px;
+    margin-top: 30px;
+}
