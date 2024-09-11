@@ -13,7 +13,8 @@ document.addEventListener("keyup", event_keyup);
 
 player1 = new Player(50, 10, 100, "white", 10);
 player2 = new Player(canvas.width - 50, 10, 100, "white", 10);
-ball = new Ball(10, "white", 10);
+ball = new Ball(10, "white", 5);
+
 
 function main_loop()
 {

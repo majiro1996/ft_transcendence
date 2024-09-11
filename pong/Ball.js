@@ -1,15 +1,14 @@
 class Ball
 {
-	constructor(radius, color, speed)
-	{
-		this.radius = radius
+	constructor(radius, color, speed) {
+		this.radius = radius;
 		this.color = color;
 		this.speed = speed;
 		this.xpos = canvas.width / 2;
 		this.ypos = canvas.height / 2;
 
-		this.xdir = (Math.random() * (1 - (-1)) + (-1))
-		this.ydir = (Math.random() * (1 - (-1)) + (-1))
+		this.xdir = (Math.random() * (1 - (-1)) + (-1));
+		this.ydir = (Math.random() * (1 - (-1)) + (-1));
 		let magnitude = Math.sqrt(Math.pow(this.xdir, 2) + Math.pow(this.ydir, 2));
 		this.xdir /= magnitude;
 		this.ydir /= magnitude;
@@ -22,7 +21,9 @@ class Ball
 		ctx.fill()
 		ctx.closePath()
 	}
-	#check_wall_collisions()
+
+
+	#check_wall_collisions(simulation)
 	{
 		// Calculate where the ball will be
 		let final_x = this.xpos + this.xdir * this.speed;
@@ -38,21 +39,37 @@ class Ball
 			this.ypos = canvas.height - this.radius - 1;
 			this.ydir *= -1;
 		}
+
 		if (final_x - this.radius <= 0) // Left
 		{
-			/*this.xpos = this.radius + 1;
-			this.xdir *= -1;*/
-			player2.score++;
-			ball = new Ball(this.radius, this.color, this.speed);
+			if (simulation==true)
+			{
+				//If its the simulated ball, ball stops in the x limit
+				this.xpos = this.radius + 1;
+				this.xdir *= 0;
+				this.ydir *= 0;
+			}
+			else
+			{
+				player2.score++;
+				ball = new Ball(this.radius, this.color, this.speed);
+			}
 		}
 		else if (final_x + this.radius >= canvas.width) // Right
 		{
-			/*this.xpos = canvas.width - this.radius - 1;
-			this.xdir *= -1;*/
-			player1.score++;
-			ball = new Ball(this.radius, this.color, this.speed);
+			//If its the simulated ball, ball stops in the x limit
+			if (simulation == true)
+			{
+				this.xpos = canvas.width - this.radius - 1;
+				this.xdir *= 0;
+				this.ydir *= 0;
+			} else {
+				player1.score++;
+				ball = new Ball(this.radius, this.color, this.speed);
+			}
 		}
 	}
+
 	#check_player_collisions(player)
 	{
 		if (this.xpos + this.radius > player.xpos &&
@@ -83,16 +100,30 @@ class Ball
 			this.ydir /= magnitude;
 		}
 	}
-	#collisions()
+	#collisions(simulation)
 	{
 		// Wall Collisions
-		this.#check_wall_collisions();
-		this.#check_player_collisions(player1);
-		this.#check_player_collisions(player2);
+		this.#check_wall_collisions(simulation);
+		//if is not the simulated ball, check player collisions
+		if (!simulation)
+		{
+			this.#check_player_collisions(player1);
+			this.#check_player_collisions(player2);
+		}
 	}
-	move()
+
+
+	//move()
+	//{
+	//	this.#collisions();
+	//	this.xpos += this.xdir * this.speed;
+	//	this.ypos += this.ydir * this.speed;
+	//}
+
+	move(simulation = false)
 	{
-		this.#collisions();
+		this.#collisions(simulation);
+		//this.#collisions();
 		this.xpos += this.xdir * this.speed;
 		this.ypos += this.ydir * this.speed;
 	}

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -14,6 +14,115 @@
 	<script src="Ball.js"></script>
 	<script src="events.js"></script>
 	<script src="time.js"></script>
-	<script src="pong.js"></script>
+	<script src="AI.js"></script>
+	<script src="pongAI.js"></script>
+
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="pong.css">
+	<link rel="stylesheet" href="JetBrainsMono.css">
+	<title>Pong</title>
+	<style>
+		body {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+			background-color: #0f0f11;
+			font-family: 'JetBrains Mono', monospace;
+			color: #ffffff;
+		}
+
+		.container {
+			text-align: center;
+		}
+
+		.selection-container {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			text-align: center;
+		}
+
+		.selection-buttons {
+			display: flex;
+			gap: 20px;
+		}
+
+			.selection-buttons button {
+				padding: 10px 20px;
+				font-size: 1.5rem;
+				cursor: pointer;
+				border: 1px solid #ffffff;
+				border-radius: 5px;
+				background-color: #ff4eff;
+				color: #ffffff;
+				transition: background-color 0.3s;
+			}
+
+				.selection-buttons button:hover {
+					background-color: #c964cc;
+				}
+
+		#game-board {
+			display: none;
+			text-align: center;
+		}
+
+		#message {
+			margin-top: 20px;
+			font-size: 1.8rem;
+			font-weight: bold;
+			color: #ffc3ff;
+		}
+	</style>
+</head>
+<body>
+	<div class="selection-container" id="selection-screen">
+		<h1>Choose your mode</h1>
+		<div class="selection-buttons">
+			<button id="two-players">2 Players</button>
+			<button id="one-player">1 Player</button>
+		</div>
+	</div>
+
+	<div id="game-board">
+		<canvas id="game_display" class="crt"></canvas>
+		<div id="message"></div>
+	</div>
+
+	<script src="Player.js"></script>
+	<script src="Ball.js"></script>
+	<script src="events.js"></script>
+	<script src="time.js"></script>
+	<script src="AI.js"></script>
+
+	<script>
+		document.getElementById('two-players').addEventListener('click', () => {
+			loadGame('pong.js');
+		});
+
+		document.getElementById('one-player').addEventListener('click', () => {
+			loadGame('pongAI.js');
+		});
+
+		function loadGame(scriptName) {
+			document.getElementById('selection-screen').style.display = 'none';
+			document.getElementById('game-board').style.display = 'block';
+
+			const script = document.createElement('script');
+			script.src = scriptName;
+			document.body.appendChild(script);
+		}
+	</script>
 </body>
 </html>

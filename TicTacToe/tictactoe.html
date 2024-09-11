@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        /* Import JetBrains Mono */
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body
+        {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #0f0f11;
+            font-family: 'JetBrains Mono', monospace;
+            color: #ffffff;
+        }
+
+        .container
+        {
+            text-align: center;
+        }
+
+        .board
+        {
+            display: grid;
+            grid-template-columns: repeat(3, 120px);
+            grid-template-rows: repeat(3, 120px);
+            gap: 10px;
+            margin: 20px auto;
+            border: 1px solid #ffffff;
+            padding: 10px;
+            background-color: #694964;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cell
+        {
+            width: 120px;
+            height: 120px;
+            background-color: #ceb7cc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem; 
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+        }
+
+        .cell:hover
+        {
+            background-color: #996b94;
+        }
+
+        .cell.x
+        {
+            background-color: #2e9843;
+        }
+
+        .cell.o
+        {
+            background-color: #d95c41;
+        }
+
+        #message
+        {
+            margin-top: 20px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffc3ff;
+        }
+
+        #game-board
+        {
+            display: none;
+        }
+
+        .selection-container
+        {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .selection-buttons
+        {
+            display: flex;
+            gap: 20px;
+        }
+
+        .selection-buttons button
+        {
+            padding: 10px 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            background-color: #ff4eff;
+            color: #ffffff;
+            transition: background-color 0.3s;
+        }
+
+        .selection-buttons button:hover
+        {
+            background-color: #c964cc;
+        }
+
+        #current-turn
+        {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ffc3ff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="selection-container" id="selection-screen">
+        <h1>Choose your mode</h1>
+        <div class="selection-buttons">
+            <button id="two-players">2 Players</button>
+            <button id="one-player">1 Player</button>
+        </div>
+    </div>
+
+    <div id="game-board" class="container">
+        <div id="current-turn">Turn: Player X</div>
+        <div class="board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        document.getElementById('two-players').addEventListener('click', () => {
+            loadGame('tictactoe.js');
+        });
+
+        document.getElementById('one-player').addEventListener('click', () => {
+            loadGame('tictactoeIA.js');
+        });
+
+        function loadGame(scriptName)
+        {
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('game-board').style.display = 'block';
+
+            const script = document.createElement('script');
+            script.src = scriptName;
+            document.body.appendChild(script);
+        }
+    </script>
+</body>
+</html>
