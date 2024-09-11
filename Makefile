@@ -1,3 +1,5 @@
+all: up
+
 build:
 	docker compose -p transcendence build
 
@@ -10,6 +12,9 @@ down:
 re:
 	docker compose -p transcendence down
 	docker compose -p transcendence up --build -d
+
+attach:
+	docker compose up
 
 prune:
 	docker system prune --all --force --volumes
