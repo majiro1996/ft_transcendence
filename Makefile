@@ -18,3 +18,5 @@ attach:
 
 prune:
 	docker system prune --all --force --volumes
+
+fclean: down prune
