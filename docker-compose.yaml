@@ -31,6 +31,16 @@ services:
     networks:
       - transcendence_network
 
+  frontend:
+    build:
+      context: ./app/frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "80:80"
+    networks:
+      - transcendence_network
+
 networks:
   transcendence_network:
     name: transcendence_network
