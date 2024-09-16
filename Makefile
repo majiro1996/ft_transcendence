@@ -20,3 +20,6 @@ prune:
 	docker system prune --all --force --volumes
 	docker network prune
 	docker rm -v -f $(docker ps -a -q)
+
+logs:
+	docker compose -p transcendence logs -f

@@ -29,7 +29,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -163,18 +162,20 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
-# Email backend (for development purposes, use console email backend)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing
-
-# Replace with real settings for production
-DEFAULT_FROM_EMAIL = 'admin@yourdomain.com'
-
-#-------------------#
 # Email Configuration
 
 # Console backend for testing; use SMTP in production
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# Replace with real settings for production in .env file
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_DEFAULT_FROM')
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 # Custom User Model
 AUTH_USER_MODEL = 'backend.User'
