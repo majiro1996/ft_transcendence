@@ -1,38 +1,38 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Check</title>
+    <title>TRASCENDENCE</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/basic.css">
+    <script src='/bootstrap/js/bootstrap.min.js'></script>
+    <script src='/js/router.js' defer></script>
 </head>
 <body>
-    <h1>Database Check</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
-
-    <h2>Data in Database</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in data %}
-            <tr>
-                <td>{{ item.id }}</td>
-                <td>{{ item.first_name }}</td>
-				<td>{{ item.last_name }}</td>
-				<td><a href="{% url 'delete' item.id %}">Delete</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<video autoplay muted loop id="bg_video">
+    <source src="../media/LANDING_VIDEO.mp4" type="video/mp4">
+</video>
+<div class="tr_header">
+    <div id="h_logo"><a id="logo_link_override" href="#" data-route="/">TRASCENDENCE.</a></div>
+    <div class="h_basic"><a href="#tournaments">TORNEOS</a></div>
+    <div class="h_basic"><a href="#scores">PUNTUACIONES</a></div>
+    <div id="h_register"> <a href="#register">REGISTRARSE</a></div>
+    <div id="h_login"> <a href="#login">INICIAR SESIÓN</a></div>
+</div>
+<div id="content">
+    <!-- Dynamic content will be loaded here -->
+</div>
+<div id="footer_container"></div>
+    <img id="footer_logo" src="../media/Trascendence_Square_Logo.svg">
+    <p id="footer_credits">FT_Trascendence ha sido creado por el equipo [NOMBRE] para 42 Málaga.<br><br>
+    [NOMBRE 1] - [TRABAJO DESEMPEÑADO]<br>
+    [NOMBRE 2] - [TRABAJO DESEMPEÑADO]<br>
+    [NOMBRE 3] - [TRABAJO DESEMPEÑADO]<br>
+    [NOMBRE 4] - [TRABAJO DESEMPEÑADO]<br>
+    [NOMBRE 5] - [TRABAJO DESEMPEÑADO]</p>
+</div>
 </body>
 </html>

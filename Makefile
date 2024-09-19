@@ -16,10 +16,14 @@ re:
 attach:
 	docker compose up
 
-prune:
+clean:
 	docker system prune --all --force --volumes
 	docker network prune
 	docker rm -v -f $(docker ps -a -q)
+
+prune:
+	docker system prune -a
+	docker builder prune
 
 logs:
 	docker compose -p transcendence logs -f
