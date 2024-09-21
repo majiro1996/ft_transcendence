@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/basic.css">
     <script src='/bootstrap/js/bootstrap.min.js'></script>
-    <script src='/js/router.js' defer></script>
+    <script src='/js/router-lang.js' defer></script>
 </head>
 <body>
 <video autoplay muted loop id="bg_video">
@@ -17,8 +17,14 @@
 </video>
 <div class="tr_header">
     <div id="h_logo"><a id="logo_link_override" href="#" data-route="/">TRASCENDENCE.</a></div>
-    <div class="h_basic"><a href="#tournaments">TORNEOS</a></div>
-    <div class="h_basic"><a href="#scores">PUNTUACIONES</a></div>
+            <!-- --------------- -->
+    <div class="language_switcher_container" id="languageSwitcher">
+        <button class="language-switcher" data-lang="en">EN</button>
+        <button class="language-switcher" data-lang="es">ES</button>
+        <button class="language-switcher" data-lang="fr">FR</button>
+    </div>
+    <div class="h_basic" id="h_tournaments"><a href="#tournaments">TORNEOS</a></div>
+    <div class="h_basic" id="h_scores"><a href="#scores">PUNTUACIONES</a></div>
     <div id="h_register"> <a href="#register">REGISTRARSE</a></div>
     <div id="h_login"> <a href="#login">INICIAR SESIÓN</a></div>
 </div>

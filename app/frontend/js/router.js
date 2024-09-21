@@ -53,6 +53,10 @@ const locationHandler = async () => {
     document.title = route.title;
     //set the meta description
     document.querySelector('meta[name="description"]').setAttribute("content", route.description);
+
+    //call the translation function
+    const lang = document.querySelector('.language-switcher.active')?.getAttribute('data-lang') || 'en';
+    await switchLanguage(lang);
 };
 
 //listen for hash changes
