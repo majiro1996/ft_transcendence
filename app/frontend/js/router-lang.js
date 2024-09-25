@@ -9,6 +9,11 @@ const languages = {
 //let currentLang = localStorage.getItem('lang') || 'en';
 let currentLang = localStorage.getItem('lang') || navigator.language.slice(0, 2) || 'en';
 
+// Check if the selected language is supported if not, fallback to English
+if (!languages[currentLang]) {
+    currentLang = 'en';
+}
+
 // Page title
 const pageTitle = "Transcendence";
 
@@ -97,6 +102,23 @@ const routes = {
             template: "/html/templates/fr/login.html",
             title: "Connexion | " + pageTitle,
             description: "Ceci est la page de connexion",
+        }
+    },
+    profile: {
+        en: {
+            template: "/html/templates/en/profile.html",
+            title: "Profile | " + pageTitle,
+            description: "This is the profile page",
+        },
+        es: {
+            template: "/html/templates/es/profile.html",
+            title: "Perfil | " + pageTitle,
+            description: "Esta es la página de perfil",
+        },
+        fr: {
+            template: "/html/templates/fr/profile.html",
+            title: "Profil | " + pageTitle,
+            description: "Ceci est la page de profil",
         }
     },
     // Add other routes here
