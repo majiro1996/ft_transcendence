@@ -1,128 +1,151 @@
-<!--<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="pong.css">
-	<link rel="stylesheet" href="JetBrainsMono.css">
-	<title>Pong</title>
-</head>
-<body>
-	<canvas id="game_display" class="crt"></canvas>
-
-	<script src="Player.js"></script>
-	<script src="Ball.js"></script>
-	<script src="events.js"></script>
-	<script src="time.js"></script>
-	<script src="AI.js"></script>
-	<script src="pongAI.js"></script>
-
-</body>
-</html>-->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="pong.css">
-	<link rel="stylesheet" href="JetBrainsMono.css">
-	<title>Pong</title>
-	<style>
-		body {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			margin: 0;
-			background-color: #0f0f11;
-			font-family: 'JetBrains Mono', monospace;
-			color: #ffffff;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="pong.css">
+    <link rel="stylesheet" href="JetBrainsMono.css">
+    <title>Pong</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #0f0f11;
+            font-family: 'JetBrains Mono', monospace;
+            color: #ffffff;
+        }
 
-		.container {
-			text-align: center;
-		}
+        .container {
+            text-align: center;
+        }
 
-		.selection-container {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			text-align: center;
-		}
+        .selection-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
 
-		.selection-buttons {
-			display: flex;
-			gap: 20px;
-		}
+        .selection-buttons, .difficulty-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
 
-			.selection-buttons button {
-				padding: 10px 20px;
-				font-size: 1.5rem;
-				cursor: pointer;
-				border: 1px solid #ffffff;
-				border-radius: 5px;
-				background-color: #ff4eff;
-				color: #ffffff;
-				transition: background-color 0.3s;
-			}
+            .selection-buttons button, .difficulty-buttons button {
+                padding: 10px 20px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                border: 1px solid #ffffff;
+                border-radius: 5px;
+                background-color: #ff4eff;
+                color: #ffffff;
+                transition: background-color 0.3s;
+            }
 
-				.selection-buttons button:hover {
-					background-color: #c964cc;
-				}
+                .selection-buttons button:hover, .difficulty-buttons button:hover {
+                    background-color: #c964cc;
+                }
 
-		#game-board {
-			display: none;
-			text-align: center;
-		}
+        #difficulty-screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-		#message {
-			margin-top: 20px;
-			font-size: 1.8rem;
-			font-weight: bold;
-			color: #ffc3ff;
-		}
-	</style>
+        #game-board {
+            display: none;
+            text-align: center;
+        }
+
+        #message {
+            position: absolute;
+            top: 75%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffc3ff;
+            display: none; /* Hidden by default */
+        }
+    </style>
 </head>
 <body>
-	<div class="selection-container" id="selection-screen">
-		<h1>Choose your mode</h1>
-		<div class="selection-buttons">
-			<button id="two-players">2 Players</button>
-			<button id="one-player">1 Player</button>
-		</div>
-	</div>
+    <div class="selection-container" id="selection-screen">
+        <h1>Choose your mode</h1>
+        <div class="selection-buttons">
+            <button id="two-players">2 Players</button>
+            <button id="one-player">1 Player</button>
+        </div>
+    </div>
 
-	<div id="game-board">
-		<canvas id="game_display" class="crt"></canvas>
-		<div id="message"></div>
-	</div>
+    <div class="selection-container" id="difficulty-screen">
+        <h1>Select Difficulty</h1>
+        <div class="difficulty-buttons">
+            <button onclick="startGameWithDifficulty('easy')">Easy</button>
+            <button onclick="startGameWithDifficulty('normal')">Normal</button>
+            <button onclick="startGameWithDifficulty('hard')">Hard</button>
+            <button onclick="startGameWithDifficulty('extreme')">Extreme</button>
+        </div>
+    </div>
 
-	<script src="Player.js"></script>
-	<script src="Ball.js"></script>
-	<script src="events.js"></script>
-	<script src="time.js"></script>
-	<script src="AI.js"></script>
+    <div id="game-board">
+        <canvas id="game_display" class="crt"></canvas>
+        <div id="message"></div>
+    </div>
 
-	<script>
-		document.getElementById('two-players').addEventListener('click', () => {
-			loadGame('pong.js');
-		});
+    <script src="Player.js"></script>
+    <script src="Ball.js"></script>
+    <script src="events.js"></script>
+    <script src="time.js"></script>
+    <script src="AI.js"></script>
 
-		document.getElementById('one-player').addEventListener('click', () => {
-			loadGame('pongAI.js');
-		});
+    <script>
+        document.getElementById('two-players').addEventListener('click', () => {
+            startTwoPlayerGame();
+        });
 
-		function loadGame(scriptName) {
-			document.getElementById('selection-screen').style.display = 'none';
-			document.getElementById('game-board').style.display = 'block';
+        document.getElementById('one-player').addEventListener('click', () => {
+            showDifficultySelection();
+        });
 
-			const script = document.createElement('script');
-			script.src = scriptName;
-			document.body.appendChild(script);
-		}
-	</script>
+        function showDifficultySelection() {
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('difficulty-screen').style.display = 'flex';  // Show the difficulty selection screen
+        }
+
+        function startTwoPlayerGame() {
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('game-board').style.display = 'block';  // Show the game area for 2 players
+
+            // Load the game script for two players (pong.js)
+            const script = document.createElement('script');
+            script.src = 'pong.js';  // Make sure pong.js is in the same directory
+            document.body.appendChild(script);
+        }
+
+        function startGameWithDifficulty(difficulty) {
+            // Save the difficulty in localStorage
+            localStorage.setItem('pongDifficulty', difficulty);
+
+            // Hide the difficulty screen and show the game board
+            document.getElementById('difficulty-screen').style.display = 'none';
+            document.getElementById('game-board').style.display = 'block';
+
+            // Load the game for single player with AI (pongAI.js)
+            const script = document.createElement('script');
+            script.src = 'pongAI.js';
+            document.body.appendChild(script);
+        }
+    </script>
 </body>
 </html>
+
