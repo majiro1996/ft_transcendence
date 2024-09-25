@@ -1,6 +1,7 @@
 # urls.py
 from django.urls import path
 from . import views
+from .views import SignUpView, LoginView, TwoFactorSetupView, TwoFactorVerifyView
 
 from django.contrib import admin
 
@@ -15,4 +16,8 @@ urlpatterns = [
 	path('styles/font_bold/', views.font_bold, name='fontbold'),
 	path('logo/', views.logo, name='logo'),
 	path('bg_landing/', views.bg_video, name='bg_landing'),
+    path('signup/', SignUpView.as_view(), name='signup'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('2fa/setup/', TwoFactorSetupView.as_view(), name='2fa-setup'),
+    path('2fa/verify/', TwoFactorVerifyView.as_view(), name='2fa-verify'),
 ]

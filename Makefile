@@ -20,3 +20,10 @@ prune:
 	docker system prune --all --force --volumes
 
 fclean: down prune
+
+p:
+	docker system prune -a
+	docker builder prune
+
+n:
+	docker network prune
