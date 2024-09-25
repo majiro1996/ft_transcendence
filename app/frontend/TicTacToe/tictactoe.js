@@ -20,6 +20,46 @@ const winningConditions = [
     [2, 4, 6]
 ];
 
+function getCookie(cname)
+{
+	let name = cname + "=";
+	let decodedCookie = decodeURIComponent(document.cookie);
+	let ca = decodedCookie.split(';');
+	for(let i = 0; i <ca.length; i++)
+	{
+		let c = ca[i];
+		while (c.charAt(0) == ' ')
+			c = c.substring(1);
+		if (c.indexOf(name) == 0)
+			return c.substring(name.length, c.length);
+	}
+	return "";
+}
+
+async function send_results()
+{
+	if (winnerPlayer == undefined)
+		winnerPlayer = "tie";
+	try
+	{
+		const response = await fetch("/",
+		{
+			method: "POST",
+			headers: {
+				"X-CSRFToken": getCookie("csrftoken"),
+			},
+			body: JSON.stringify({
+				game_id: getCookie("game_id"),
+				results: winnerPlayer
+			}),
+		});
+	} catch (error) {
+		console.log(`Error: ${error}`)
+	}
+}
+
+message.onclick = send_results
+
 //Message for the turn
 function updateTurnMessage()
 {

@@ -75,6 +75,7 @@
             font-weight: bold;
             color: #ffc3ff;
             display: none; /* Hidden by default */
+			cursor: pointer;
         }
     </style>
 </head>
@@ -101,6 +102,8 @@
         <canvas id="game_display" class="crt"></canvas>
         <div id="message"></div>
     </div>
+
+	{% csrf_token %}
 
     <script src="Player.js"></script>
     <script src="Ball.js"></script>

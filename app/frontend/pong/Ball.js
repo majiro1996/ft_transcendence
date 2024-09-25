@@ -8,7 +8,8 @@ class Ball
 		this.ypos = canvas.height / 2;
 
 		this.xdir = (Math.random() * (1 - (-1)) + (-1));
-		this.ydir = (Math.random() * (1 - (-1)) + (-1));
+		//this.ydir = (Math.random() * (1 - (-1)) + (-1));
+		this.ydir = 0;
 		let magnitude = Math.sqrt(Math.pow(this.xdir, 2) + Math.pow(this.ydir, 2));
 		this.xdir /= magnitude;
 		this.ydir /= magnitude;
