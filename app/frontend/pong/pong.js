@@ -1,3 +1,4 @@
+const message = document.getElementById('message');
 // Game Setup
 let canvas = document.getElementById("game_display");
 let ctx = canvas.getContext("2d");
@@ -41,6 +42,16 @@ function main_loop()
 	counter += delta_time;
 	console.log(counter / 1000);
 
+	// Check if any player has won (score >= 10)
+	if (player1.score >= 10) {
+		message.textContent = "Player 2 wins!";
+		message.style.display = 'block';
+		return;
+	} else if (player2.score >= 10) {
+		message.textContent = "Player 1 wins!";
+		message.style.display = 'block';
+		return;
+	}
 	requestAnimationFrame(main_loop);
 }
 
