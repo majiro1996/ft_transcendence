@@ -19,7 +19,12 @@ services:
       context: ./app
       dockerfile: Dockerfile
     container_name: web
-    command: python3 manage.py runserver 0.0.0.0:8000
+    hostname: web
+    env_file:
+      - app/.env
+    command: >
+      sh -c "until nc -z db 5432; do echo 'Waiting for db...'; sleep 1; done;
+             python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000" 
     volumes:
       - ./app:/app
     depends_on:

@@ -16,6 +16,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container
 COPY . .
 
+#---------------------------------------------------------------
+RUN python manage.py collectstatic --noinput
+
+#RUN python manage.py migrate
+
 # Expose port 8000 for the application
 EXPOSE 8000
 
