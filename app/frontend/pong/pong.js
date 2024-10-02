@@ -1,3 +1,4 @@
+const message = document.getElementById('message');
 // Game Setup
 let canvas = document.getElementById("game_display");
 let ctx = canvas.getContext("2d");
@@ -13,8 +14,46 @@ document.addEventListener("keyup", event_keyup);
 
 player1 = new Player(50, 10, 100, "white", 10);
 player2 = new Player(canvas.width - 50, 10, 100, "white", 10);
-ball = new Ball(10, "white", 5);
+ball = new Ball(10, "white", 12);
 
+winner = "";
+
+function getCookie(cname)
+{
+	let name = cname + "=";
+	let decodedCookie = decodeURIComponent(document.cookie);
+	let ca = decodedCookie.split(';');
+	for(let i = 0; i <ca.length; i++)
+	{
+		let c = ca[i];
+		while (c.charAt(0) == ' ')
+			c = c.substring(1);
+		if (c.indexOf(name) == 0)
+			return c.substring(name.length, c.length);
+	}
+	return "";
+}
+
+async function send_results()
+{
+	try
+	{
+		const response = await fetch("/", {
+			method: "POST",
+			headers: {
+				"X-CSRFToken": getCookie("csrftoken"),
+			},
+			body: JSON.stringify({
+				game_id: getCookie("game_id"),
+				results: winner
+			}),
+		});
+	} catch (error){
+		console.log(`Error: ${error}`);
+	}
+}
+
+message.onclick = send_results
 
 function main_loop()
 {
@@ -39,8 +78,20 @@ function main_loop()
 	// Time Calc
 	DeltaTime();
 	counter += delta_time;
-	console.log(counter / 1000);
+	//console.log(counter / 1000);
 
+	// Check if any player has won (score >= 10)
+	if (player1.score >= 10) {
+		winner = "player1";
+		message.textContent = "Player 1 wins!";
+		message.style.display = 'block';
+		return;
+	} else if (player2.score >= 10) {
+		winner = "player2";
+		message.textContent = "Player 2 wins!";
+		message.style.display = 'block';
+		return;
+	}
 	requestAnimationFrame(main_loop);
 }
 

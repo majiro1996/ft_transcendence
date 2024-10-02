@@ -20,6 +20,28 @@ const winningConditions = [
     [2, 4, 6]
 ];
 
+// Difficulty
+const difficulty = localStorage.getItem('tictactoeDifficulty') || 'normal';
+let valor = 0.5;
+
+// Adjust difficulty
+switch (difficulty) {
+    case 'easy':
+        valor = 0.25;
+        speed = 5;
+        break;
+    case 'normal':
+        valor = 0.5;
+        break;
+    case 'hard':
+        valor = 0.75;
+        break;
+    case 'extreme':
+        valor = 1;
+        break;
+}
+
+
 //Message for the turn
 function updateTurnMessage()
 {
@@ -77,13 +99,26 @@ function checkWin()
     return false;
 }
 
-//Move 4 the IA
-function aiMove()
-{
-    const bestMove = getBestMove();
-    makeMove(bestMove, 'O');
-    if (checkWin())
+// Move for the AI
+function aiMove() {
+    let bestMove;
+
+    // Decide randomly whether to use Minimax or make a random move
+    if (Math.random() < valor)
     {
+        // Use Minimax to find the best move
+        bestMove = getBestMove();
+        console.log("AI used Minimax to decide the move.");
+    }
+    else
+    {
+        // Make a random move
+        bestMove = getRandomMove();
+        console.log("AI made a random move.");
+    }
+
+    makeMove(bestMove, 'O');
+    if (checkWin()) {
         gameActive = false;
         message.textContent = `O wins!`;
         return;
@@ -99,6 +134,20 @@ function aiMove()
     currentPlayer = 'X';
     updateTurnMessage();
 }
+
+// Function to find a random empty spot for the AI
+function getRandomMove() {
+    const availableMoves = [];
+    for (let i = 0; i < boardState.length; i++)
+    {
+        if (boardState[i] === '')
+            availableMoves.push(i);
+    }
+    // Pick a random index from the available moves
+    const randomIndex = Math.floor(Math.random() * availableMoves.length);
+    return availableMoves[randomIndex];
+}
+
 
 //This function uses MINIMAX algorithm to find the best movement for the IA
 function getBestMove()
