@@ -17,6 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 #---------------------------------------------------------------
+RUN apt-get update && apt-get install -y netcat-openbsd
+
 RUN python manage.py collectstatic --noinput
 
 #RUN python manage.py migrate

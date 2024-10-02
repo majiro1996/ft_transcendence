@@ -8,7 +8,6 @@ class Person(models.Model):
 
 
 class User(AbstractUser):
-    name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     is_2fa_enabled = models.BooleanField(default=False)
     otp_secret = models.CharField(max_length=16, blank=True, null=True)  # OTP secret
