@@ -6,7 +6,6 @@ const languages = {
 };
 
 // Default language
-//let currentLang = localStorage.getItem('lang') || 'en';
 let currentLang = localStorage.getItem('lang') || navigator.language.slice(0, 2) || 'en';
 
 // Check if the selected language is supported if not, fallback to English
@@ -124,28 +123,11 @@ const routes = {
     // Add other routes here
 };
 
-// Function to handle language change
-const setLanguage = (lang) => {
-    if (languages[lang]) {
-        currentLang = lang;
-        localStorage.setItem('lang', lang);  // Save the selected language
-        locationHandler();  // Reload the page content for the selected language
-    }
-};
+// Function to handle location changes
+async function locationHandler() {
+    const path = window.location.hash.substring(1) || '/';
+    const route = routes[path] ? routes[path][currentLang] : routes['404'][currentLang];
 
-// Language switcher event listener
-document.getElementById('languageSwitcher').addEventListener('change', (e) => {
-    setLanguage(e.target.value);
-});
-
-const locationHandler = async () => {
-    var location = window.location.hash.replace("#", "");
-
-    if (location.length == 0) {
-        location = "/";
-    }
-    // Get the route for the current location and language, or fallback to 404
-    const route = routes[location] ? routes[location][currentLang] : routes[404][currentLang];
     // Fetch the template
     const template = await fetch(route.template).then((response) => response.text());
     // Set the content div HTML to the template
@@ -154,23 +136,46 @@ const locationHandler = async () => {
     document.title = route.title;
     // Set the meta description
     document.querySelector('meta[name="description"]').setAttribute("content", route.description);
-};
+}
+
+// Function to update header and footer
+async function updateHeaderAndFooter(lang) {
+    const headerPath = '/html/templates/' + lang + '/header.html';
+    const footerPath = '/html/templates/' + lang + '/footer.html';
+    // Fetch the header and footer templates
+    const headerTemplate = await fetch(headerPath).then((response) => response.text());
+    const footerTemplate = await fetch(footerPath).then((response) => response.text());
+    // Set the header and footer divs HTML to the templates
+    document.getElementById("header").innerHTML = headerTemplate;
+    document.getElementById("footer_container").innerHTML = footerTemplate;
+    
+    attachLanguageSwitcherListeners(); // Re-attach event listeners to language switcher buttons
+}
+
+// Function to set language
+async function setLanguage(lang) {
+    if (languages[lang]) {
+        currentLang = lang;
+        localStorage.setItem('lang', lang);
+        await locationHandler();
+        await updateHeaderAndFooter(lang);
+    }
+}
+
+
+// Function to attach event listeners to language switcher buttons
+function attachLanguageSwitcherListeners() {
+    document.querySelectorAll('.language-switcher').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const selectedLang = e.target.getAttribute('data-lang');
+            await setLanguage(selectedLang);  // Trigger language change
+        });
+    });
+}
 
 // Listen for hash changes and page load
 window.addEventListener("hashchange", locationHandler);
-window.addEventListener("load", locationHandler);
-
-
-// Add event listener to each language switcher button
-document.querySelectorAll('.language-switcher').forEach(button => {
-    button.addEventListener('click', (e) => {
-        const selectedLang = e.target.getAttribute('data-lang');
-        setLanguage(selectedLang);  // Trigger language change
-    });
+window.addEventListener("load", async () => {
+    await locationHandler();
+    await updateHeaderAndFooter(currentLang);
 });
-
-locationHandler();  // Initial load
-
-
-
-
