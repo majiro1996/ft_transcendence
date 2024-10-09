@@ -45,6 +45,57 @@ function login() {
 	});
 }
 
+function login2fa() {
+    const data = {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+    };
+
+    fetch('http://localhost:8000/login/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    // if the response is successful redirect to the 2fa page
+    .then(data => {
+        console.log('valid credentials, proceed to 2fa');
+        window.location.hash = '#2fa';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Invalid credentials, please try again');
+    });
+}
+
+function verify2fa() {
+    const data = { 
+        username: document.getElementById('username').value,
+        otp: document.getElementById('otp').value,
+    };
+    
+    fetch('http://localhost:8000/verify-2fa/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+        console.log('Login successful');
+        window.location.hash = '#'  // redirect to home page
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Invalid OTP, please try again');
+    });
+}
+
 function logout() {
 	const refresh_token = localStorage.getItem('refresh_token');
     
@@ -123,9 +174,19 @@ function getProtectedData() {
 }
 
 
+function isLoggedIn() {
+    const token = localStorage.getItem('access_token');
+    return token && !isTokenExpired(token);
+}
 
-// make functions global
+
+// make functions available
 window.register = register;
 window.login = login;
 window.logout = logout;
 window.getProtectedData = getProtectedData;
+window.login2fa = login2fa;
+window.verify2fa = verify2fa;
+window.refreshToken = refreshToken;
+window.isTokenExpired = isTokenExpired;
+window.isLoggedIn = isLoggedIn;
