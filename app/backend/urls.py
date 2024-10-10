@@ -5,7 +5,7 @@ from . import views
 
 from django.contrib import admin
 
-from .views import RegisterView, LoginView, LogoutView, ProtectedView
+from .views import RegisterView, LoginView, LogoutView, ProtectedView, Login2fView, TwoFactorVerifyView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
@@ -26,6 +26,8 @@ urlpatterns = [
     ### API ###
 	path('register/', RegisterView.as_view(), name='register'),
 	path('login/', LoginView.as_view(), name='login'),
+    path('login-2fa/', Login2fView.as_view(), name='login-2fa'),
+	path('2fa/verify/', TwoFactorVerifyView.as_view(), name='2fa-verify'),
 	path('logout/', LogoutView.as_view(), name='logout'),
 	path('token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 	path('protected-endpoint/', ProtectedView.as_view(), name='protected'),

@@ -51,7 +51,7 @@ function login2fa() {
         password: document.getElementById('password').value,
     };
 
-    fetch('http://localhost:8000/login/', {
+    fetch('http://localhost:8000/login-2fa/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ function login2fa() {
     // if the response is successful redirect to the 2fa page
     .then(data => {
         console.log('valid credentials, proceed to 2fa');
-        window.location.hash = '#2fa';
+        window.location.hash = '#auth2fa';
     })
     .catch(error => {
         console.error('Error:', error);
@@ -76,7 +76,7 @@ function verify2fa() {
         otp: document.getElementById('otp').value,
     };
     
-    fetch('http://localhost:8000/verify-2fa/', {
+    fetch('http://localhost:8000/2fa/verify/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -85,9 +85,14 @@ function verify2fa() {
     })
     .then(response => response.json())
     .then(data => {
+        if (!data.access || !data.refresh) {
+            alert('Invalid OTP, please try again');
+            return;
+        }
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
         console.log('Login successful');
+        RouterLb.updateHeaderAndFooter(currentLang);
         window.location.hash = '#'  // redirect to home page
     })
     .catch(error => {
@@ -176,17 +181,30 @@ function getProtectedData() {
 
 function isLoggedIn() {
     const token = localStorage.getItem('access_token');
-    return token && !isTokenExpired(token);
+    if (!token) {
+        return false;
+    }
+    try {
+        return !isTokenExpired(token);
+    }
+    catch (error) {
+        return false;
+    }
 }
 
 
-// make functions available
-window.register = register;
-window.login = login;
-window.logout = logout;
-window.getProtectedData = getProtectedData;
-window.login2fa = login2fa;
-window.verify2fa = verify2fa;
-window.refreshToken = refreshToken;
-window.isTokenExpired = isTokenExpired;
-window.isLoggedIn = isLoggedIn;
+
+// collect all the functions in an object
+const AuthLb = {
+    register,
+    login,
+    logout,
+    getProtectedData,
+    login2fa,
+    verify2fa,
+    refreshToken,
+    isTokenExpired,
+    isLoggedIn,
+};
+
+window.AuthLb = AuthLb;

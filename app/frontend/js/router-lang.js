@@ -120,6 +120,24 @@ const routes = {
             description: "Ceci est la page de profil",
         }
     },
+    auth2fa: {
+        en: {
+            template: "/html/templates/en/2fa.html",
+            title: "2FA | " + pageTitle,
+            description: "This is the 2FA page",
+        },
+        es: {
+            template: "/html/templates/es/2fa.html",
+            title: "2FA | " + pageTitle,
+            description: "Esta es la página 2FA",
+        },
+        fr: {
+            template: "/html/templates/fr/2fa.html",
+            title: "2FA | " + pageTitle,
+            description: "Ceci est la page 2FA",
+        }
+    },
+
     // Add other routes here
 };
 
@@ -140,8 +158,12 @@ async function locationHandler() {
 
 // Function to update header and footer
 async function updateHeaderAndFooter(lang) {
-    const headerPath = '/html/templates/' + lang + '/header.html';
-    const footerPath = '/html/templates/' + lang + '/footer.html';
+    let headerPath = '/html/templates/' + lang + '/header.html';
+    let footerPath = '/html/templates/' + lang + '/footer.html';
+
+    if (AuthLb.isLoggedIn()) {
+        headerPath = '/html/templates/' + lang + '/header-loggedin.html';
+    }
     // Fetch the header and footer templates
     const headerTemplate = await fetch(headerPath).then((response) => response.text());
     const footerTemplate = await fetch(footerPath).then((response) => response.text());
@@ -179,3 +201,9 @@ window.addEventListener("load", async () => {
     await locationHandler();
     await updateHeaderAndFooter(currentLang);
 });
+
+
+const RouterLb = {
+    updateHeaderAndFooter,
+    setLanguage,
+};

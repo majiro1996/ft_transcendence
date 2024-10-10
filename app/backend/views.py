@@ -16,8 +16,15 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth import authenticate
+import pyotp
+import logging
+
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -108,6 +115,74 @@ class RegisterView(APIView):
 # Login using JWT
 class LoginView(TokenObtainPairView):
     permission_classes = [AllowAny]
+
+
+
+# Login api view that checks credentials, if they are correct sends 2fa code to mail
+class Login2fView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        logger.debug(f'username: {username}, password: {password}') #remove ############################
+
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not user.otp_secret:
+            user.otp_secret = pyotp.random_base32()
+            user.save()
+
+        totp = pyotp.TOTP(user.otp_secret, interval=300)
+        token = totp.now()
+        subject = 'Login 2fa code'
+        message = f'Your 2fa code is {token}'
+        from_email = settings.EMAIL_HOST_USER
+        send_mail(subject, message, from_email, [user.email])
+
+        return Response({'success': '2fa code sent to your email'}, status=status.HTTP_200_OK)
+
+
+
+# Verify 2fa code api view, if code is correct returns JWT tokens
+class TwoFactorVerifyView(APIView):
+    permission_classes = [AllowAny]
+    # throttle_classes = [UserRateThrottle] # add later
+
+    def post(self, request):
+        username = request.data.get('username')
+        otp = request.data.get('otp')
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'error': 'Invalid username'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        totp = pyotp.TOTP(user.otp_secret, interval=300)
+
+        if not totp.verify(otp, valid_window=2):
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # If OTP is valid, generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        return Response({
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, status=status.HTTP_200_OK)
+
+    
+
+# Refresh token api view
+class TokenRefreshView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+
+
 
 # Logout api view
 class LogoutView(APIView):
