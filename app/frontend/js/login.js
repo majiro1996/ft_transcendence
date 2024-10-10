@@ -85,15 +85,15 @@ function verify2fa() {
     })
     .then(response => response.json())
     .then(data => {
-        if (!data.access || !data.refresh) {
-            alert('Invalid OTP, please try again');
+        if (!data.access_token || !data.refresh_token) {
+            alert('Something went wrong');
             return;
         }
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
+        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('refresh_token', data.refresh_token);
         console.log('Login successful');
-        RouterLb.updateHeaderAndFooter(currentLang);
         window.location.hash = '#'  // redirect to home page
+        RouterLb.updateHeaderAndFooter(currentLang);
     })
     .catch(error => {
         console.error('Error:', error);
@@ -113,19 +113,23 @@ function logout() {
     	},
     	body: JSON.stringify({ refresh_token: refresh_token }),
 	})
-	.then(response => response.json())
-	.then(data => {
-    	console.log('Logout successful', data);
-
-    	// Clear tokens from localStorage or sessionStorage
-    	localStorage.removeItem('access_token');
-    	localStorage.removeItem('refresh_token');
-
-    	// Optionally redirect to login page or home
-    	window.location.href = '/login';
-	})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Logout failed');
+        }
+    
+        // Clear tokens from localStorage or sessionStorage
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+    
+        // Redirect to login page or home
+        window.location.hash = '#login';
+        RouterLb.updateHeaderAndFooter(currentLang);
+        console.log('Logout successful');
+    })
 	.catch(error => {
     	console.error('Error:', error);
+        alert('logout failed');
 	});
 }
 

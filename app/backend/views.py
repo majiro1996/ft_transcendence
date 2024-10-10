@@ -171,6 +171,8 @@ class TwoFactorVerifyView(APIView):
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
 
+        logger.info(f'User {user.username} logged in successfully') #remove ############################
+
         return Response({
             'access_token': access_token,
             'refresh_token': refresh_token
