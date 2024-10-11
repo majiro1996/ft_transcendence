@@ -1,15 +1,20 @@
-
-<div class="container d-flex justify-content-center align-items-center" style="height: calc(100vh - 100px); margin-top: 100px;">
-    <h2>Login 2FA</h2>
-    <form id="loginForm" onsubmit="event.preventDefault(); AuthLb.verify2fa();">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="otp" name="password" required>
-        <br>
-        <button type="submit">Login</button>
-    </form>
+<div class="container" style="height: calc(100vh - 100px); margin-top: 100px;">
+    <div class="row">
+        <div class="col-md-6 d-flex align-items-center">
+            <h2 class="display-4">Login 2FA</h2>
+        </div>
+        <div class="col-md-6">
+            <form id="loginForm" onsubmit="event.preventDefault(); AuthLb.verify2fa();">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="otp" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Login</button>
+            </form>
+        </div>
+    </div>
 </div>
-
-
