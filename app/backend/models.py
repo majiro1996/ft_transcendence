@@ -11,6 +11,7 @@ class User(AbstractUser):
     username = models.TextField(unique=True, null=True)
     password = models.TextField(unique=True, null=True)
     email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
     is_2fa_enabled = models.BooleanField(default=False)
     otp_secret = models.CharField(max_length=16, blank=True, null=True)  # OTP secret
     last_online = models.DateTimeField(auto_now=True)

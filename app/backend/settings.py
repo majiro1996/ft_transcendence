@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,10 +40,13 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-	'backend'
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
+	'backend', 
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
 	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
@@ -50,6 +54,12 @@ MIDDLEWARE = [
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+#CORS_ALLOWED_ALL_ORIGINS = True # development only
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:80",
+    "http://localhost",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -121,7 +131,7 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),   
 ]
 
-TIME_ZONE = 'UTC'
+#TIME_ZONE = 'UTC'
 
 USE_I18N = True
 USE_L10N = True
@@ -146,10 +156,18 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': (
+		'rest_framework.permissions.IsAuthenticated',
+	),
+    'DEFAULT_THROTTLE_CLASSES': (
+		'rest_framework.throttling.UserRateThrottle',
+	),
+    'DEFAULT_THROTTLE_RATES': {
+		'user': '5/minute',
+	},
 }
 
 # JWT Token settings
-from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -160,8 +178,8 @@ SIMPLE_JWT = {
 # Email Configuration
 
 # Console backend for testing; use SMTP in production
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
