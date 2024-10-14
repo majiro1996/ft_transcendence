@@ -158,7 +158,7 @@
         <div id="message"></div>
     </div>
 
-	{% csrf_token %}
+	<p hidden> {% csrf_token %} </p>
 
     <script>
         document.getElementById('two-players').addEventListener('click', () => {
