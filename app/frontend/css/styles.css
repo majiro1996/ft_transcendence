@@ -1,12 +1,12 @@
 @font-face {
     font-family: "Jetbrains Mono";
-    src: url(font);
+    src: url(../media/fonts/JetBrainsMono-Regular.woff2);
 }
 
 @font-face {
     font-family: "Jetbrains Mono";
     font-weight: bold;
-    src: url(font_bold);
+    src: url(../media/fonts/JetBrainsMono-Bold.woff2);
 }
 
 a {

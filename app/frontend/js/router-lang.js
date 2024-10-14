@@ -120,6 +120,40 @@ const routes = {
             description: "Ceci est la page de profil",
         }
     },
+    pong: {
+        en: {
+            template: "/pong/pong.html",
+            title: "Pong | " + pageTitle,
+            description: "This is Pong.",
+        },
+        es: {
+            template: "/pong/pong.html",
+            title: "Pong | " + pageTitle,
+            description: "This is Pong.",
+        },
+        fr: {
+            template: "/pong/pong.html",
+            title: "Pong | " + pageTitle,
+            description: "This is Pong.",
+        }
+    },
+    tictactoe: {
+        en: {
+            template: "/TicTacToe/tictactoe.html",
+            title: "Tic-Tac-Toe | " + pageTitle,
+            description: "This is Tic-Tac-Toe.",
+        },
+        es: {
+            template: "/TicTacToe/tictactoe.html",
+            title: "Tic-Tac-Toe | " + pageTitle,
+            description: "This is Tic-Tac-Toe."
+        },
+        fr: {
+            template: "/TicTacToe/tictactoe.html",
+            title: "Tic-Tac-Toe | " + pageTitle,
+            description: "This is Tic-Tac-Toe.",
+        }
+    },
     // Add other routes here
 };
 
@@ -127,6 +161,7 @@ const routes = {
 async function locationHandler() {
     const path = window.location.hash.substring(1) || '/';
     const route = routes[path] ? routes[path][currentLang] : routes['404'][currentLang];
+    console.log(route);
 
     // Fetch the template
     const template = await fetch(route.template).then((response) => response.text());
@@ -148,7 +183,7 @@ async function updateHeaderAndFooter(lang) {
     // Set the header and footer divs HTML to the templates
     document.getElementById("header").innerHTML = headerTemplate;
     document.getElementById("footer_container").innerHTML = footerTemplate;
-    
+
     attachLanguageSwitcherListeners(); // Re-attach event listeners to language switcher buttons
 }
 
