@@ -196,9 +196,13 @@ async function updateHeaderAndFooter(lang) {
     let headerPath = '/html/templates/' + lang + '/header.html';
     let footerPath = '/html/templates/' + lang + '/footer.html';
 
-    if (AuthLb.isLoggedIn()) {
+    let loggedIn = await AuthLb.isLoggedIn();
+
+    if (loggedIn) {
+        console.log('User is logged in'); //remove
         headerPath = '/html/templates/' + lang + '/header-loggedin.html';
     }
+
     // Fetch the header and footer templates
     const headerTemplate = await fetch(headerPath).then((response) => response.text());
     const footerTemplate = await fetch(footerPath).then((response) => response.text());

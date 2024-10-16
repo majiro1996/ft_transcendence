@@ -21,6 +21,17 @@ from django.contrib.auth import authenticate
 import pyotp
 import logging
 
+# for custom jwt
+from django.contrib.auth import authenticate
+from .jwt_utils import create_token, verify, decode_payload
+from .models import BlackListedToken
+from .permissions import IsAuthenticatedWithJWT
+from .jwt_utils import create_token, verify, decode_payload
+from .models import BlackListedToken
+from django.contrib.auth.hashers import make_password
+import time
+
+
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -177,3 +188,108 @@ class ProtectedView(APIView):
         return Response({'success': 'You are accessing protected data'})
         
         
+
+#--------------------------------------------#
+#custom jwt api views
+
+class SignUpAPIViewJWT(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if User.objects.filter(username=username).exists():
+            return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password # create_user auto hashes the password
+        )
+
+        access_token = create_token(user.id, 'access')
+        refresh_token = create_token(user.id, 'refresh')
+
+        return Response({
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, status=status.HTTP_201_CREATED)
+
+class LoginAPIViewJWT(APIView):
+     permission_classes = [AllowAny]
+
+     def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_2fa_enabled:
+                return Response({'success': '2fa required'}, status=status.HTTP_200_OK)
+            else:
+                access_token = create_token(user.id, 'access')
+                refresh_token = create_token(user.id, 'refresh')
+                return Response({
+                    'access_token': access_token,
+                    'refresh_token': refresh_token
+                }, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RefreshTokenAPIViewJWT(APIView):
+    def post(self, request):
+        refresh_token = request.data.get('refresh_token')
+
+        if not refresh_token or not verify(refresh_token):
+            return Response({'error': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        payload = decode_payload(refresh_token)
+        if payload.get('type') != 'refresh':
+            return Response({'error': 'Invalid token type'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if BlackListedToken.objects.filter(token=refresh_token).exists():
+            return Response({'error': 'Token blacklisted'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if payload.get('exp') < time.time():
+            return Response({'error': 'Token expired'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user_id = payload.get('user_id')
+        token = create_token(user_id, 'access')
+
+        return Response({'token': token}, status=status.HTTP_200_OK)
+
+
+class LogoutAPIViewJWT(APIView):
+     def post(self, request):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        token = auth_header.split(' ')[1]
+        refresh_token = request.data.get('refresh_token')
+
+        if BlackListedToken.objects.filter(token=token).exists():
+            return Response({'error': 'Token already blacklisted'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if refresh_token:
+            if BlackListedToken.objects.filter(token=refresh_token).exists():
+                return Response({'error': 'Token already blacklisted'}, status=status.HTTP_400_BAD_REQUEST)
+            BlackListedToken.objects.create(token=refresh_token)
+
+        BlackListedToken.objects.create(token=token)
+        return Response({'success': 'Successfully logged out'}, status=status.HTTP_200_OK)
+
+
+
+# Get protected data test api view with JWT
+class ProtectedDataAPIViewJWT(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({'message': 'You are accessing protected data with JWT'}, status=status.HTTP_200_OK)
+

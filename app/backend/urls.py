@@ -2,8 +2,9 @@
 from django.urls import path
 from . import views
 from django.contrib import admin
-from .views import RegisterView, LoginView, LogoutView, ProtectedView, Login2fView, TwoFactorVerifyView
-from rest_framework_simplejwt.views import TokenRefreshView
+# from .views import RegisterView, LoginView, LogoutView, ProtectedView, Login2fView, TwoFactorVerifyView
+# from rest_framework_simplejwt.views import TokenRefreshView
+from .views import LoginAPIViewJWT, RefreshTokenAPIViewJWT, LogoutAPIViewJWT, ProtectedDataAPIViewJWT, SignUpAPIViewJWT
 
 
 urlpatterns = [
@@ -18,12 +19,19 @@ urlpatterns = [
 	path('bg_landing/', views.bg_video, name='bg_landing'),
     
     ### API ###
-	path('register/', RegisterView.as_view(), name='register'),
-	path('login/', LoginView.as_view(), name='login'),
-    path('login-2fa/', Login2fView.as_view(), name='login-2fa'),
-	path('2fa/verify/', TwoFactorVerifyView.as_view(), name='2fa-verify'),
-	path('logout/', LogoutView.as_view(), name='logout'),
-	path('token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-	path('protected-endpoint/', ProtectedView.as_view(), name='protected'),
+	# path('register/', RegisterView.as_view(), name='register'),
+	# path('login/', LoginView.as_view(), name='login'),
+    # path('login-2fa/', Login2fView.as_view(), name='login-2fa'),
+	# path('2fa/verify/', TwoFactorVerifyView.as_view(), name='2fa-verify'),
+	# path('logout/', LogoutView.as_view(), name='logout'),
+	# path('token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+	# path('protected-endpoint/', ProtectedView.as_view(), name='protected'),
+    
+	### API jwt ###
+    path('signup/', SignUpAPIViewJWT.as_view(), name='signup'),
+    path('login/', LoginAPIViewJWT.as_view(), name='login'),
+    path('refresh/', RefreshTokenAPIViewJWT.as_view(), name='refresh'),
+    path('logout/', LogoutAPIViewJWT.as_view(), name='logout'),
+    path('protected/', ProtectedDataAPIViewJWT.as_view(), name='protected'),
     
 ]
