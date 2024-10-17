@@ -3,6 +3,8 @@ const backendPort = '8000';
 
 let apiurl = `${backendUrl}:${backendPort}`;
 
+window.apiurl = apiurl;
+
 
 async function register() {
     const data = {
@@ -96,35 +98,42 @@ async function login2fa() {
     }
 }
 
-function verify2fa() {
+async function verify2fa() {
     const data = { 
         username: document.getElementById('username').value,
         otp: document.getElementById('otp').value,
     };
-    
-    fetch('http://localhost:8000/2fa/verify/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.access_token || !data.refresh_token) {
+
+    try {
+        const response = await fetch(`${backendUrl}:${backendPort}/login-2fa/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.error || 'Something went wrong');
+            return;
+        }
+
+        if (!result.access_token || !result.refresh_token) {
             alert('Something went wrong');
             return;
         }
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('refresh_token', data.refresh_token);
+
+        localStorage.setItem('access_token', result.access_token);
+        localStorage.setItem('refresh_token', result.refresh_token);
         console.log('Login successful');
-        window.location.hash = '#'  // redirect to home page
+        window.location.hash = '#';  // redirect to home page
         RouterLb.updateHeaderAndFooter(currentLang);
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error:', error);
         alert('Invalid OTP, please try again');
-    });
+    }
 }
 
 async function logout() {
@@ -169,7 +178,7 @@ async function refreshToken() {
     const refresh_token = localStorage.getItem('refresh_token');
 
     try {
-        const response = await fetch(`${backendUrl}:${backendPort}/refresh/`, {
+        const response = await fetch(apiurl + '/refresh/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

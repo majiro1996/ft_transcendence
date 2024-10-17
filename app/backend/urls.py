@@ -4,7 +4,15 @@ from . import views
 from django.contrib import admin
 # from .views import RegisterView, LoginView, LogoutView, ProtectedView, Login2fView, TwoFactorVerifyView
 # from rest_framework_simplejwt.views import TokenRefreshView
-from .views import LoginAPIViewJWT, RefreshTokenAPIViewJWT, LogoutAPIViewJWT, ProtectedDataAPIViewJWT, SignUpAPIViewJWT
+from .views import (
+	LoginAPIViewJWT,
+    RefreshTokenAPIViewJWT,
+    LogoutAPIViewJWT,
+    ProtectedDataAPIViewJWT,
+    SignUpAPIViewJWT,
+    Login2fViewJWT,
+    ProfileSettingsView,
+)
 
 
 urlpatterns = [
@@ -30,8 +38,10 @@ urlpatterns = [
 	### API jwt ###
     path('signup/', SignUpAPIViewJWT.as_view(), name='signup'),
     path('login/', LoginAPIViewJWT.as_view(), name='login'),
+    path('login-2fa/', Login2fViewJWT.as_view(), name='login-2fa'),
     path('refresh/', RefreshTokenAPIViewJWT.as_view(), name='refresh'),
     path('logout/', LogoutAPIViewJWT.as_view(), name='logout'),
     path('protected/', ProtectedDataAPIViewJWT.as_view(), name='protected'),
+    path('profile-settings/', ProfileSettingsView.as_view(), name='profile'),
     
 ]

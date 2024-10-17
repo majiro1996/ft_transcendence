@@ -15,6 +15,7 @@ class User(AbstractUser):
     is_2fa_enabled = models.BooleanField(default=False)
     otp_secret = models.CharField(max_length=16, blank=True, null=True)  # OTP secret
     last_online = models.DateTimeField(auto_now=True)
+    #profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     def __str__(self):
         return self.username

@@ -25,7 +25,6 @@ import logging
 from django.contrib.auth import authenticate
 from .jwt_utils import create_token, verify, decode_payload
 from .models import BlackListedToken
-from .permissions import IsAuthenticatedWithJWT
 from .jwt_utils import create_token, verify, decode_payload
 from .models import BlackListedToken
 from django.contrib.auth.hashers import make_password
@@ -229,6 +228,14 @@ class LoginAPIViewJWT(APIView):
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_2fa_enabled:
+                user.otp_secret = pyotp.random_base32()
+                user.save()
+                totp = pyotp.TOTP(user.otp_secret, interval=300)
+                token = totp.now()
+                subject = 'Login 2fa code'
+                message = f'Your 2fa code is {token}'
+                from_email = settings.EMAIL_HOST_USER
+                send_mail(subject, message, from_email, [user.email])
                 return Response({'success': '2fa required'}, status=status.HTTP_200_OK)
             else:
                 access_token = create_token(user.id, 'access')
@@ -240,6 +247,31 @@ class LoginAPIViewJWT(APIView):
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
+class Login2fViewJWT(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        otp = request.data.get('otp')
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'error': 'Invalid username'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        totp = pyotp.TOTP(user.otp_secret, interval=300)
+
+        if not totp.verify(otp, valid_window=2):
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+
+        access_token = create_token(user.id, 'access')
+        refresh_token = create_token(user.id, 'refresh')
+
+        return Response({
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, status=status.HTTP_200_OK)
+     
 
 class RefreshTokenAPIViewJWT(APIView):
     def post(self, request):
@@ -293,3 +325,30 @@ class ProtectedDataAPIViewJWT(APIView):
     def get(self, request):
         return Response({'message': 'You are accessing protected data with JWT'}, status=status.HTTP_200_OK)
 
+
+# Profile settings api view
+class ProfileSettingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'username': user.username,
+            'email': user.email,
+            '2fa_enabled': user.is_2fa_enabled
+        }, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        user = request.user
+        #check if new name or email already exists
+        if User.objects.filter(username=request.data.get('username')).exclude(id=user.id).exists():
+            return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=request.data.get('email')).exclude(id=user.id).exists():
+            return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        user.username = request.data.get('username')
+        user.email = request.data.get('email')
+        user.is_2fa_enabled = request.data.get('2fa_enabled')
+        user.save()
+        return Response({'success': 'Profile settings updated successfully'}, status=status.HTTP_200_OK)
+    
+    
