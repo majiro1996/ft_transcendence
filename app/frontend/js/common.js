@@ -46,6 +46,53 @@ function submitProfileSettings() {
 }
 
 
+//tic-tac-toe game 
+
+function LoadTicTacToe() {
+    document.getElementById('two-players').addEventListener('click', () => {
+        showGameBoard();
+        loadGame('../TicTacToe/tictactoe.js');
+        });
+
+    document.getElementById('one-player').addEventListener('click', () => {
+        showDifficultySelection();
+    });
+}
+
+
+function showDifficultySelection()
+{
+    document.getElementById('selection-screen').style.display = 'none';
+    document.getElementById('difficulty-screen').style.display = 'flex';
+}
+
+function startGameWithDifficulty(difficulty)
+{
+    localStorage.setItem('tictactoeDifficulty', difficulty);
+
+    document.getElementById('difficulty-screen').style.display = 'none';
+    showGameBoard();
+
+    const script = document.createElement('script');
+    script.src = '../TicTacToe/tictactoeIA.js';
+    document.body.appendChild(script);
+}
+
+function showGameBoard()
+{
+    document.getElementById('selection-screen').style.display = 'none';
+    document.getElementById('game-board').style.display = 'block';
+}
+
+function loadGame(scriptName)
+{
+    const script = document.createElement('script');
+    script.src = scriptName;
+    document.body.appendChild(script);
+}
+
+// ----------------------
+
 const CommonLb = {
     getProfileSettings,
     submitProfileSettings

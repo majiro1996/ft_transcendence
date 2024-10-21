@@ -164,7 +164,7 @@ const routes = {
         }
     },
     tictactoe: {
-        onLoad: null,
+        onLoad: LoadTicTacToe,
         en: {
             template: "/TicTacToe/tictactoe.html",
             title: "Tic-Tac-Toe | " + pageTitle,
@@ -189,6 +189,13 @@ async function locationHandler() {
     const path = window.location.hash.substring(1) || '/';
     const route = routes[path] ? routes[path][currentLang] : routes['404'][currentLang];
     console.log(route);
+
+    //check if the path does indeed exist as a file
+    const response = await fetch(route.template);
+    if (!response.ok) {
+        console.log('File not found');
+        route = routes['404'][currentLang];
+    }
 
     // Fetch the template
     const template = await fetch(route.template).then((response) => response.text());

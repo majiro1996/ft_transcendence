@@ -12,6 +12,9 @@ COPY media /usr/share/nginx/html/media
 
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
+COPY /TicTacToe /usr/share/nginx/html/TicTacToe
+COPY /pong /usr/share/nginx/html/pong
+
 EXPOSE 80
 
 # Start nginx
