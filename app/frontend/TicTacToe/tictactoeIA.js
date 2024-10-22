@@ -1,45 +1,43 @@
-const board = document.getElementById('board');
-const message = document.getElementById('message');
-const currentTurn = document.getElementById('current-turn');
+(function() {
+    const board = document.getElementById('board');
+    const message = document.getElementById('message');
+    const currentTurn = document.getElementById('current-turn');
 
-//States of the game
-let currentPlayer = 'X';
-let gameActive = true;
-let boardState = ['', '', '', '', '', '', '', '', ''];
-let winnerPlayer;
+    // States of the game
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let boardState = ['', '', '', '', '', '', '', '', ''];
+    let winnerPlayer;
 
-//victory combinations. Each number is a position of the table
-const winningConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-];
+    // Victory combinations. Each number is a position of the table
+    const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
 
-// Difficulty
-const difficulty = localStorage.getItem('tictactoeDifficulty') || 'normal';
-let valor = 0.5;
+    // Difficulty
+    const difficulty = localStorage.getItem('tictactoeDifficulty') || 'normal';
+    let valor = 0.5;
 
-// Adjust difficulty
-switch (difficulty) {
-    case 'easy':
-        valor = 0.25;
-        speed = 5;
-        break;
-    case 'normal':
-        valor = 0.5;
-        break;
-    case 'hard':
-        valor = 0.75;
-        break;
-    case 'extreme':
-        valor = 1;
-        break;
-}
+    // Adjust difficulty
+    switch (difficulty) {
+        case 'easy':
+            valor = 0.25;
+            speed = 5;
+            break;
+        case 'normal':
+            valor = 0.5;
+            break;
+        case 'hard':
+            valor = 0.75;
+            break;
+    }
 
 
 //Message for the turn
@@ -209,3 +207,5 @@ function minimax(boardState, depth, isMaximizing)
 }
 
 updateTurnMessage();
+
+})();
