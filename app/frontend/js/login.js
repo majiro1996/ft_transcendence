@@ -31,6 +31,7 @@ async function register() {
             console.log('Access Token:', result.access_token);
             console.log('Refresh Token:', result.refresh_token);
             window.location.hash = '#';  // redirect to home page
+            RouterLb.setPreferredLanguage();
         }
     } catch (error) {
         alert('Error: ' + error);
@@ -89,6 +90,7 @@ async function login2fa() {
             localStorage.setItem('refresh_token', result.refresh_token);
             window.location.hash = '#'  // redirect to home page
             RouterLb.updateHeaderAndFooter(currentLang);
+            RouterLb.setPreferredLanguage();
         } else if (result.error) {
             alert('Invalid credentials, please try again');
         }
@@ -130,6 +132,7 @@ async function verify2fa() {
         console.log('Login successful');
         window.location.hash = '#';  // redirect to home page
         RouterLb.updateHeaderAndFooter(currentLang);
+        RouterLb.setPreferredLanguage();
     } catch (error) {
         console.error('Error:', error);
         alert('Invalid OTP, please try again');

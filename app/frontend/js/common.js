@@ -1,4 +1,5 @@
 
+
 // Function to handle GET request and populate the form
 function getProfileSettings() {
     fetch(apiurl + '/profile-settings/', {
@@ -12,6 +13,7 @@ function getProfileSettings() {
         document.getElementById('username').value = data.username;
         document.getElementById('email').value = data.email;
         document.getElementById('2fa_enabled').checked = data['2fa_enabled'];
+        document.getElementById('language_preference').value = data.language_preference;
     })
     .catch(error => console.error('Error:', error));
 }
@@ -21,6 +23,7 @@ function submitProfileSettings() {
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
     const is2faEnabled = document.getElementById('2fa_enabled').checked;
+    const languagePreference = document.getElementById('language_preference').value;
 
     fetch(apiurl + '/profile-settings/', {
         method: 'POST',
@@ -31,7 +34,8 @@ function submitProfileSettings() {
         body: JSON.stringify({
             username: username,
             email: email,
-            '2fa_enabled': is2faEnabled
+            '2fa_enabled': is2faEnabled,
+            'language_preference': languagePreference
         })
     })
     .then(response => response.json())
@@ -41,6 +45,8 @@ function submitProfileSettings() {
         } else {
             document.getElementById('message').innerText = data.error;
         }
+        currentLang = languagePreference;
+        RouterLb.setLanguage(languagePreference);
     })
     .catch(error => console.error('Error:', error));
 }

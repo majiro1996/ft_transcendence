@@ -335,7 +335,8 @@ class ProfileSettingsView(APIView):
         return Response({
             'username': user.username,
             'email': user.email,
-            '2fa_enabled': user.is_2fa_enabled
+            '2fa_enabled': user.is_2fa_enabled,
+            'language_preference': user.language_preference
         }, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -348,6 +349,7 @@ class ProfileSettingsView(APIView):
         user.username = request.data.get('username')
         user.email = request.data.get('email')
         user.is_2fa_enabled = request.data.get('2fa_enabled')
+        user.language_preference = request.data.get('language_preference')
         user.save()
         return Response({'success': 'Profile settings updated successfully'}, status=status.HTTP_200_OK)
     
