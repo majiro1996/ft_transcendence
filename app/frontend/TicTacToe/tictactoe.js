@@ -1,24 +1,25 @@
-const board = document.getElementById('board');
-const message = document.getElementById('message');
-const currentTurn = document.getElementById('current-turn');
+(function() {
+    const board = document.getElementById('board');
+    const message = document.getElementById('message');
+    const currentTurn = document.getElementById('current-turn');
 
-//States of the game
-let currentPlayer = 'X';
-let gameActive = true;
-let boardState = ['', '', '', '', '', '', '', '', ''];
-let winnerPlayer;
+    // States of the game
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let boardState = ['', '', '', '', '', '', '', '', ''];
+    let winnerPlayer;
 
-//victory combinations. Each number is a position of the table
-const winningConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-];
+    // Victory combinations. Each number is a position of the table
+    const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
 
 function getCookie(cname)
 {
@@ -111,3 +112,4 @@ function checkWin()
 }
 
 updateTurnMessage();
+})();

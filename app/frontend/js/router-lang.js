@@ -19,6 +19,7 @@ const pageTitle = "Transcendence";
 // Object that maps routes to templates (with language support)
 const routes = {
     404: {
+        onLoad: null,
         en: {
             template: "/html/templates/en/404.html",
             title: "404 | " + pageTitle,
@@ -36,6 +37,7 @@ const routes = {
         }
     },
     "/": {
+        onLoad: null,
         en: {
             template: "/html/templates/en/home.html",
             title: "Home | " + pageTitle,
@@ -53,6 +55,7 @@ const routes = {
         }
     },
     tournaments: {
+        onLoad: null,
         en: {
             template: "/html/templates/en/tournaments.html",
             title: "Tournaments | " + pageTitle,
@@ -70,6 +73,7 @@ const routes = {
         }
     },
     register: {
+        onLoad: null,
         en: {
             template: "/html/templates/en/register.html",
             title: "Register | " + pageTitle,
@@ -87,6 +91,7 @@ const routes = {
         }
     },
     login: {
+        onLoad: null,
         en: {
             template: "/html/templates/en/login.html",
             title: "Login | " + pageTitle,
@@ -104,6 +109,7 @@ const routes = {
         }
     },
     profile: {
+        onLoad: CommonLb.getProfileSettings,
         en: {
             template: "/html/templates/en/profile.html",
             title: "Profile | " + pageTitle,
@@ -121,6 +127,7 @@ const routes = {
         }
     },
     auth2fa: {
+        onLoad: null,
         en: {
             template: "/html/templates/en/2fa.html",
             title: "2FA | " + pageTitle,
@@ -139,6 +146,7 @@ const routes = {
     },
 
     pong: {
+        onLoad: null,
         en: {
             template: "/pong/pong.html",
             title: "Pong | " + pageTitle,
@@ -156,6 +164,7 @@ const routes = {
         }
     },
     tictactoe: {
+        onLoad: LoadTicTacToe,
         en: {
             template: "/TicTacToe/tictactoe.html",
             title: "Tic-Tac-Toe | " + pageTitle,
@@ -181,6 +190,13 @@ async function locationHandler() {
     const route = routes[path] ? routes[path][currentLang] : routes['404'][currentLang];
     console.log(route);
 
+    //check if the path does indeed exist as a file
+    const response = await fetch(route.template);
+    if (!response.ok) {
+        console.log('File not found');
+        route = routes['404'][currentLang];
+    }
+
     // Fetch the template
     const template = await fetch(route.template).then((response) => response.text());
     // Set the content div HTML to the template
@@ -189,6 +205,10 @@ async function locationHandler() {
     document.title = route.title;
     // Set the meta description
     document.querySelector('meta[name="description"]').setAttribute("content", route.description);
+    // Call the onLoad function if it exists and is a function
+    if (routes[path] && typeof routes[path].onLoad === 'function') {
+        routes[path].onLoad();
+    }
 }
 
 // Function to update header and footer
@@ -196,9 +216,13 @@ async function updateHeaderAndFooter(lang) {
     let headerPath = '/html/templates/' + lang + '/header.html';
     let footerPath = '/html/templates/' + lang + '/footer.html';
 
-    if (AuthLb.isLoggedIn()) {
+    let loggedIn = await AuthLb.isLoggedIn();
+
+    if (loggedIn) {
+        console.log('User is logged in'); //remove
         headerPath = '/html/templates/' + lang + '/header-loggedin.html';
     }
+
     // Fetch the header and footer templates
     const headerTemplate = await fetch(headerPath).then((response) => response.text());
     const footerTemplate = await fetch(footerPath).then((response) => response.text());
