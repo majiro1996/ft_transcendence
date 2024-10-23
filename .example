@@ -1,0 +1,16 @@
+# DATABASE
+POSTGRES_USER=transcendence
+POSTGRES_PASSWORD=******
+POSTGRESS_DB=db_transcendence
+#BACKEND
+BACKEND_API_URL= http://localhost
+BACKEND_PORT=8000
+#2FA
+EMAIL_DEFAULT_FROM=placeholder@mail.example
+EMAIL_USER=placeholder@mail.example
+EMAIL_PASSWORD=*****
+#JWT
+JWT_SECRET=*****
+#FRONTEND
+FRONTEND_URL=http://localhost
+FRONTEND_PORT=80

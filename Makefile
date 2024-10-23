@@ -1,4 +1,4 @@
-all: up
+all: init up
 
 build:
 	docker compose -p transcendence build
@@ -9,9 +9,7 @@ up:
 down:
 	docker compose -p transcendence down
 
-re:
-	docker compose -p transcendence down
-	docker compose -p transcendence up --build -d
+re: down init up
 
 attach:
 	docker compose up
@@ -21,9 +19,5 @@ prune:
 
 fclean: down prune
 
-p:
-	docker system prune -a
-	docker builder prune
-
-n:
-	docker network prune
+init:
+	./init.sh
