@@ -17,7 +17,13 @@ attach:
 prune:
 	docker system prune --all --force --volumes
 
-fclean: down prune
+fclean: down prune dbclean
+	rm app/.env
+	rm -rf app/frontend/js/frontenv.js
 
 init:
-	./init.sh
+	cp .env app/.env
+	./scripts/frontenv.sh
+
+dbclean:
+	./scripts/dbclean.sh

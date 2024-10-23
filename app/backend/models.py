@@ -13,7 +13,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     is_2fa_enabled = models.BooleanField(default=False)
-    otp_secret = models.CharField(max_length=16, blank=True, null=True)  # OTP secret
+    otp_secret = models.CharField(max_length=64, blank=True, null=True)  # OTP secret
     last_online = models.DateTimeField(auto_now=True)
     language_preference = models.CharField(max_length=2, default='en')
     #profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)

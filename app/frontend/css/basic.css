@@ -1,6 +1,5 @@
-
-#content, #content * {
-    color: aliceblue;
+#content, h2 {
+    color: rgb(255, 255, 255) !important;
 }
 
 #content input, #content input *,

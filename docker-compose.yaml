@@ -24,7 +24,7 @@ services:
       - app/.env
     command: >
           sh -c "until nc -z db 5432; do echo 'Waiting for db...'; sleep 1; done;
-                 python3 manage.py makemigrations backend && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000" 
+                 python3 manage.py makemigrations backend && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:${BACKEND_PORT}" 
     volumes:
       - ./app:/app
     depends_on:
@@ -32,7 +32,7 @@ services:
     environment:
       - DEBUG=True
     ports:
-      - "8000:8000"
+      - ${BACKEND_PORT}:${BACKEND_PORT}
     networks:
       - transcendence_network
 
@@ -42,7 +42,7 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     ports:
-      - "80:80"
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
     networks:
       - transcendence_network
 

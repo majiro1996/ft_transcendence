@@ -255,21 +255,25 @@ function attachLanguageSwitcherListeners() {
 }
 
 
-// Function to get profile settings and set the language as per user preference
-function setPreferredLanguage() {
-    fetch(apiurl + '/profile-settings/', {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+async function setPreferredLanguage() {
+    try {
+        const response = await fetch(apiurl + '/profile-settings/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Something went wrong');
         }
-    })
-    .then(response => response.json())
-    .then(data => {
+
+        const data = await response.json();
         currentLang = data.language_preference;
         RouterLb.setLanguage(data.language_preference);
+    } catch (error) {
+        console.error('Error:', error);
     }
-    )
-    .catch(error => console.error('Error:', error));
 }
 
 // Listen for hash changes and page load

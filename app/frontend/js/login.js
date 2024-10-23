@@ -1,5 +1,6 @@
-const backendUrl = 'http://localhost';
-const backendPort = '8000';
+
+const backendUrl = BACKEND_API_URL;
+const backendPort = BACKEND_PORT;
 
 let apiurl = `${backendUrl}:${backendPort}`;
 
@@ -28,8 +29,8 @@ async function register() {
             alert('Error: ' + result.error);
         } else {
             alert('Registration successful');
-            console.log('Access Token:', result.access_token);
-            console.log('Refresh Token:', result.refresh_token);
+            localStorage.setItem('access_token', result.access_token);
+            localStorage.setItem('refresh_token', result.refresh_token);
             window.location.hash = '#';  // redirect to home page
             RouterLb.setPreferredLanguage();
         }

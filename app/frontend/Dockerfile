@@ -1,8 +1,5 @@
 FROM nginx:alpine
 
-# Copy the frontend code into the container
-#COPY frontend /usr/share/nginx/html
-
 COPY /js  /usr/share/nginx/html/js
 COPY index.html /usr/share/nginx/html/index.html
 COPY /html /usr/share/nginx/html/html
