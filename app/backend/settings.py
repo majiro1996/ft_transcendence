@@ -59,9 +59,13 @@ MIDDLEWARE = [
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+frontend_url = os.getenv('FRONTEND_URL')
+frontend_port = os.getenv('FRONTEND_PORT')
+
 #CORS_ALLOWED_ALL_ORIGINS = True # development only # remove
 CORS_ALLOWED_ORIGINS = [
-	os.getenv('FRONTEND_URL'),
+	frontend_url,
+	f'{frontend_url}:{frontend_port}',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -92,7 +96,7 @@ load_dotenv(".env")
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql',
-		'NAME': os.getenv("DB_NAME"),
+		'NAME': os.getenv("POSTGRES_DB"),
 		'USER': os.getenv("POSTGRES_USER"),
 		'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
 		'HOST': 'db',
@@ -167,8 +171,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
 	),
     'DEFAULT_THROTTLE_RATES': {
-		'user': '10/minute',
-		'anon': '3/minute',
+		'user': '100/minute',
+		'anon': '15/minute',
 	},
 }
 

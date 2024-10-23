@@ -1,4 +1,4 @@
-all: up
+all: init up
 
 build:
 	docker compose -p transcendence build
@@ -9,9 +9,7 @@ up:
 down:
 	docker compose -p transcendence down
 
-re:
-	docker compose -p transcendence down
-	docker compose -p transcendence up --build -d
+re: down init up
 
 attach:
 	docker compose up
@@ -19,11 +17,13 @@ attach:
 prune:
 	docker system prune --all --force --volumes
 
-fclean: down prune
+fclean: down prune dbclean
+	rm app/.env
+	rm -rf app/frontend/js/frontenv.js
 
-p:
-	docker system prune -a
-	docker builder prune
+init:
+	cp .env app/.env
+	./scripts/frontenv.sh
 
-n:
-	docker network prune
+dbclean:
+	./scripts/dbclean.sh

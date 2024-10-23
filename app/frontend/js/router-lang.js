@@ -166,17 +166,17 @@ const routes = {
     tictactoe: {
         onLoad: LoadTicTacToe,
         en: {
-            template: "/TicTacToe/tictactoe.html",
+            template: "/html/templates/en/tictactoe.html",
             title: "Tic-Tac-Toe | " + pageTitle,
             description: "This is Tic-Tac-Toe.",
         },
         es: {
-            template: "/TicTacToe/tictactoe.html",
+            template: "/html/templates/es/tictactoe.html",
             title: "Tic-Tac-Toe | " + pageTitle,
             description: "This is Tic-Tac-Toe."
         },
         fr: {
-            template: "/TicTacToe/tictactoe.html",
+            template: "/html/templates/fr/tictactoe.html",
             title: "Tic-Tac-Toe | " + pageTitle,
             description: "This is Tic-Tac-Toe.",
         }
@@ -254,6 +254,28 @@ function attachLanguageSwitcherListeners() {
     });
 }
 
+
+async function setPreferredLanguage() {
+    try {
+        const response = await fetch(apiurl + '/profile-settings/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Something went wrong');
+        }
+
+        const data = await response.json();
+        currentLang = data.language_preference;
+        RouterLb.setLanguage(data.language_preference);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 // Listen for hash changes and page load
 window.addEventListener("hashchange", locationHandler);
 window.addEventListener("load", async () => {
@@ -265,4 +287,5 @@ window.addEventListener("load", async () => {
 const RouterLb = {
     updateHeaderAndFooter,
     setLanguage,
+    setPreferredLanguage
 };

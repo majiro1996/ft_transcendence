@@ -1,10 +1,12 @@
-
-#content, #content * {
-    color: aliceblue;
+#content, h2 {
+    color: rgb(255, 255, 255) !important;
 }
 
-#content input, #content input * {
+#content input, #content input *,
+#content select, #content select *{
     color: rgb(84, 255, 255) !important;
 }
+
+
 
 /*-------------------*/
