@@ -19,11 +19,9 @@ prune:
 
 fclean: down prune dbclean
 	rm app/.env
-	rm -rf app/frontend/js/frontenv.js
 
 init:
 	cp .env app/.env
-	./scripts/frontenv.sh
 
 dbclean:
 	./scripts/dbclean.sh

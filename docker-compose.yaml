@@ -41,6 +41,9 @@ services:
       context: ./app/frontend
       dockerfile: Dockerfile
     container_name: frontend
+    hostname: frontend
+    env_file:
+      - app/.env
     ports:
       - ${FRONTEND_PORT}:${FRONTEND_PORT}
     networks:

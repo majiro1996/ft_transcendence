@@ -12,7 +12,13 @@ COPY conf/nginx.conf /etc/nginx/nginx.conf
 COPY /TicTacToe /usr/share/nginx/html/TicTacToe
 COPY /pong /usr/share/nginx/html/pong
 
+COPY conf/init.sh /usr/share/nginx/html/scripts/init.sh
+RUN chmod +x /usr/share/nginx/html/scripts/init.sh
+
+
 EXPOSE 80
 
 # Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+#CMD ["nginx", "-g", "daemon off;"]
+
+CMD ["/usr/share/nginx/html/scripts/init.sh"]
