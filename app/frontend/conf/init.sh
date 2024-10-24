@@ -14,5 +14,8 @@ for var in $env_vars; do
   fi
 done
 
+# Replace variables in nginx.conf file
+envsubst '$FRONTEND_PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+
 # Start the Nginx server
 nginx -g "daemon off;"
