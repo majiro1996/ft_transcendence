@@ -25,10 +25,11 @@ import logging
 from django.contrib.auth import authenticate
 from .jwt_utils import create_token, verify, decode_payload
 from .models import BlackListedToken
-from .jwt_utils import create_token, verify, decode_payload
-from .models import BlackListedToken
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password # remove
 import time
+
+# for friends
+from .models import FriendShip, FriendRequest
 
 
 
@@ -362,4 +363,49 @@ class ProfileSettingsView(APIView):
             'refresh_token': refresh_token
         }, status=status.HTTP_200_OK)
     
+
+class FriendRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user_sender = request.user
+        user_receiver = request.data.get('user_receiver')
+
+        if user_sender == user_receiver:
+            return Response({'error': 'You cannot send request to yourself'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
+            return Response({'error': 'Request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        user = request.user
+        friend_requests = FriendRequest.objects.filter(userReceiver=user)
+        return Response({
+            'friend_requests': [f.userSender.username for f in friend_requests]
+        }, status=status.HTTP_200_OK)
+
     
+class FriendRequestAcceptView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user_sender = request.data.get('user_sender')
+        user_receiver = request.user
+
+        if not FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
+            return Response({'error': 'Request does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        FriendShip.objects.create(user1=user_sender, user2=user_receiver)
+        FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
+
+        return Response({'success': 'Friend request accepted'}, status=status.HTTP_200_OK)
+
+class FriendRequestListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        friend_requests = FriendRequest.objects.filter(userReceiver=user)
+        return Response({
+            'friend_requests': [f.userSender.username for f in friend_requests]
+        }, status=status.HTTP_200_OK)

@@ -38,3 +38,19 @@ class BlackListedToken(models.Model):
 
     def __str__(self):
         return self.token
+
+
+class FriendShip(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')
+
+    def __str__(self):
+        return self.user1.username + ' and ' + self.user2.username
+
+class FriendRequest(models.Model):
+    userSender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userSender')
+    userReceiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userReceiver')
+
+    def __str__(self):
+        return self.userSender.username + ' to ' + self.userReceiver.username
+
