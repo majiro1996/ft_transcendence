@@ -54,3 +54,16 @@ class FriendRequest(models.Model):
     def __str__(self):
         return self.userSender.username + ' to ' + self.userReceiver.username
 
+class Tournament(models.Model):
+    userHost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userHost')
+    userGuest0 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest0')
+    userGuest1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest1')
+    userGuest2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest2')
+    userGuest3 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest3')
+    userGuest4 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest4')
+    userGuest5 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest5')
+    userGuest6 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest6')
+
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner')
+    status = models.CharField(max_length=30)
+

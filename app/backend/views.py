@@ -409,3 +409,47 @@ class FriendRequestListView(APIView):
         return Response({
             'friend_requests': [f.userSender.username for f in friend_requests]
         }, status=status.HTTP_200_OK)
+
+class CreateTournamentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user_host = request.user
+        user_guest0 = request.data.get('user_guest0')
+        user_guest1 = request.data.get('user_guest1')
+        user_guest2 = request.data.get('user_guest2')
+        user_guest3 = request.data.get('user_guest3')
+        user_guest4 = request.data.get('user_guest4')
+        user_guest5 = request.data.get('user_guest5')
+        user_guest6 = request.data.get('user_guest6')
+
+        if Tournament.objects.filter(userHost=user_host).exists():
+            return Response({'error': 'You already have a tournament'}, status=status.HTTP_400_BAD_REQUEST)
+
+        Tournament.objects.create(
+            userHost=user_host,
+            userGuest0=user_guest0,
+            userGuest1=user_guest1,
+            userGuest2=user_guest2,
+            userGuest3=user_guest3,
+            userGuest4=user_guest4,
+            userGuest5=user_guest5,
+            userGuest6=user_guest6
+        )
+
+        return Response({'success': 'Tournament created'}, status=status.HTTP_201_CREATED)
+
+
+class TournamentGetView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        tournaments = Tournament.objects.filter(userHost=user)
+        return Response({
+            'tournaments': [t.userGuest0.username for t in tournaments]
+        }, status=status.HTTP_200_OK)
+
+class TournamentSetWinner(APIView):
+    permission_classes = [IsAuthenticated]
+
