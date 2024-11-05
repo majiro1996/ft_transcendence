@@ -75,3 +75,15 @@ class TournamentInvite(models.Model):
 
     def __str__(self):
         return self.userSender.username + ' to ' + self.userReceiver.username + ' for ' + self.tournament.id
+
+class MatchResult(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')
+    user1_score = models.IntegerField()
+    user2_score = models.IntegerField()
+    date = models.DateTimeField(auto_now=True)
+    game_type = models.CharField(max_length=30)
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner')
+
+    def __str__(self):
+        return self.user1.username + ' vs ' + self.user2.username

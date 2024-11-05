@@ -12,8 +12,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken # remove
+from rest_framework_simplejwt.views import TokenObtainPairView # remove
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
@@ -28,8 +28,8 @@ from .models import BlackListedToken
 from django.contrib.auth.hashers import make_password # remove
 import time
 
-# for friends
-from .models import FriendShip, FriendRequest
+# 
+from .models import FriendShip, FriendRequest, Tournament, TournamentInvite, MatchResult
 
 
 
@@ -459,6 +459,53 @@ class TournamentGetView(APIView):
             'tournaments': [t.userGuest0.username for t in tournaments]
         }, status=status.HTTP_200_OK)
 
-class TournamentSetWinner(APIView):
+
+class SetMatchResultView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def post(self, request):
+        user1 = reques.data.get('user1')
+        user2 = request.data.get('user2')
+        winner = request.data.get('winner')
+        game_type = request.data.get('game_type')
+        user1_score = request.data.get('user1_score')
+        user2_score = request.data.get('user2_score')
+
+        if not User.objects.filter(username=user1).exists():
+            return Response({'error': f'User {user1} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        if not User.objects.filter(username=user2).exists():
+            return Response({'error': f'User {user2} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        if not User.objects.filter(username=winner).exists():
+            return Response({'error': f'User {winner} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+        MatchResult.objects.create(
+            user1=user1,
+            user2=user2,
+            winner=winner,
+            game_type=game_type,
+            user1_score=user1_score,
+            user2_score=user2_score
+        )
+
+        return Response({'success': 'Match result recorded'}, status=status.HTTP_201_CREATED)
+
+
+class GetMatchResultsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        user = request.user
+        match_results = MatchResult.objects.filter(user1=user) | MatchResult.objects.filter(user2=user)
+        return Response({
+            'match_results': [
+                {
+                    'user1': m.user1.username,
+                    'user2': m.user2.username,
+                    'winner': m.winner.username,
+                    'game_type': m.game_type,
+                    'user1_score': m.user1_score,
+                    'user2_score': m.user2_score
+                } for m in match_results
+            ]
+        }, status=status.HTTP_200_OK)
+        
