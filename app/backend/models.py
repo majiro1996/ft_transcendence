@@ -67,3 +67,11 @@ class Tournament(models.Model):
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner')
     status = models.CharField(max_length=30)
 
+
+class TournamentInvite(models.Model):
+    userSender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userSender')
+    userReceiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userReceiver')
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.userSender.username + ' to ' + self.userReceiver.username + ' for ' + self.tournament.id

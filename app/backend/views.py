@@ -426,6 +426,15 @@ class CreateTournamentView(APIView):
         if Tournament.objects.filter(userHost=user_host).exists():
             return Response({'error': 'You already have a tournament'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # check if any of the users are the same or does not exist
+        users = [user_guest0, user_guest1, user_guest2, user_guest3, user_guest4, user_guest5, user_guest6]
+        for user in users:
+            if user == user_host:
+                return Response({'error': 'You cannot add yourself to the tournament'}, status=status.HTTP_400_BAD_REQUEST)
+            if not User.objects.filter(username=user).exists():
+                return Response({'error': f'User {user} does not exist'}, status=status.HTTP_400_BAD
+
+        
         Tournament.objects.create(
             userHost=user_host,
             userGuest0=user_guest0,
