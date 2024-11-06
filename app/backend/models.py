@@ -41,15 +41,15 @@ class BlackListedToken(models.Model):
 
 
 class FriendShip(models.Model):
-    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
-    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1_friend')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2_friend')
 
     def __str__(self):
         return self.user1.username + ' and ' + self.user2.username
 
 class FriendRequest(models.Model):
-    userSender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userSender')
-    userReceiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userReceiver')
+    userSender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userSender_friend')
+    userReceiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userReceiver_friend')
 
     def __str__(self):
         return self.userSender.username + ' to ' + self.userReceiver.username
@@ -64,26 +64,26 @@ class Tournament(models.Model):
     userGuest5 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest5')
     userGuest6 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest6')
 
-    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner')
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_tournament')
     status = models.CharField(max_length=30)
 
 
 class TournamentInvite(models.Model):
-    userSender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userSender')
-    userReceiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userReceiver')
+    userSender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userSender_tournament')
+    userReceiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userReceiver_tournament')
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.userSender.username + ' to ' + self.userReceiver.username + ' for ' + self.tournament.id
 
 class MatchResult(models.Model):
-    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
-    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1_match')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2_match')
     user1_score = models.IntegerField()
     user2_score = models.IntegerField()
     date = models.DateTimeField(auto_now=True)
     game_type = models.CharField(max_length=30)
-    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner')
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_match')
 
     def __str__(self):
         return self.user1.username + ' vs ' + self.user2.username
