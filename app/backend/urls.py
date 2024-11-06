@@ -11,6 +11,12 @@ from .views import (
     SignUpAPIViewJWT,
     Login2fViewJWT,
     ProfileSettingsView,
+	GetGameStatsView,
+	GetMatchResultsView,
+	SetMatchResultView,
+	CreateTournamentView,
+	FriendRequestView,
+	FriendRequestAcceptView,
 )
 
 
@@ -25,15 +31,6 @@ urlpatterns = [
 	path('logo/', views.logo, name='logo'),
 	path('bg_landing/', views.bg_video, name='bg_landing'),
     
-    ### API ###
-	# path('register/', RegisterView.as_view(), name='register'),
-	# path('login/', LoginView.as_view(), name='login'),
-    # path('login-2fa/', Login2fView.as_view(), name='login-2fa'),
-	# path('2fa/verify/', TwoFactorVerifyView.as_view(), name='2fa-verify'),
-	# path('logout/', LogoutView.as_view(), name='logout'),
-	# path('token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-	# path('protected-endpoint/', ProtectedView.as_view(), name='protected'),
-    
 	### API jwt ###
     path('signup/', SignUpAPIViewJWT.as_view(), name='signup'),
     path('login/', LoginAPIViewJWT.as_view(), name='login'),
@@ -42,5 +39,12 @@ urlpatterns = [
     path('logout/', LogoutAPIViewJWT.as_view(), name='logout'),
     path('protected/', ProtectedDataAPIViewJWT.as_view(), name='protected'),
     path('profile-settings/', ProfileSettingsView.as_view(), name='profile'),
+	
+	path('friend-request/', FriendRequestView.as_view(), name='friend-request'),
+	path('friend-request-accept/', FriendRequestAcceptView.as_view(), name='friend-request-accept'),
+	path('game-stats/', GetGameStatsView.as_view(), name='game-stats'),
+	path('match-results/', GetMatchResultsView.as_view(), name='match-results'),
+	path('set-match-result/', SetMatchResultView.as_view(), name='set-match-result'),
+	path('create-tournament/', CreateTournamentView.as_view(), name='create-tournament'),
     
 ]

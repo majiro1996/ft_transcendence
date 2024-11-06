@@ -61,11 +61,13 @@ MIDDLEWARE = [
 
 frontend_url = os.getenv('FRONTEND_URL')
 frontend_port = os.getenv('FRONTEND_PORT')
+frontend_port_ssl = os.getenv('FRONTEND_PORT_SSL')
 
 #CORS_ALLOWED_ALL_ORIGINS = True # development only # remove
 CORS_ALLOWED_ORIGINS = [
-	frontend_url,
-	f'{frontend_url}:{frontend_port}',
+	f'http://{frontend_url}:{frontend_port}',
+	f'https://{frontend_url}:{frontend_port_ssl}',
+	'http://localhost',
 ]
 
 ROOT_URLCONF = 'backend.urls'

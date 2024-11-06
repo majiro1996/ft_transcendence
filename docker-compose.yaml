@@ -46,6 +46,7 @@ services:
       - app/.env
     ports:
       - ${FRONTEND_PORT}:${FRONTEND_PORT}
+      - ${FRONTEND_PORT_SSL}:${FRONTEND_PORT_SSL}
     networks:
       - transcendence_network
 
