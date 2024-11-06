@@ -42,8 +42,6 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_simplejwt', #to remove
-    'rest_framework_simplejwt.token_blacklist', #to remove
     'corsheaders',
 	'backend', 
 ]
@@ -67,8 +65,8 @@ frontend_port_ssl = os.getenv('FRONTEND_PORT_SSL')
 CORS_ALLOWED_ORIGINS = [
 	f'http://{frontend_url}:{frontend_port}',
 	f'https://{frontend_url}:{frontend_port_ssl}',
-	'http://localhost',
-	'https://localhost',
+	f'http://{frontend_url}',
+	f'https://{frontend_url}',
 ]
 
 ROOT_URLCONF = 'backend.urls'

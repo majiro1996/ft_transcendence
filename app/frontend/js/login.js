@@ -199,11 +199,9 @@ async function isLoggedIn() {
         console.log('Response:', response);
         
         if (response.ok) {
-            console.log('test ok');
             return true;
         }
         else {
-            console.log('test not ok');
             return false;
         }
         

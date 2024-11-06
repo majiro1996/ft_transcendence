@@ -12,8 +12,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
-from rest_framework_simplejwt.tokens import RefreshToken # remove
-from rest_framework_simplejwt.views import TokenObtainPairView # remove
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
@@ -25,7 +23,6 @@ import logging
 from django.contrib.auth import authenticate
 from .jwt_utils import create_token, verify, decode_payload
 from .models import BlackListedToken
-from django.contrib.auth.hashers import make_password # remove
 import time
 
 # 
