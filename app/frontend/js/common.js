@@ -108,6 +108,52 @@ function loadGame(scriptName)
     document.body.appendChild(script);
 }
 
+// pong game
+
+function LoadPong() {
+    loadGame("../pong/Player.js");
+    loadGame("../pong/Ball.js");
+    loadGame("../pong/events.js");
+    loadGame("../pong/time.js");
+    loadGame("../pong/AI.js");
+    document.getElementById('two-players').addEventListener('click', () => {
+        pong_startTwoPlayerGame();
+    });
+
+    document.getElementById('one-player').addEventListener('click', () => {
+        pong_showDifficultySelection();
+    });
+}
+
+function pong_showDifficultySelection() {
+    document.getElementById('selection-screen').style.display = 'none';
+    document.getElementById('difficulty-screen').style.display = 'flex';  // Show the difficulty selection screen
+}
+
+function pong_startTwoPlayerGame() {
+    document.getElementById('selection-screen').style.display = 'none';
+    document.getElementById('game-board').style.display = 'block';  // Show the game area for 2 players
+
+    // Load the game script for two players (pong.js)
+    const script = document.createElement('script');
+    script.src = '../pong/pong.js';  // Make sure pong.js is in the same directory
+    document.body.appendChild(script);
+}
+
+function pong_startGameWithDifficulty(difficulty) {
+    // Save the difficulty in localStorage
+    localStorage.setItem('pongDifficulty', difficulty);
+
+    // Hide the difficulty screen and show the game board
+    document.getElementById('difficulty-screen').style.display = 'none';
+    document.getElementById('game-board').style.display = 'block';
+
+    // Load the game for single player with AI (pongAI.js)
+    const script = document.createElement('script');
+    script.src = '../pong/pongAI.js';
+    document.body.appendChild(script);
+}
+
 // ----------------------
 
 const CommonLb = {

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="pong.css">
-    <link rel="stylesheet" href="JetBrainsMono.css">
+    <link rel="stylesheet" href="/pong/pong.css">
+    <link rel="stylesheet" href="/pong/JetBrainsMono.css">
     <title>Pong</title>
     <style>
         body {
@@ -77,6 +77,15 @@
             display: none; /* Hidden by default */
 			cursor: pointer;
         }
+        #bg_video {
+            display: none;
+        }
+        #header {
+            display: none;
+        }
+        #footer_container {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -91,10 +100,10 @@
     <div class="selection-container" id="difficulty-screen">
         <h1>Select Difficulty</h1>
         <div class="difficulty-buttons">
-            <button onclick="startGameWithDifficulty('easy')">Easy</button>
-            <button onclick="startGameWithDifficulty('normal')">Normal</button>
-            <button onclick="startGameWithDifficulty('hard')">Hard</button>
-            <button onclick="startGameWithDifficulty('extreme')">Extreme</button>
+            <button onclick="pong_startGameWithDifficulty('easy')">Easy</button>
+            <button onclick="pong_startGameWithDifficulty('normal')">Normal</button>
+            <button onclick="pong_startGameWithDifficulty('hard')">Hard</button>
+            <button onclick="pong_startGameWithDifficulty('extreme')">Extreme</button>
         </div>
     </div>
 
@@ -105,27 +114,27 @@
 
     <p hidden> {% csrf_token %} </p>
 
-    <script src="Player.js"></script>
-    <script src="Ball.js"></script>
-    <script src="events.js"></script>
-    <script src="time.js"></script>
-    <script src="AI.js"></script>
+    <script src="./Player.js"></script>
+    <script src="./Ball.js"></script>
+    <script src="./events.js"></script>
+    <script src="./time.js"></script>
+    <script src="./AI.js"></script>
 
     <script>
         document.getElementById('two-players').addEventListener('click', () => {
-            startTwoPlayerGame();
+            pong_startTwoPlayerGame();
         });
 
         document.getElementById('one-player').addEventListener('click', () => {
-            showDifficultySelection();
+            pong_showDifficultySelection();
         });
 
-        function showDifficultySelection() {
+        function pong_showDifficultySelection() {
             document.getElementById('selection-screen').style.display = 'none';
             document.getElementById('difficulty-screen').style.display = 'flex';  // Show the difficulty selection screen
         }
 
-        function startTwoPlayerGame() {
+        function pong_startTwoPlayerGame() {
             document.getElementById('selection-screen').style.display = 'none';
             document.getElementById('game-board').style.display = 'block';  // Show the game area for 2 players
 
@@ -135,7 +144,7 @@
             document.body.appendChild(script);
         }
 
-        function startGameWithDifficulty(difficulty) {
+        function pong_startGameWithDifficulty(difficulty) {
             // Save the difficulty in localStorage
             localStorage.setItem('pongDifficulty', difficulty);
 

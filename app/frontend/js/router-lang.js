@@ -146,7 +146,7 @@ const routes = {
     },
 
     pong: {
-        onLoad: null,
+        onLoad: LoadPong,
         en: {
             template: "/pong/pong.html",
             title: "Pong | " + pageTitle,
