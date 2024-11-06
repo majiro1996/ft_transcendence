@@ -68,6 +68,7 @@ CORS_ALLOWED_ORIGINS = [
 	f'http://{frontend_url}:{frontend_port}',
 	f'https://{frontend_url}:{frontend_port_ssl}',
 	'http://localhost',
+	'https://localhost',
 ]
 
 ROOT_URLCONF = 'backend.urls'
