@@ -1,3 +1,5 @@
+let isTournament = false
+
 // Function to handle GET request and populate the form
 async function getProfileSettings() {
     try {
