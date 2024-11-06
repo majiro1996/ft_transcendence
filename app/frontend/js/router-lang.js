@@ -233,6 +233,13 @@ async function updateHeaderAndFooter(lang) {
     attachLanguageSwitcherListeners(); // Re-attach event listeners to language switcher buttons
 }
 
+// Function to update the alert container
+async function updateAlertContainer(lang) {
+    const alertPath = '/html/templates/' + lang + '/alert.html';
+    const alertTemplate = await fetch(alertPath).then((response) => response.text());
+    document.getElementById("alert_container").innerHTML = alertTemplate;
+}
+
 // Function to set language
 async function setLanguage(lang) {
     if (languages[lang]) {
@@ -240,6 +247,7 @@ async function setLanguage(lang) {
         localStorage.setItem('lang', lang);
         await locationHandler();
         await updateHeaderAndFooter(lang);
+        await updateAlertContainer(lang);
     }
 }
 
@@ -281,6 +289,7 @@ window.addEventListener("hashchange", locationHandler);
 window.addEventListener("load", async () => {
     await locationHandler();
     await updateHeaderAndFooter(currentLang);
+    await updateAlertContainer(currentLang);
 });
 
 

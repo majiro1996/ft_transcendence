@@ -162,3 +162,17 @@ const CommonLb = {
 };
 
 window.CommonLb = CommonLb;
+
+// Bootstrap alerts
+function setAlertText(text)
+{
+    document.getElementById('form-alert').innerHTML = text;
+}
+function showAlert()
+{
+    document.getElementById('form-alert').style.display = 'block';
+}
+function hideAlert()
+{
+    document.getElementById('form-alert').style.display = 'none';
+}

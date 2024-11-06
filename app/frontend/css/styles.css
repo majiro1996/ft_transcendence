@@ -20,6 +20,18 @@ hr {
     margin-left: 170px;
 }
 
+.alert {
+    font-family: "Jetbrains Mono";
+    padding: 10px;
+    margin-top: 25px;
+    margin-left: 170px;
+    margin-right: 170px;
+    text-align: center;
+    z-index: 1;
+    height: 50px;
+    overflow: hidden;
+}
+
 .tr_header {
     height: 75px;
     background-color: black;
