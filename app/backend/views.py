@@ -419,6 +419,7 @@ class CreateTournamentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        tournament_name = request.data.get('tournament_name')
         user_host = request.user
         user_guest0 = request.data.get('user_guest0')
         user_guest1 = request.data.get('user_guest1')
@@ -440,6 +441,7 @@ class CreateTournamentView(APIView):
                 return Response({'error': f'User {user} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         Tournament.objects.create(
+            tournamet_name=tournament_name,
             userHost=user_host,
             userGuest0=user_guest0,
             userGuest1=user_guest1,

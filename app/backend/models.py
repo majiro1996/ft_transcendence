@@ -55,6 +55,7 @@ class FriendRequest(models.Model):
         return self.userSender.username + ' to ' + self.userReceiver.username
 
 class Tournament(models.Model):
+    tournamet_name = models.CharField(max_length=30)
     userHost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userHost')
     userGuest0 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest0')
     userGuest1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest1')
@@ -64,8 +65,18 @@ class Tournament(models.Model):
     userGuest5 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest5')
     userGuest6 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest6')
 
+    firstMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='firstMatch')
+    secondMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='secondMatch')
+    thirdMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='thirdMatch')
+    fourthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fourthMatch')
+
+    fifthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fifthMatch')
+    sixthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='sixthMatch')
+
+    finalMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='finalMatch')
+
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_tournament')
-    status = models.CharField(max_length=30)
+    status = models.ShortField()
 
 
 class TournamentInvite(models.Model):

@@ -156,6 +156,31 @@ function pong_startGameWithDifficulty(difficulty) {
 
 // ----------------------
 
+//TOURNAMENTS
+
+// async function createTournament() {
+//     const tournament_name = document.getElementById('tournament_name').value;
+//     const host = document.getElementById('host').value;
+//     const user_guest0 = document.getElementById('user_guest0').value;
+//     const user_guest1 = document.getElementById('user_guest1').value;
+//     const user_guest2 = document.getElementById('user_guest2').value;
+//     const user_guest3 = document.getElementById('user_guest3').value;
+//     const user_guest4 = document.getElementById('user_guest4').value;
+//     const user_guest5 = document.getElementById('user_guest5').value;
+//     const user_guest6 = document.getElementById('user_guest6').value;
+
+//     try {
+//         const response = await fetch(apiurl + '/create-tournament/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+//             },
+//             body
+
+
+// }
+
 const CommonLb = {
     getProfileSettings,
     submitProfileSettings
