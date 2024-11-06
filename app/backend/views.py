@@ -376,13 +376,13 @@ class FriendRequestView(APIView):
 
         if FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
             return Response({'error': 'Request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if FriendShip.objects.filter(user1=user_sender, user2=user_receiver).exists():
+            return Response({'error': 'You are already friends'}, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request):
-        user = request.user
-        friend_requests = FriendRequest.objects.filter(userReceiver=user)
-        return Response({
-            'friend_requests': [f.userSender.username for f in friend_requests]
-        }, status=status.HTTP_200_OK)
+        FriendRequest.objects.create(userSender=user_sender, userReceiver=user_receiver)
+        return Response({'success': 'Friend request sent'}, status=status.HTTP_201_CREATED)
+
 
     
 class FriendRequestAcceptView(APIView):
@@ -391,10 +391,15 @@ class FriendRequestAcceptView(APIView):
     def post(self, request):
         user_sender = request.data.get('user_sender')
         user_receiver = request.user
+        action = request.data.get('action')
 
         if not FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
             return Response({'error': 'Request does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         
+        if action == 'reject':
+            FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
+            return Response({'success': 'Friend request rejected'}, status=status.HTTP_200_OK)
+
         FriendShip.objects.create(user1=user_sender, user2=user_receiver)
         FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
 
