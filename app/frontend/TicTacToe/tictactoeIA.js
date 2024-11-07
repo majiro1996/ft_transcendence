@@ -37,6 +37,9 @@
         case 'hard':
             valor = 0.75;
             break;
+        case 'extreme':
+            valor = 1;
+            break;
     }
 
 

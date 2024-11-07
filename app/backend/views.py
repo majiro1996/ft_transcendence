@@ -305,8 +305,9 @@ class CreateTournamentView(APIView):
         tournament_name = request.data.get('tournament_name')
         user_guests = request.data.get('user_guests')
 
-        if Tournament.objects.filter(tournamet_name=tournament_name).exists():
-            return Response({'error': 'Tournament name already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        #if there is a tournament of this host witout a winner, return error
+        if Tournament.objects.filter(userHost=user, status=1).exists():
+            return Response({'error': 'You already have an ongoing tournament'}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(user_guests) != 7:
             return Response({'error': 'There must be 7 guests'}, status=status.HTTP_400_BAD_REQUEST)
@@ -340,6 +341,37 @@ class CreateTournamentView(APIView):
             )
 
         return Response({'success': 'Tournament created'}, status=status.HTTP_201_CREATED)
+
+class GetTournamenReadyView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        #returns the tournament that has all invites accepted and has not started
+        tournament = Tournament.objects.filter(userHost=user, accepted_invites=7, status=0)
+        if not tournament.exists():
+        # returns the tournament that exists, but has not all invites accepted
+            tournament = Tournament.objects.filter(userHost=user, status=0).filter(Q(accepted_invites__lt=7))
+        if not tournament.exists():
+            return Response({'error': 'No tournament available'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            'tournament': tournament.first().tournamet_name,
+            'game_type': tournament.first().game_type,
+            'user_guests': [
+                tournament.first().userGuest0.username,
+                tournament.first().userGuest1.username,
+                tournament.first().userGuest2.username,
+                tournament.first().userGuest3.username,
+                tournament.first().userGuest4.username,
+                tournament.first().userGuest5.username,
+                tournament.first().userGuest6.username
+            ]
+            'status': tournament.first().status,
+
+        }, status=status.HTTP_200_OK)
+        
+
         
 class tournamentInviteAcceptView(APIView):
     permission_classes = [IsAuthenticated]

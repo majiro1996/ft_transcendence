@@ -209,6 +209,29 @@ async function createTournament() {
     }
 }
 
+async function getTournament() {
+    try {
+        const response = await fetch(apiurl + '/get-tournament/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+
+        if (!response.ok) {
+            //show error alert // wip
+        }
+
+        const data = await response.json();
+        //if there is no tournament 
+    }
+    
+        catch (error) {
+            console.error('Error:', error);
+        }
+
+}
+
 const CommonLb = {
     getProfileSettings,
     submitProfileSettings
