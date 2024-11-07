@@ -228,7 +228,7 @@ async function getTournament() {
     
         catch (error) {
             //if no tournament available  redirect to create tournament page // wip
-            window.location.href = '#/create-tournament';
+            window.location.href = '#/createTournament';
         }
 
 }
