@@ -163,6 +163,7 @@ const routes = {
             description: "This is Pong.",
         }
     },
+
     tictactoe: {
         onLoad: LoadTicTacToe,
         en: {
@@ -181,6 +182,27 @@ const routes = {
             description: "This is Tic-Tac-Toe.",
         }
     },
+
+    createTournament: {
+        onLoad: undefined,
+        en: {
+            template: "/html/templates/en/create-tournament.html",
+            title: "Create Tournament | " + pageTitle,
+            description: "This is the create tournament page",
+        },
+        es: {
+            template: "/html/templates/es/create-tournament.html",
+            title: "Crear Torneo | " + pageTitle,
+            description: "Esta es la página de creación de torneos",
+        },
+        fr: {
+            template: "/html/templates/fr/create-tournament.html",
+            title: "Créer un tournoi | " + pageTitle,
+            description: "Ceci est la page de création de tournois",
+        }
+    },
+
+    
     // Add other routes here
 };
 
