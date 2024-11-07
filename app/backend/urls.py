@@ -21,15 +21,15 @@ from .views import (
 
 
 urlpatterns = [
-	path('admin/', admin.site.urls),
-	path('', views.index, name='index'),
-	path('styles/', views.base_styles, name='styles'),
-	path('bootstrap/', views.bootstrap_styles, name='bootstrap'),
-	path('bootstrapjs/', views.bootstrap_js, name='bootstrapjs'),
-	path('styles/font/', views.font_base, name='font'),
-	path('styles/font_bold/', views.font_bold, name='fontbold'),
-	path('logo/', views.logo, name='logo'),
-	path('bg_landing/', views.bg_video, name='bg_landing'),
+	# path('admin/', admin.site.urls),
+	# path('', views.index, name='index'),
+	# path('styles/', views.base_styles, name='styles'),
+	# path('bootstrap/', views.bootstrap_styles, name='bootstrap'),
+	# path('bootstrapjs/', views.bootstrap_js, name='bootstrapjs'),
+	# path('styles/font/', views.font_base, name='font'),
+	# path('styles/font_bold/', views.font_bold, name='fontbold'),
+	# path('logo/', views.logo, name='logo'),
+	# path('bg_landing/', views.bg_video, name='bg_landing'),
     
 	### API jwt ###
     path('signup/', SignUpAPIViewJWT.as_view(), name='signup'),
@@ -42,9 +42,11 @@ urlpatterns = [
 	
 	path('friend-request/', FriendRequestView.as_view(), name='friend-request'),
 	path('friend-request-accept/', FriendRequestAcceptView.as_view(), name='friend-request-accept'),
+	path('friend-request-list/', views.FriendRequestListView.as_view(), name='friend-request-list'),
 	path('game-stats/', GetGameStatsView.as_view(), name='game-stats'),
 	path('match-results/', GetMatchResultsView.as_view(), name='match-results'),
 	path('set-match-result/', SetMatchResultView.as_view(), name='set-match-result'),
 	path('create-tournament/', CreateTournamentView.as_view(), name='create-tournament'),
     
+	path('users/', views.UsersListView.as_view(), name='users'),
 ]
