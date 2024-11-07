@@ -12,8 +12,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
-from rest_framework_simplejwt.tokens import RefreshToken # remove
-from rest_framework_simplejwt.views import TokenObtainPairView # remove
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
@@ -25,7 +23,6 @@ import logging
 from django.contrib.auth import authenticate
 from .jwt_utils import create_token, verify, decode_payload
 from .models import BlackListedToken
-from django.contrib.auth.hashers import make_password # remove
 import time
 
 # 
@@ -69,125 +66,7 @@ def logo(request):
 def bg_video(request):
 	f = open('frontend/media/LANDING_VIDEO.mp4', 'rb')
 	return FileResponse(f, content_type='video/mp4')
-
-#--------------------------------------------#
-
-### API views
-
-# Registration api view
-# class RegisterView(APIView):
-#     permission_classes = [AllowAny]
-
-#     def post(self, request):
-#         username = request.data.get('username')
-#         email = request.data.get('email')
-#         password = request.data.get('password')
-
-#         if User.objects.filter(username=username).exists():
-#             return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
-#         if User.objects.filter(email=email).exists():
-#             return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
-        
-#         user = User.objects.create_user(username=username, email=email, password=password)
-#         user.save()
-#         return Response({'success': 'User created successfully'}, status=status.HTTP_201_CREATED)
-
-# # Login using JWT
-# class LoginView(TokenObtainPairView):
-#     permission_classes = [AllowAny]
-
-
-
-# # Login api view that checks credentials, if they are correct sends 2fa code to mail
-# class Login2fView(APIView):
-#     permission_classes = [AllowAny]
-
-#     def post(self, request):
-#         username = request.data.get('username')
-#         password = request.data.get('password')
-
-#         logger.debug(f'username: {username}, password: {password}') #remove ############################
-
-#         user = authenticate(username=username, password=password)
-#         if user is None:
-#             return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
-        
-#         if not user.otp_secret:
-#             user.otp_secret = pyotp.random_base32()
-#             user.save()
-
-#         totp = pyotp.TOTP(user.otp_secret, interval=300)
-#         token = totp.now()
-#         subject = 'Login 2fa code'
-#         message = f'Your 2fa code is {token}'
-#         from_email = settings.EMAIL_HOST_USER
-#         send_mail(subject, message, from_email, [user.email])
-
-#         return Response({'success': '2fa code sent to your email'}, status=status.HTTP_200_OK)
-
-
-
-# # Verify 2fa code api view, if code is correct returns JWT tokens
-# class TwoFactorVerifyView(APIView):
-#     permission_classes = [AllowAny]
-#     # throttle_classes = [UserRateThrottle] # add later
-
-#     def post(self, request):
-#         username = request.data.get('username')
-#         otp = request.data.get('otp')
-
-#         try:
-#             user = User.objects.get(username=username)
-#         except User.DoesNotExist:
-#             return Response({'error': 'Invalid username'}, status=status.HTTP_400_BAD_REQUEST)
-        
-#         totp = pyotp.TOTP(user.otp_secret, interval=300)
-
-#         if not totp.verify(otp, valid_window=2):
-#             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         # If OTP is valid, generate JWT tokens
-#         refresh = RefreshToken.for_user(user)
-#         access_token = str(refresh.access_token)
-#         refresh_token = str(refresh)
-
-#         logger.info(f'User {user.username} logged in successfully') #remove ############################
-
-#         return Response({
-#             'access_token': access_token,
-#             'refresh_token': refresh_token
-#         }, status=status.HTTP_200_OK)
-
     
-
-# # Refresh token api view
-# class TokenRefreshView(TokenObtainPairView):
-#     permission_classes = [AllowAny]
-
-
-
-# # Logout api view
-# class LogoutView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request):
-#         try:
-#             refresh_token = request.data.get('refresh_token')
-#             token = RefreshToken(refresh_token)
-#             token.blacklist()
-#             return Response({'success': 'User logged out successfully'}, status=status.HTTP_205_RESET_CONTENT)
-#         except Exception as e:
-#             return Response({'error': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
-        
-
-# # Get protected data test api view
-# class ProtectedView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         return Response({'success': 'You are accessing protected data'})
-        
-        
 
 #--------------------------------------------#
 #custom jwt api views
@@ -415,43 +294,84 @@ class FriendRequestListView(APIView):
             'friend_requests': [f.userSender.username for f in friend_requests]
         }, status=status.HTTP_200_OK)
 
+## Tournament views
+
+# creates a tournament, sends invites to all user guests
 class CreateTournamentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_host = request.user
-        user_guest0 = request.data.get('user_guest0')
-        user_guest1 = request.data.get('user_guest1')
-        user_guest2 = request.data.get('user_guest2')
-        user_guest3 = request.data.get('user_guest3')
-        user_guest4 = request.data.get('user_guest4')
-        user_guest5 = request.data.get('user_guest5')
-        user_guest6 = request.data.get('user_guest6')
+        user = request.user
+        tournament_name = request.data.get('tournament_name')
+        user_guests = request.data.get('user_guests')
 
-        if Tournament.objects.filter(userHost=user_host).exists():
-            return Response({'error': 'You already have a tournament'}, status=status.HTTP_400_BAD_REQUEST)
+        if Tournament.objects.filter(tournamet_name=tournament_name).exists():
+            return Response({'error': 'Tournament name already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # check if any of the users are the same or does not exist
-        users = [user_guest0, user_guest1, user_guest2, user_guest3, user_guest4, user_guest5, user_guest6]
-        for user in users:
-            if user == user_host:
-                return Response({'error': 'You cannot add yourself to the tournament'}, status=status.HTTP_400_BAD_REQUEST)
-            if not User.objects.filter(username=user).exists():
-                return Response({'error': f'User {user} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(user_guests) != 7:
+            return Response({'error': 'There must be 7 guests'}, status=status.HTTP_400_BAD_REQUEST)
 
-        Tournament.objects.create(
-            userHost=user_host,
-            userGuest0=user_guest0,
-            userGuest1=user_guest1,
-            userGuest2=user_guest2,
-            userGuest3=user_guest3,
-            userGuest4=user_guest4,
-            userGuest5=user_guest5,
-            userGuest6=user_guest6
+        if user in user_guests:
+            return Response({'error': 'You cannot invite yourself'}, status=status.HTTP_400_BAD_REQUEST)
+        #guest must be unique and valid users
+        for u in user_guests:
+            if not User.objects.filter(username=u).exists():
+                return Response({'error': f'User {u} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            if user_guests.count(u) > 1:
+                return Response({'error': f'User {u} is duplicated'}, status=status.HTTP_400_BAD_REQUEST)
+
+        tournament = Tournament.objects.create(
+            tournamet_name=tournament_name,
+            userHost=user,
+            userGuest0=user_guests[0],
+            userGuest1=user_guests[1],
+            userGuest2=user_guests[2],
+            userGuest3=user_guests[3],
+            userGuest4=user_guests[4],
+            userGuest5=user_guests[5],
+            userGuest6=user_guests[6]
         )
 
-        return Response({'success': 'Tournament created'}, status=status.HTTP_201_CREATED)
+        for u in user_guests:
+            TournamentInvite.objects.create(
+                userSender=user,
+                userReceiver=u,
+                tournament=tournament
+            )
 
+        return Response({'success': 'Tournament created'}, status=status.HTTP_201_CREATED)
+        
+class tournamentInviteAcceptView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user_sender = request.data.get('user_sender')
+        user_receiver = request.user
+        action = request.data.get('action')
+
+        if not TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
+            return Response({'error': 'Request does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if action == 'reject':
+            TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
+            return Response({'success': 'Tournament invite rejected'}, status=status.HTTP_200_OK)
+        
+        tournament = TournamentInvite.objects.get(userSender=user_sender, userReceiver=user_receiver).tournament
+        tournament.accepted_invites += 1
+        tournament.save()
+        TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
+
+        return Response({'success': 'Tournament invite accepted'}, status=status.HTTP_200_OK)
+
+class TournamentInviteListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        tournament_invites = TournamentInvite.objects.filter(userReceiver=user)
+        return Response({
+            'tournament_invites': [t.userSender.username for t in tournament_invites]
+        }, status=status.HTTP_200_OK)
 
 class TournamentGetView(APIView):
     permission_classes = [IsAuthenticated]
@@ -498,19 +418,13 @@ class GetMatchResultsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        match_results = MatchResult.objects.all()
+        user = request.data.get('user')
+        game_type = request.data.get('game_type')
+        match_results = MatchResult.objects.filter(game_type=game_type, user1=user)
+        match_results2 = MatchResult.objects.filter(game_type=game_type, user2=user)
+        match_results = match_results.union(match_results2)
         return Response({
-            'match_results': [
-                {
-                    'user1': m.user1.username,
-                    'user2': m.user2.username,
-                    'winner': m.winner.username,
-                    'game_type': m.game_type,
-                    'user1_score': m.user1_score,
-                    'user2_score': m.user2_score,
-                    'date': m.date
-                } for m in match_results
-            ]
+            'match_results': [f'{m.user1.username} vs {m.user2.username} - {m.winner.username} won at {m.date}' for m in match_results]
         }, status=status.HTTP_200_OK)
         
 

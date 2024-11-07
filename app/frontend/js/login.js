@@ -2,7 +2,8 @@
 const backendUrl = BACKEND_API_URL;
 const backendPort = BACKEND_PORT;
 
-let apiurl = `${backendUrl}:${backendPort}`;
+//let apiurl = `${backendUrl}:${backendPort}`;
+let apiurl = "http://" + backendUrl + ":" + backendPort;
 
 window.apiurl = apiurl;
 
@@ -40,30 +41,6 @@ async function register() {
     }
 }
 
-// function login() {
-// 	const data = {
-//     	username: document.getElementById('username').value,
-//     	password: document.getElementById('password').value,
-// 	};
-
-// 	fetch('http://localhost:8000/login/', {
-//     	method: 'POST',
-//     	headers: {
-//         	'Content-Type': 'application/json',
-//     	},
-//     	body: JSON.stringify(data),
-// 	})
-// 	.then(response => response.json())
-// 	.then(data => {
-//     	localStorage.setItem('access_token', data.access);
-//     	localStorage.setItem('refresh_token', data.refresh);
-//     	console.log('Login successful');
-// 	})
-// 	.catch(error => {
-//     	console.error('Error:', error);
-// 	});
-// }
-
 async function login2fa() {
     const data = {
         username: document.getElementById('username').value,
@@ -71,7 +48,7 @@ async function login2fa() {
     };
 
     try {
-        const response = await fetch(`${backendUrl}:${backendPort}/login/`, {
+        const response = await fetch(apiurl + '/login/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -108,7 +85,7 @@ async function verify2fa() {
     };
 
     try {
-        const response = await fetch(`${backendUrl}:${backendPort}/login-2fa/`, {
+        const response = await fetch(apiurl + '/login-2fa/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -144,7 +121,7 @@ async function logout() {
     const refresh_token = localStorage.getItem('refresh_token');
 
     try {
-        const response = await fetch(`${backendUrl}:${backendPort}/logout/`, {
+        const response = await fetch(apiurl + '/logout/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -205,32 +182,6 @@ async function refreshToken() {
     }
 }
 
-
-
-
-function getProtectedData() {
-	const token = localStorage.getItem('access_token');
-    
-    if (isTokenExpired(token)) {
-        refreshToken();
-    }                               
-        
-	fetch('http://localhost:8000/protected-endpoint/', {
-    	method: 'GET',
-    	headers: {
-        	'Authorization': `Bearer ${token}`,
-    	}
-	})
-	.then(response => response.json())
-	.then(data => {
-    	console.log('Protected data:', data);
-	})
-	.catch(error => {
-    	console.error('Error:', error);
-	});
-}
-
-
 async function isLoggedIn() {
     try {
         const token = localStorage.getItem('access_token');
@@ -248,11 +199,9 @@ async function isLoggedIn() {
         console.log('Response:', response);
         
         if (response.ok) {
-            console.log('test ok');
             return true;
         }
         else {
-            console.log('test not ok');
             return false;
         }
         
@@ -266,9 +215,7 @@ async function isLoggedIn() {
 // collect all the functions in an object
 const AuthLb = {
     register,
-    //login,
     logout,
-    getProtectedData,
     login2fa,
     verify2fa,
     refreshToken,
