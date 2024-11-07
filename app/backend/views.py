@@ -530,8 +530,16 @@ class GetGameStatsView(APIView):
                 wins += 1
             else:
                 losses += 1
+        if wins + losses > 0:
+            win_rate = wins / (wins + losses)
+            bar_px = int(win_rate * 600)
+        else:
+            win_rate = 0
+            bar_px = 0
         return Response({
             'wins': wins,
-            'losses': losses
+            'losses': losses,
+            'win_rate': win_rate,
+            'bar_size': bar_px
         }, status=status.HTTP_200_OK)
 

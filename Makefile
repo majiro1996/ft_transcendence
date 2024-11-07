@@ -11,6 +11,8 @@ down:
 
 re: down init up
 
+fre: fclean init up
+
 attach:
 	docker compose up
 
@@ -25,3 +27,5 @@ init:
 
 dbclean:
 	./scripts/dbclean.sh
+
+.PHONY: all build up down re fre attach prune fclean init dbclean
