@@ -418,19 +418,13 @@ class GetMatchResultsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        match_results = MatchResult.objects.all()
+        user = request.data.get('user')
+        game_type = request.data.get('game_type')
+        match_results = MatchResult.objects.filter(game_type=game_type, user1=user)
+        match_results2 = MatchResult.objects.filter(game_type=game_type, user2=user)
+        match_results = match_results.union(match_results2)
         return Response({
-            'match_results': [
-                {
-                    'user1': m.user1.username,
-                    'user2': m.user2.username,
-                    'winner': m.winner.username,
-                    'game_type': m.game_type,
-                    'user1_score': m.user1_score,
-                    'user2_score': m.user2_score,
-                    'date': m.date
-                } for m in match_results
-            ]
+            'match_results': [f'{m.user1.username} vs {m.user2.username} - {m.winner.username} won at {m.date}' for m in match_results]
         }, status=status.HTTP_200_OK)
         
 
