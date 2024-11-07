@@ -86,7 +86,7 @@ class Tournament(models.Model):
     ]
 
     status = models.IntegerField(choices=STATUS_CHOICES, default=0)
-    game_type = models.CharField(max_length=30)
+    game_type = models.CharField(max_length=30, default= 'pong')
 
 
 class TournamentInvite(models.Model):
