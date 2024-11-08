@@ -109,7 +109,7 @@ const routes = {
         }
     },
     profile: {
-        onLoad: CommonLb.getProfileSettings,
+        onLoad: null,
         en: {
             template: "/html/templates/en/profile.html",
             title: "Profile | " + pageTitle,
