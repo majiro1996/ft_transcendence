@@ -113,11 +113,6 @@ function loadGame(scriptName)
 // pong game
 
 function LoadPong() {
-    loadGame("../pong/Player.js");
-    loadGame("../pong/Ball.js");
-    loadGame("../pong/events.js");
-    loadGame("../pong/time.js");
-    loadGame("../pong/AI.js");
     document.getElementById('two-players').addEventListener('click', () => {
         pong_startTwoPlayerGame();
     });
