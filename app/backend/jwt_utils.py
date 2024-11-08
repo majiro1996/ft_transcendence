@@ -7,7 +7,7 @@ from django.conf import settings
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRY = 15 * 60  # 15 minutes
+ACCESS_TOKEN_EXPIRY = 24 * 60 * 60 # 24 hours
 REFRESH_TOKEN_EXPIRY = 7 * 24 * 60 * 60  # 7 days
 
 def base64url_encode(data: bytes) -> str:

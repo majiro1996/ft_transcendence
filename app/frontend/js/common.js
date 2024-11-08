@@ -153,6 +153,57 @@ function pong_startGameWithDifficulty(difficulty) {
 
 // ----------------------
 
+//TOURNAMENTS
+
+async function createTournament() {
+    const tournament_name = document.getElementById('tournament_name').value;
+    const host = document.getElementById('host').value;
+    const game_type = document.getElementById('game_type').value;
+    const guest0 = document.getElementById('guest0').value;
+    const guest1 = document.getElementById('guest1').value;
+    const guest2 = document.getElementById('guest2').value;
+    const guest3 = document.getElementById('guest3').value;
+    const guest4 = document.getElementById('guest4').value;
+    const guest5 = document.getElementById('guest5').value;
+    const guest6 = document.getElementById('guest6').value;
+
+    try {
+        const response = await fetch(apiurl + '/create-tournament/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                tournament_name: tournament_name,
+                host: host,
+                game_type: game_type,
+                guest0: guest0,
+                guest1: guest1,
+                guest2: guest2,
+                guest3: guest3,
+                guest4: guest4,
+                guest5: guest5,
+                guest6: guest6
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // redirect to tournament starting page // wip
+
+        }
+
+        else {
+            //show error alert // wip
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 const CommonLb = {
     getProfileSettings,
     submitProfileSettings

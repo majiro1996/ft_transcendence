@@ -16,7 +16,7 @@ class User(AbstractUser):
     otp_secret = models.CharField(max_length=64, blank=True, null=True)  # OTP secret
     last_online = models.DateTimeField(auto_now=True)
     language_preference = models.CharField(max_length=2, default='en')
-    #profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.username
@@ -55,6 +55,7 @@ class FriendRequest(models.Model):
         return self.userSender.username + ' to ' + self.userReceiver.username
 
 class Tournament(models.Model):
+    tournamet_name = models.CharField(max_length=30, unique=True, null=True)
     userHost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userHost')
     userGuest0 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest0')
     userGuest1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest1')
@@ -64,8 +65,28 @@ class Tournament(models.Model):
     userGuest5 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest5')
     userGuest6 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest6')
 
+    accepted_invites = models.IntegerField(default=0)
+
+    firstMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='firstMatch', null=True, blank=True)
+    secondMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='secondMatch', null=True, blank=True)
+    thirdMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='thirdMatch', null=True, blank=True)
+    fourthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fourthMatch', null=True, blank=True)
+
+    fifthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fifthMatch', null=True, blank=True)
+    sixthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='sixthMatch', null=True, blank=True)
+
+    finalMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='finalMatch', null=True, blank=True)
+
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_tournament')
-    status = models.CharField(max_length=30)
+    
+    STATUS_CHOICES = [
+        (0, 'Not Started'),
+        (1, 'Ongoing'),
+        (2, 'Finished'),
+    ]
+
+    status = models.IntegerField(choices=STATUS_CHOICES, default=0)
+    game_type = models.CharField(max_length=30, default= 'pong')
 
 
 class TournamentInvite(models.Model):

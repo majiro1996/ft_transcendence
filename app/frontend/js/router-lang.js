@@ -219,7 +219,6 @@ async function updateHeaderAndFooter(lang) {
     let loggedIn = await AuthLb.isLoggedIn();
 
     if (loggedIn) {
-        console.log('User is logged in'); //remove
         headerPath = '/html/templates/' + lang + '/header-loggedin.html';
     }
 
