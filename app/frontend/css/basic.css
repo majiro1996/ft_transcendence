@@ -1,12 +1,36 @@
-#content, h2 {
-    color: rgb(255, 255, 255) !important;
+/* Overlay background */
+.overlay {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it is above other content */
 }
 
-#content input, #content input *,
-#content select, #content select *{
-    color: rgb(84, 255, 255) !important;
+/* Overlay content */
+.overlay_content {
+    position: relative;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 40%;
+    background-color: rgb(92, 0, 0);
+    padding: 50px 100px; 
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    font-size: 28px;
 }
 
+.overlay_content p {
+    margin-bottom: 50px;
+}
 
-
-/*-------------------*/
+.overlay_content .form_settings_button {
+    margin: 5px;
+}

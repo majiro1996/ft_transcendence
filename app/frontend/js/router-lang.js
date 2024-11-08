@@ -202,6 +202,25 @@ const routes = {
         }
     },
 
+    settings: {
+        onLoad: CommonLb.getProfileSettings,
+        en: {
+            template: "/html/templates/en/settings.html",
+            title: "Settings | " + pageTitle,
+            description: "This is the settings page",
+        },
+        es: {
+            template: "/html/templates/es/settings.html",
+            title: "Ajustes | " + pageTitle,
+            description: "Esta es la página de ajustes",
+        },
+        fr: {
+            template: "/html/templates/fr/settings.html",
+            title: "Paramètres | " + pageTitle,
+            description: "Ceci est la page des paramètres",
+        }
+    },
+
     
     // Add other routes here
 };
@@ -235,23 +254,27 @@ async function locationHandler() {
 
 // Function to update header and footer
 async function updateHeaderAndFooter(lang) {
-    let headerPath = '/html/templates/' + lang + '/header.html';
-    let footerPath = '/html/templates/' + lang + '/footer.html';
+    try {
+        let headerPath = '/html/templates/' + lang + '/header.html';
+        let footerPath = '/html/templates/' + lang + '/footer.html';
 
-    let loggedIn = await AuthLb.isLoggedIn();
+        let loggedIn = await AuthLb.isLoggedIn();
+        if (loggedIn) {
+            headerPath = '/html/templates/' + lang + '/header-loggedin.html';
+        }
 
-    if (loggedIn) {
-        headerPath = '/html/templates/' + lang + '/header-loggedin.html';
+        // Fetch the header and footer templates
+        let headerTemplate = await fetch(headerPath).then((response) => response.text());
+        let footerTemplate = await fetch(footerPath).then((response) => response.text());
+        // Set the header and footer divs HTML to the templates
+        document.getElementById("header").innerHTML = headerTemplate;
+        document.getElementById("footer_container").innerHTML = footerTemplate;
+
+        attachLanguageSwitcherListeners(); // Re-attach event listeners to language switcher buttons
     }
-
-    // Fetch the header and footer templates
-    const headerTemplate = await fetch(headerPath).then((response) => response.text());
-    const footerTemplate = await fetch(footerPath).then((response) => response.text());
-    // Set the header and footer divs HTML to the templates
-    document.getElementById("header").innerHTML = headerTemplate;
-    document.getElementById("footer_container").innerHTML = footerTemplate;
-
-    attachLanguageSwitcherListeners(); // Re-attach event listeners to language switcher buttons
+    catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 // Function to update the alert container

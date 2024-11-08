@@ -222,24 +222,38 @@ class ProfileSettingsView(APIView):
 
     def post(self, request):
         user = request.user
-        #check if new name or email already exists
-        if User.objects.filter(username=request.data.get('username')).exclude(id=user.id).exists():
+        data = request.data
+
+        if 'delete_account' in data:
+            user.delete()
+            return Response({'success': 'Account deleted'}, status=status.HTTP_200_OK)
+
+        # Check if new username or email already exists
+        if 'username' in data and User.objects.filter(username=data['username']).exclude(id=user.id).exists():
             return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(email=request.data.get('email')).exclude(id=user.id).exists():
+        if 'email' in data and User.objects.filter(email=data['email']).exclude(id=user.id).exists():
             return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
-        user.username = request.data.get('username')
-        user.email = request.data.get('email')
-        user.is_2fa_enabled = request.data.get('2fa_enabled')
-        user.language_preference = request.data.get('language_preference')
+
+        # Update user fields if they are provided in the request
+        if 'username' in data:
+            user.username = data['username']
+        if 'email' in data:
+            user.email = data['email']
+        if '2fa_enabled' in data:
+            user.is_2fa_enabled = data['2fa_enabled']
+        if 'language_preference' in data:
+            user.language_preference = data['language_preference']
+
         user.save()
 
-        # create new tokens for the user
+        # Create new tokens for the user
         access_token = create_token(user.id, 'access')
         refresh_token = create_token(user.id, 'refresh')
 
         return Response({
             'access_token': access_token,
-            'refresh_token': refresh_token
+            'refresh_token': refresh_token,
+            'success': 'Profile updated successfully'
         }, status=status.HTTP_200_OK)
     
 
@@ -366,7 +380,7 @@ class GetTournamenReadyView(APIView):
                 tournament.first().userGuest4.username,
                 tournament.first().userGuest5.username,
                 tournament.first().userGuest6.username
-            ]
+            ],
             'status': tournament.first().status,
 
         }, status=status.HTTP_200_OK)
