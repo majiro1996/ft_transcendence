@@ -503,3 +503,20 @@ class GetGameStatsView(APIView):
             'bar_size': bar_px
         }, status=status.HTTP_200_OK)
 
+class ProfileView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        #if there is a username in the request data return that user's profile
+        #else return the profile of the authenticated user
+        #if there is no of the above, return error
+
+        if 'username' in request.data:
+            user = User.objects.get(username=request.data.get('username'))
+        else:
+            user = request.user
+        return Response({
+            'username': user.username,
+        }, status=status.HTTP_200_OK)
+
+

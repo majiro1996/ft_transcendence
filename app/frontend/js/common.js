@@ -37,6 +37,29 @@ async function getProfileSettings() {
     }
 }
 
+async function LoadProfile() {
+    try {
+        const response = await fetch(apiurl + '/profile/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok')
+        }
+
+        const data = await response.json();
+        document.getElementById('pr_username').textContent = data.username;
+    }
+
+    catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
 // Function to handle POST request when form is submitted
 async function submitProfileSettings(settingType, value) {
     const payload = {};

@@ -109,7 +109,7 @@ const routes = {
         }
     },
     profile: {
-        onLoad: null,
+        onLoad: LoadProfile,
         en: {
             template: "/html/templates/en/profile.html",
             title: "Profile | " + pageTitle,
