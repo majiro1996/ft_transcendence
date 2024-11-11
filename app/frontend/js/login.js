@@ -150,6 +150,40 @@ async function logout() {
     }
 }
 
+// Function to handle account deletion
+async function deleteAccount() {
+    try {
+        const response = await fetch(apiurl + '/profile-settings/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({ delete_account: true })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            updateHeaderAndFooter(currentLang);
+            window.location.hash = '#'; // redirect to home page
+            console.log('Account deleted');
+        } else {
+            //wip show error alert
+            alert('Error deleting account');
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error deleting account');
+    }
+    //hideItem('delete_confirmation_overlay');
+    
+}
+
+
 function isTokenExpired(token) {
     const decodedToken = jwt_decode(token);
     return decodedToken.exp < Date.now() / 1000;

@@ -17,6 +17,8 @@ from .views import (
 	CreateTournamentView,
 	FriendRequestView,
 	FriendRequestAcceptView,
+	GetTournamenReadyView,
+	ProfileView,
 )
 
 
@@ -38,7 +40,8 @@ urlpatterns = [
     path('refresh/', RefreshTokenAPIViewJWT.as_view(), name='refresh'),
     path('logout/', LogoutAPIViewJWT.as_view(), name='logout'),
     path('protected/', ProtectedDataAPIViewJWT.as_view(), name='protected'),
-    path('profile-settings/', ProfileSettingsView.as_view(), name='profile'),
+    path('profile-settings/', ProfileSettingsView.as_view(), name='profile-settings'),
+	path('profile/', ProfileView.as_view(), name='profile'),
 	
 	path('friend-request/', FriendRequestView.as_view(), name='friend-request'),
 	path('friend-request-accept/', FriendRequestAcceptView.as_view(), name='friend-request-accept'),
@@ -46,7 +49,9 @@ urlpatterns = [
 	path('game-stats/', GetGameStatsView.as_view(), name='game-stats'),
 	path('match-results/', GetMatchResultsView.as_view(), name='match-results'),
 	path('set-match-result/', SetMatchResultView.as_view(), name='set-match-result'),
+	
 	path('create-tournament/', CreateTournamentView.as_view(), name='create-tournament'),
+	path('get-tournament-ready/', GetTournamenReadyView.as_view(), name='get-tournament-ready'),
     
 	path('users/', views.UsersListView.as_view(), name='users'),
 ]

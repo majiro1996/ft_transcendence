@@ -13,23 +13,17 @@ a {
     text-decoration: none;
 }
 
-hr {
+.hr_footer {
     color: white;
     margin-top: 250px;
     margin-bottom: 25px;
     margin-left: 170px;
 }
 
-.alert {
-    font-family: "Jetbrains Mono";
-    padding: 10px;
-    margin-top: 25px;
-    margin-left: 170px;
-    margin-right: 170px;
-    text-align: center;
-    z-index: 1;
-    height: 50px;
-    overflow: hidden;
+.hr_stats {
+    color: white;
+    opacity: 100%;
+    margin: 0px;
 }
 
 .tr_header {
@@ -44,6 +38,12 @@ hr {
     width: 100%;
     z-index: 1;
 }
+
+.pr_highlight {
+    font-size: 10pt;
+    color: #ff4eff;
+}
+
 .h_basic {
     font-family: "Jetbrains Mono", serif;
     color: white;
@@ -117,6 +117,17 @@ hr {
     height: 750px;
     border: 1px solid white;
 }
+.form_body_xs {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: "JetBrains Mono";
+    background-color: black;
+    width: 550px;
+    height: 900px;
+    border: 1px solid white;
+    margin-bottom: 20px;
+}
 
 .form_title {
     font-weight: bold;
@@ -136,11 +147,67 @@ hr {
     background-color: black;
 }
 
+.form_field_with_button_container
+{
+    margin-top: 30px;
+    display: flex;
+}
+
+.form_field_with_button
+{
+    font-size: 16pt;
+    width: 75%;
+    margin-left: 12.5%;
+    color: white;
+    padding: 8px;
+    padding-left: 11.5%;
+    border: 1px solid white;
+    background-color: black;
+    flex-grow: 2;
+}
+
+.form_embedded_submit_button {
+    font-size: 16pt;
+    flex-grow: 1;
+    margin-right: 12.5%;
+    width: 50px;
+    color: black;
+    border-style: solid;
+    border-color: white;
+    border-width: 1px;
+    background-color: #9fc2d5;
+    margin-left: 2px;
+}
+
+.form_embedded_submit_button:hover {
+    background-color: #78a4bc;
+}
+
 .form_label {
     margin-top: 25px;
     font-size: 16pt;
     font-weight: bold;
     margin-left: 12.5%;
+}
+
+.form_label_with_checkbox_container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+.form_checkbox_label {
+    flex-grow: 1;
+    max-width: 67%;
+    margin-top: 25px;
+    font-size: 16pt;
+    font-weight: bold;
+    margin-left: 12.5%;
+}
+.form_embedded_checkbox {
+    accent-color: #9fc2d5;
+    height: 45px;
+    width: 45px;
+    margin-top: 18px;
 }
 
 .form_main_button {
@@ -161,6 +228,43 @@ hr {
     border-color: #f095f2;
 }
 
+.form_main_button_fle
+{
+    font-size: 16pt;
+    width: 75%;
+    margin-left: 12.5%;
+    margin-bottom: 31px;
+    padding: 8px;
+    color: white;
+    border-style: solid;
+    border-color: #ff4eff;
+    border-width: 1px;
+    background-color: #ff4eff;
+}
+
+.form_main_button_fle:hover {
+    background-color: #f095f2;
+    border-color: #f095f2;
+}
+
+.form_settings_button {
+    font-size: 16pt;
+    width: 75%;
+    margin-left: 12.5%;
+    margin-top: 25px;
+    padding: 8px;
+    color: black;
+    border-style: solid;
+    border-color: #9fc2d5;
+    border-width: 1px;
+    background-color: #9fc2d5;
+}
+
+.form_settings_button:hover {
+    background-color: #78a4bc;
+    border-color: #78a4bc;
+}
+
 .form_bottom {
     margin-top: 100px;
     font-size: 14pt;
@@ -177,6 +281,310 @@ hr {
     font-weight: bold;
 }
 
+.pr_friend_item {
+    display: flex;
+    flex-direction: row;
+    width: 300px;
+    height: 75px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.pr_friend_request_item {
+    display: flex;
+    border: solid 1px #d9d441;
+    background-color: rgba(217, 212, 65, 0.2);
+    flex-direction: row;
+    width: 300px;
+    height: 78px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.pr_friend_item_editor {
+    display: flex;
+    flex-direction: row;
+    height: 75px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.pr_friend_accept_button {
+    border-style: solid;
+    border-top: none;
+    border-bottom: none;
+    border-color: #d9d441;
+    border-width: 1px;
+    background-color: #2E9843;
+}
+
+.pr_friend_accept_button:hover {
+    background-color: #63b172;
+}
+
+.pr_friend_decline_button {
+    border-style: none;
+    border-color: white;
+    padding-top: 3px;
+    border-width: 1px;
+    background-color: #D95C41;
+}
+
+.pr_friend_decline_button:hover {
+    background-color: #dd8e7d;
+}
+
+.pr_friend_delete
+{
+    border-style: solid;
+    border-color: white;
+    border-width: 1px;
+    background-color: #D95C41;
+}
+
+.pr_friend_delete:hover
+{
+    border-style: solid;
+    border-color: white;
+    border-width: 1px;
+    background-color: #dd8e7d;
+}
+
+.pr_friend_image {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+}
+
+.pr_friend_info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.pr_friend_info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.pr_friend_username {
+    font-family: "JetBrains Mono";
+    font-weight: bold;
+    font-size: 12pt;
+    margin: 16px;
+    margin-bottom: 0px;
+}
+
+.pr_friend_status_on {
+    font-family: "JetBrains Mono";
+    color: #2E9843;
+    font-size: 10pt;
+    margin: 16px;
+    margin-top: 0px;
+}
+
+.pr_friend_status_off {
+    font-family: "JetBrains Mono";
+    color: #A6A6A7;
+    font-size: 10pt;
+    margin: 16px;
+    margin-top: 0px;
+}
+
+.pr_stats_container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 200px;
+    margin-left: 50px;
+    width: 600px;
+    height: 600px;
+}
+
+.pr_stats_header {
+    font-family: "JetBrains Mono";
+    color: white;
+    font-size: 16pt;
+    margin-bottom: 70px;
+}
+
+.pr_history_item {
+    height: 100px;
+    width: 100%;
+}
+
+.pr_history_item_title {
+    font-family: "JetBrains Mono";
+    font-weight: bold;
+    font-size: 16pt;
+    color: white;
+    margin-top: 7px;
+    margin-bottom: 5px;
+}
+
+.pr_history_item_winner {
+    font-family: "JetBrains Mono";
+    font-size: 12pt;
+    color: #2E9843;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 4ch;
+}
+
+.pr_history_item_loser {
+    font-family: "JetBrains Mono";
+    font-size: 12pt;
+    color: #D95C41;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 4ch;
+}
+
+.pr_history_item_opponent {
+    font-family: "JetBrains Mono";
+    font-size: 12pt;
+    color: white;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 4ch;
+}
+
+.pr_stats_item {
+    display: flex;
+    flex-direction: row;
+    height: 49px;
+    width: 100%;
+}
+
+.pr_stats_item_bar {
+    position: absolute;
+    background-color: hsla(0, 0%, 100%, 0.33);
+    flex-direction: row;
+    height: 49px;
+    width: 600px;
+    z-index: 0;
+}
+.pr_stats_text {
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+    flex-grow: 1;
+}
+
+.pr_stats_wins {
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    font-weight: bold;
+    color: #2E9843;
+    margin-top: 10px;
+}
+
+.pr_stats_losses {
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    font-weight: bold;
+    color: #D95C41;
+    margin-top: 10px;
+}
+
+.pr_stats_draws {
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    font-weight: bold;
+    color: #d9d441;
+    margin-top: 10px;
+}
+
+.pr_stats_winrate {
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+}
+
+.pr_sidebar_link {
+    font-family: "JetBrains Mono";
+    font-size: 12pt;
+    color: #ff4eff;
+    margin-bottom: 0px;
+}
+
+.sc_place {
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    width: 12.5%;
+    height: 40px;
+}
+
+.sc_name {
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    width: 75%;
+}
+
+.sc_prestige {
+    font-family: "JetBrains Mono";
+    font-size: 16pt;
+    width: 12.5%;
+}
+
+.sc_content {
+    font-family: "JetBrains Mono";
+    font-size: 12pt;
+    height: 40px;
+    border-bottom: white solid 1px;
+}
+
+.fle_control_container {
+    display: flex;
+    flex-direction: row;
+    height: 60px;
+    width: 100%;
+    background-color: #6f42c1;
+    margin-top: auto;
+}
+
+.fle_add_friends {
+    height: 60px;
+    width: 50%;
+    color: white;
+    background-color: #2E9843;
+    border: none;
+}
+
+.fle_remove_friends {
+    height: 60px;
+    width: 50%;
+    color: white;
+    background-color: #D95C41;
+    border: none;
+}
+
+.settings_language_select_container {
+    display: flex;
+    flex-direction: row;
+    margin-left: 12.5%;
+    width: 75%;
+}
+
+.settings_language_button {
+    font-size: 16pt;
+    border-style: solid;
+    border-width: 1px;
+    background-color: #9fc2d5;
+    border-color: #9fc2d5;
+    margin-left: 2px;
+    flex-grow: 1;
+}
+
+.settings_language_button:hover {
+    background-color: #78a4bc;
+    border-color: #78a4bc;
+}
+
 #bg_video {
     position: fixed;
     right: 0;
@@ -186,11 +594,19 @@ hr {
     z-index: -1;
 }
 
-#h_logo {
-    font-family: "JetBrains Mono";
+#h_logo_container {
+    display: flex;
+    flex-direction: row;
     margin-left: 25px;
-    color: white;
     flex-grow: 2;
+    height: 100%;
+}
+
+#h_logo {
+    z-index: 2;
+    margin-top: 13px;
+    width: 250px;
+    height: 50px;
 }
 
 #logo_link_override {
@@ -300,8 +716,8 @@ hr {
 }
 
 #footer_logo {
-    height: 300px;
-    width: 300px;
+    height: 290px;
+    width: 400px;
 }
 
 #footer_credits {
@@ -310,4 +726,117 @@ hr {
     color: white;
     margin-left: 50px;
     margin-top: 30px;
+}
+
+#pr_structure {
+    display: flex;
+    flex-direction: row;
+}
+
+#pr_sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 800px;
+    height: 100vh;
+    min-width: 400px;
+    background-color: black;
+}
+
+#pr_user_image {
+    height: 200px;
+    width: 200px;
+    margin-top: 100px;
+    border-radius: 50%;
+}
+
+#pr_infobox {
+    width: 200px;
+}
+
+#pr_username {
+    font-family: "JetBrains Mono";
+    font-size: 14pt;
+    font-weight: bold;
+    margin-top: 25px;
+    color: white;
+}
+
+#pr_friend_count {
+    font-family: "JetBrains Mono";
+    font-size: 14pt;
+    margin-top: 16px;
+    color: white;
+}
+
+#pr_friendbox::-webkit-scrollbar {
+    display: none;
+}
+
+#pr_friendbox {
+    color: white;
+    overflow-y: scroll;
+    width: 300px;
+    flex-grow: 1;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#pr_friendbox_editor::-webkit-scrollbar {
+    display: none;
+}
+
+#pr_friendbox_editor {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color: white;
+    overflow-y: scroll;
+    width: 410px;
+    margin-left: 68px;
+    flex-grow: 1;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#pr_stats_subheader_pong {
+    font-family: "JetBrains Mono";
+    color: white;
+    font-size: 16pt;
+    margin-top: 6px;
+    margin-bottom: 12px;
+}
+
+#pr_stats_subheader_ttt {
+    font-family: "JetBrains Mono";
+    color: white;
+    font-size: 16pt;
+    margin-top: 98px;
+    margin-bottom: 18px;
+}
+
+#pr_body {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+#sc_leaderboard_container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 150px;
+    width: 100%;
+    justify-content: center;
+}
+
+#sc_leaderboard_body {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: "JetBrains Mono";
+    background-color: black;
+    width: 550px;
+    padding: 16px;
+    padding-bottom: 20px;
+    border: 1px solid white;
+    text-align: center;
 }

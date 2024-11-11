@@ -1,5 +1,18 @@
 let isTournament = false
 
+function showItem(item) {
+    document.getElementById(item).style.display = 'block';
+}
+
+function hideItem(item) {
+    document.getElementById(item).style
+        .display = 'none';
+}
+
+function changeLocation(location) {
+    window.location.hash = location;
+}
+
 // Function to handle GET request and populate the form
 async function getProfileSettings() {
     try {
@@ -24,12 +37,33 @@ async function getProfileSettings() {
     }
 }
 
+async function LoadProfile() {
+    try {
+        const response = await fetch(apiurl + '/profile/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok')
+        }
+
+        const data = await response.json();
+        document.getElementById('pr_username').textContent = data.username;
+    }
+
+    catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
 // Function to handle POST request when form is submitted
-async function submitProfileSettings() {
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const is2faEnabled = document.getElementById('2fa_enabled').checked;
-    const languagePreference = document.getElementById('language_preference').value;
+async function submitProfileSettings(settingType, value) {
+    const payload = {};
+    payload[settingType] = value;
 
     try {
         const response = await fetch(apiurl + '/profile-settings/', {
@@ -38,27 +72,29 @@ async function submitProfileSettings() {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem('access_token')
             },
-            body: JSON.stringify({
-                username: username,
-                email: email,
-                '2fa_enabled': is2faEnabled,
-                'language_preference': languagePreference
-            })
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();
 
         if (data.success) {
-            document.getElementById('message').innerText = data.success;
-            // reset the jwt tokens
-            localStorage.setItem('access_token', data.access_token);
-            localStorage.setItem('refresh_token', data.refresh_token);
+            // show success alert
+            alert('Settings updated successfully');
+            // reset the jwt tokens if provided
+            if (data.access_token) {
+                localStorage.setItem('access_token', data.access_token);
+            }
+            if (data.refresh_token) {
+                localStorage.setItem('refresh_token', data.refresh_token);
+            }
         } else {
-            document.getElementById('message').innerText = data.error;
+            alert('Error updating settings');
         }
 
-        currentLang = languagePreference;
-        RouterLb.setLanguage(languagePreference);
+        if (settingType === 'language_preference') {
+            currentLang = value;
+            RouterLb.setLanguage(value);
+        }
     } catch (error) {
         console.error('Error:', error);
     }
@@ -202,6 +238,30 @@ async function createTournament() {
     } catch (error) {
         console.error('Error:', error);
     }
+}
+
+async function getTournament() {
+    try {
+        const response = await fetch(apiurl + '/get-tournament/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+
+        if (!response.ok) {
+            //show error alert // wip
+        }
+
+        const data = await response.json();
+        //if there is no tournament 
+    }
+    
+        catch (error) {
+            //if no tournament available  redirect to create tournament page // wip
+            window.location.href = '#/createTournament';
+        }
+
 }
 
 const CommonLb = {

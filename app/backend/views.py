@@ -224,24 +224,38 @@ class ProfileSettingsView(APIView):
 
     def post(self, request):
         user = request.user
-        #check if new name or email already exists
-        if User.objects.filter(username=request.data.get('username')).exclude(id=user.id).exists():
+        data = request.data
+
+        if 'delete_account' in data:
+            user.delete()
+            return Response({'success': 'Account deleted'}, status=status.HTTP_200_OK)
+
+        # Check if new username or email already exists
+        if 'username' in data and User.objects.filter(username=data['username']).exclude(id=user.id).exists():
             return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(email=request.data.get('email')).exclude(id=user.id).exists():
+        if 'email' in data and User.objects.filter(email=data['email']).exclude(id=user.id).exists():
             return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
-        user.username = request.data.get('username')
-        user.email = request.data.get('email')
-        user.is_2fa_enabled = request.data.get('2fa_enabled')
-        user.language_preference = request.data.get('language_preference')
+
+        # Update user fields if they are provided in the request
+        if 'username' in data:
+            user.username = data['username']
+        if 'email' in data:
+            user.email = data['email']
+        if '2fa_enabled' in data:
+            user.is_2fa_enabled = data['2fa_enabled']
+        if 'language_preference' in data:
+            user.language_preference = data['language_preference']
+
         user.save()
 
-        # create new tokens for the user
+        # Create new tokens for the user
         access_token = create_token(user.id, 'access')
         refresh_token = create_token(user.id, 'refresh')
 
         return Response({
             'access_token': access_token,
-            'refresh_token': refresh_token
+            'refresh_token': refresh_token,
+            'success': 'Profile updated successfully'
         }, status=status.HTTP_200_OK)
     
 
@@ -310,8 +324,9 @@ class CreateTournamentView(APIView):
         tournament_name = request.data.get('tournament_name')
         user_guests = request.data.get('user_guests')
 
-        if Tournament.objects.filter(tournamet_name=tournament_name).exists():
-            return Response({'error': 'Tournament name already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        #if there is a tournament of this host witout a winner, return error
+        if Tournament.objects.filter(userHost=user, status=1).exists():
+            return Response({'error': 'You already have an ongoing tournament'}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(user_guests) != 7:
             return Response({'error': 'There must be 7 guests'}, status=status.HTTP_400_BAD_REQUEST)
@@ -345,6 +360,37 @@ class CreateTournamentView(APIView):
             )
 
         return Response({'success': 'Tournament created'}, status=status.HTTP_201_CREATED)
+
+class GetTournamenReadyView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        #returns the tournament that has all invites accepted and has not started
+        tournament = Tournament.objects.filter(userHost=user, accepted_invites=7, status=0)
+        if not tournament.exists():
+        # returns the tournament that exists, but has not all invites accepted
+            tournament = Tournament.objects.filter(userHost=user, status=0).filter(Q(accepted_invites__lt=7))
+        if not tournament.exists():
+            return Response({'error': 'No tournament available'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            'tournament': tournament.first().tournamet_name,
+            'game_type': tournament.first().game_type,
+            'user_guests': [
+                tournament.first().userGuest0.username,
+                tournament.first().userGuest1.username,
+                tournament.first().userGuest2.username,
+                tournament.first().userGuest3.username,
+                tournament.first().userGuest4.username,
+                tournament.first().userGuest5.username,
+                tournament.first().userGuest6.username
+            ],
+            'status': tournament.first().status,
+
+        }, status=status.HTTP_200_OK)
+        
+
         
 class tournamentInviteAcceptView(APIView):
     permission_classes = [IsAuthenticated]
@@ -461,6 +507,23 @@ class GetGameStatsView(APIView):
             'win_rate': win_rate,
             'bar_size': bar_px
         }, status=status.HTTP_200_OK)
+
+class ProfileView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        #if there is a username in the request data return that user's profile
+        #else return the profile of the authenticated user
+        #if there is no of the above, return error
+
+        if 'username' in request.data:
+            user = User.objects.get(username=request.data.get('username'))
+        else:
+            user = request.user
+        return Response({
+            'username': user.username,
+        }, status=status.HTTP_200_OK)
+
 
 class UsersListView(APIView):
     permission_classes = [AllowAny]
