@@ -18,6 +18,8 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 import pyotp
 import logging
+import json
+import datetime
 
 # for custom jwt
 from django.contrib.auth import authenticate
@@ -150,7 +152,7 @@ class Login2fViewJWT(APIView):
 
         return Response({
             'access_token': access_token,
-            'refresh_token': refresh_token
+            'refreshusers_token': refresh_token
         }, status=status.HTTP_200_OK)
      
 
@@ -261,15 +263,18 @@ class FriendRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_sender = request.user
-        user_receiver = request.data.get('user_receiver')
+        user_sender = User.objects.get(username=request.data.get('user'))
+        user_receiver = User.objects.get(username=request.data.get('user_receiver'))
+
+        if user_sender != request.user:
+            return Response({'error': 'Invalid user'}, status=status.HTTP_400_BAD_REQUEST)
 
         if user_sender == user_receiver:
             return Response({'error': 'You cannot send request to yourself'}, status=status.HTTP_400_BAD_REQUEST)
 
         if FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
             return Response({'error': 'Request already sent'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         if FriendShip.objects.filter(user1=user_sender, user2=user_receiver).exists():
             return Response({'error': 'You are already friends'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -282,7 +287,7 @@ class FriendRequestAcceptView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_sender = request.data.get('user_sender')
+        user_sender = User.objects.get(username=request.data.get('user_sender'))
         user_receiver = request.user
         action = request.data.get('action')
 
@@ -519,4 +524,52 @@ class ProfileView(APIView):
             'username': user.username,
         }, status=status.HTTP_200_OK)
 
+
+class UsersListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        user = request.GET.get('user')
+        if user:
+            user = User.objects.get(username=user)
+            user_json = {
+                'user': user.username,
+                'profile_pic': user.profile_picture,
+                'friends': [f.user2.username for f in FriendShip.objects.filter(user1=user)],
+                'last_online': user.last_online,
+                'time_since_online': int(round((datetime.datetime.now(tz=datetime.timezone.utc) - user.last_online).total_seconds(), 0)),
+                'online': (datetime.datetime.now(tz=datetime.timezone.utc) - user.last_online).total_seconds() < 60
+            }
+            user_json['friends'].extend([f.user1.username for f in FriendShip.objects.filter(user2=user)])
+            return Response({
+                'user': user_json
+            }, status=status.HTTP_200_OK)
+        users = User.objects.all()
+        user_json_base = {
+            'user': '',
+            'friends': [],
+            'last_online': '',
+            'online': False,
+            'time_since_online': ''
+        }
+        user_jsons = []
+        for u in users:
+            user_json = user_json_base.copy()
+            user_json['user'] = u.username
+            user_json['friends'] = [f.user2.username for f in FriendShip.objects.filter(user1=u)]
+            user_json['friends'].extend([f.user1.username for f in FriendShip.objects.filter(user2=u)])
+            user_json['last_online'] = u.last_online
+            time_since_online = datetime.datetime.now(tz=datetime.timezone.utc) - u.last_online
+            user_json['online'] = time_since_online.total_seconds() < 60
+            user_json['time_since_online'] = time_since_online
+            user_jsons.append(user_json)
+        return Response({
+            'users': user_jsons 
+        }, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        user = User.objects.get(username=request.data.get('user'))
+        user.last_online = datetime.datetime.now(tz=datetime.timezone.utc)
+        user.save()
+        return Response({'success': 'User online status updated'}, status=status.HTTP_200_OK)
 

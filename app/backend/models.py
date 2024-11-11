@@ -16,7 +16,7 @@ class User(AbstractUser):
     otp_secret = models.CharField(max_length=64, blank=True, null=True)  # OTP secret
     last_online = models.DateTimeField(auto_now=True)
     language_preference = models.CharField(max_length=2, default='en')
-    #profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.username
