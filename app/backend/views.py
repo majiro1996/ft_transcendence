@@ -130,6 +130,31 @@ class LoginAPIViewJWT(APIView):
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
+# class Login2fViewJWT(APIView):
+#     permission_classes = [AllowAny]
+
+#     def post(self, request):
+#         username = request.data.get('username')
+#         otp = request.data.get('otp')
+
+#         try:
+#             user = User.objects.get(username=username)
+#         except User.DoesNotExist:
+#             return Response({'error': 'Invalid username'}, status=status.HTTP_400_BAD_REQUEST)
+        
+#         totp = pyotp.TOTP(user.otp_secret, interval=300)
+
+#         if not totp.verify(otp, valid_window=2):
+#             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         access_token = create_token(user.id, 'access')
+#         refresh_token = create_token(user.id, 'refresh')
+
+#         return Response({
+#             'access_token': access_token,
+#             'refreshusers_token': refresh_token
+#         }, status=status.HTTP_200_OK)
+
 class Login2fViewJWT(APIView):
     permission_classes = [AllowAny]
 
@@ -142,9 +167,13 @@ class Login2fViewJWT(APIView):
         except User.DoesNotExist:
             return Response({'error': 'Invalid username'}, status=status.HTTP_400_BAD_REQUEST)
         
-        totp = pyotp.TOTP(user.otp_secret, interval=300)
+        if not user.otp_secret:
+            return Response({'error': 'OTP not set for user'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not totp.verify(otp, valid_window=2):
+        totp = pyotp.TOTP(user.otp_secret, interval=300)
+        is_valid = totp.verify(otp, valid_window=2)
+
+        if not is_valid:
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
         access_token = create_token(user.id, 'access')
@@ -152,7 +181,7 @@ class Login2fViewJWT(APIView):
 
         return Response({
             'access_token': access_token,
-            'refreshusers_token': refresh_token
+            'refresh_token': refresh_token
         }, status=status.HTTP_200_OK)
      
 
