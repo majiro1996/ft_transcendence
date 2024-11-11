@@ -39,7 +39,7 @@ async function getProfileSettings() {
 
 async function LoadProfile() {
     try {
-        const response = await fetch(apiurl + '/profile/', {
+        const response = await fetch(apiurl + '/users/', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('access_token')
@@ -51,7 +51,25 @@ async function LoadProfile() {
         }
 
         const data = await response.json();
-        document.getElementById('pr_username').textContent = data.username;
+        console.log(data);
+        document.getElementById('pr_username').textContent = data.user.user;
+        data.user.friends.forEach(friend => {
+            var template = document.getElementById('friend_template').cloneNode(true);
+            console.log(template);
+            if (friend.profile_pic != null)
+                template.querySelector('img').src = friend.profile_pic;
+            template.querySelector('#friend_username_template').textContent = friend.user;
+            if (friend.online)
+                template.querySelector('#friend_status_template').textContent = 'Online';
+            else {
+                template.querySelector('#friend_status_template').textContent = 'Offline';
+                template.querySelector('#friend_status_template').classList.add('pr_friend_status_off');
+                template.querySelector('#friend_status_template').classList.remove('pr_friend_status_on');
+            }
+            template.style.display = 'flex';
+            template.id = friend.user;
+            document.getElementById('pr_friendbox').appendChild(template);
+        });
     }
 
     catch (error) {

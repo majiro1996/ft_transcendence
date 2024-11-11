@@ -18,7 +18,6 @@ from .views import (
 	FriendRequestView,
 	FriendRequestAcceptView,
 	GetTournamenReadyView,
-	ProfileView,
 )
 
 
@@ -41,7 +40,7 @@ urlpatterns = [
     path('logout/', LogoutAPIViewJWT.as_view(), name='logout'),
     path('protected/', ProtectedDataAPIViewJWT.as_view(), name='protected'),
     path('profile-settings/', ProfileSettingsView.as_view(), name='profile-settings'),
-	path('profile/', ProfileView.as_view(), name='profile'),
+	# path('profile/', ProfileView.as_view(), name='profile'),
 	
 	path('friend-request/', FriendRequestView.as_view(), name='friend-request'),
 	path('friend-request-accept/', FriendRequestAcceptView.as_view(), name='friend-request-accept'),

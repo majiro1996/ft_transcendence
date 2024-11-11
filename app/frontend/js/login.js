@@ -223,21 +223,18 @@ async function isLoggedIn() {
             return false;
         }
 
+        try {
         const response = await fetch(apiurl + '/protected/', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
         });
-
-        console.log('Response:', response);
+        } catch (error) {
+            throw new Error();
+        }
         
-        if (response.ok) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return (true);
         
     } catch (error) {
         console.error('Error checking login status:', error);

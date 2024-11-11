@@ -30,7 +30,7 @@ import time
 # 
 from .models import FriendShip, FriendRequest, Tournament, TournamentInvite, MatchResult
 
-
+ONLINE_THRESHOLD = 60
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -508,39 +508,37 @@ class GetGameStatsView(APIView):
             'bar_size': bar_px
         }, status=status.HTTP_200_OK)
 
-class ProfileView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        #if there is a username in the request data return that user's profile
-        #else return the profile of the authenticated user
-        #if there is no of the above, return error
-
-        if 'username' in request.data:
-            user = User.objects.get(username=request.data.get('username'))
-        else:
-            user = request.user
-        return Response({
-            'username': user.username,
-        }, status=status.HTTP_200_OK)
-
 
 class UsersListView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
         user = request.GET.get('user')
+        if not user and not request.user.is_authenticated:
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+        elif not user:
+            user = request.user
+
+        try:
+            User.objects.get(username=user)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+
         if user:
             user = User.objects.get(username=user)
             user_json = {
                 'user': user.username,
                 'profile_pic': user.profile_picture,
-                'friends': [f.user2.username for f in FriendShip.objects.filter(user1=user)],
+                'friends': [{"user": f.user2.username, "profile_pic": f.user2.profile_picture, "online": (datetime.datetime.now(tz=datetime.timezone.utc) - f.user2.last_online).total_seconds() < ONLINE_THRESHOLD} for f in FriendShip.objects.filter(user1=user)],
+                'requests': [],
                 'last_online': user.last_online,
                 'time_since_online': int(round((datetime.datetime.now(tz=datetime.timezone.utc) - user.last_online).total_seconds(), 0)),
-                'online': (datetime.datetime.now(tz=datetime.timezone.utc) - user.last_online).total_seconds() < 60
+                'online': (datetime.datetime.now(tz=datetime.timezone.utc) - user.last_online).total_seconds() < ONLINE_THRESHOLD,
+                'deleted': user.deleted
             }
-            user_json['friends'].extend([f.user1.username for f in FriendShip.objects.filter(user2=user)])
+            user_json['friends'].extend([{"user": f.user1.username, "profile_pic": f.user1.profile_picture, "online": (datetime.datetime.now(tz=datetime.timezone.utc) - f.user1.last_online).total_seconds() < ONLINE_THRESHOLD} for f in FriendShip.objects.filter(user2=user)])
+            if user == request.user and request.user.is_authenticated:
+                user_json['requests'] = [{"user": f.userSender.username, "profile_pic": f.userSender.profile_picture, "online": (datetime.datetime.now(tz=datetime.timezone.utc) - f.userSender.last_online).total_seconds() < ONLINE_THRESHOLD} for f in FriendRequest.objects.filter(userReceiver=user)]
             return Response({
                 'user': user_json
             }, status=status.HTTP_200_OK)
@@ -550,7 +548,8 @@ class UsersListView(APIView):
             'friends': [],
             'last_online': '',
             'online': False,
-            'time_since_online': ''
+            'time_since_online': '',
+            'deleted': False
         }
         user_jsons = []
         for u in users:
@@ -560,15 +559,16 @@ class UsersListView(APIView):
             user_json['friends'].extend([f.user1.username for f in FriendShip.objects.filter(user2=u)])
             user_json['last_online'] = u.last_online
             time_since_online = datetime.datetime.now(tz=datetime.timezone.utc) - u.last_online
-            user_json['online'] = time_since_online.total_seconds() < 60
+            user_json['online'] = time_since_online.total_seconds() < ONLINE_THRESHOLD
             user_json['time_since_online'] = time_since_online
+            user_json['deleted'] = u.deleted
             user_jsons.append(user_json)
         return Response({
             'users': user_jsons 
         }, status=status.HTTP_200_OK)
 
     def put(self, request):
-        user = User.objects.get(username=request.data.get('user'))
+        user = User.objects.get(username=request.user)
         user.last_online = datetime.datetime.now(tz=datetime.timezone.utc)
         user.save()
         return Response({'success': 'User online status updated'}, status=status.HTTP_200_OK)
