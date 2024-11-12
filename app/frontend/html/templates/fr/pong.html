@@ -1,0 +1,63 @@
+<div class="selection-container" id="selection-screen"></div>
+    <h1>Choose your mode</h1>
+    <div class="selection-buttons">
+        <button id="two-players">2 Players</button>
+        <button id="one-player">1 Player</button>
+    </div>
+</div>
+
+<div class="selection-container" id="difficulty-screen">
+    <h1>Select Difficulty</h1>
+    <div class="difficulty-buttons">
+        <button onclick="startGameWithDifficulty('easy')">Easy</button>
+        <button onclick="startGameWithDifficulty('normal')">Normal</button>
+        <button onclick="startGameWithDifficulty('hard')">Hard</button>
+        <button onclick="startGameWithDifficulty('extreme')">Extreme</button>
+    </div>
+</div>
+
+<div id="game-board">
+    <canvas id="game_display" class="crt"></canvas>
+    <div id="message"></div>
+</div>
+
+<p hidden> {% csrf_token %} </p>
+
+<script>
+    document.getElementById('two-players').addEventListener('click', () => {
+        startTwoPlayerGame();
+    });
+
+    document.getElementById('one-player').addEventListener('click', () => {
+        showDifficultySelection();
+    });
+
+    function showDifficultySelection() {
+        document.getElementById('selection-screen').style.display = 'none';
+        document.getElementById('difficulty-screen').style.display = 'flex';  // Show the difficulty selection screen
+    }
+
+    function startTwoPlayerGame() {
+        document.getElementById('selection-screen').style.display = 'none';
+        document.getElementById('game-board').style.display = 'block';  // Show the game area for 2 players
+
+        // Load the game script for two players (pong.js)
+        const script = document.createElement('script');
+        script.src = 'pong.js';  // Make sure pong.js is in the same directory
+        document.body.appendChild(script);
+    }
+
+    function startGameWithDifficulty(difficulty) {
+        // Save the difficulty in localStorage
+        localStorage.setItem('pongDifficulty', difficulty);
+
+        // Hide the difficulty screen and show the game board
+        document.getElementById('difficulty-screen').style.display = 'none';
+        document.getElementById('game-board').style.display = 'block';
+
+        // Load the game for single player with AI (pongAI.js)
+        const script = document.createElement('script');
+        script.src = 'pongAI.js';
+        document.body.appendChild(script);
+    }
+</script>

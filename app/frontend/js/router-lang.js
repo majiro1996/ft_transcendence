@@ -298,7 +298,7 @@ async function setLanguage(lang) {
 
 // Function to attach event listeners to language switcher buttons
 function attachLanguageSwitcherListeners() {
-    document.querySelectorAll('.language-switcher').forEach(button => {
+    document.querySelectorAll('.h_flag_button').forEach(button => {
         button.addEventListener('click', async (e) => {
             const selectedLang = e.target.getAttribute('data-lang');
             await setLanguage(selectedLang);  // Trigger language change

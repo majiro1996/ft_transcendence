@@ -1,12 +1,15 @@
+
 <div class="form_container">
     <div class="form_body">
-        <p class="form_title">CONNEXION</p>
-        <p class="form_label">EMAIL</p>
-        <input class="form_field" type="text"/>
-        <p class="form_label">MOT DE PASSE</p>
-        <input class="form_field" type="password"/>
-        <button class="form_main_button">SE CONNECTER</button>
-        <p class="form_bottom">Vous n'avez pas de compte?</p>
-        <a href="#register" class="form_link">Inscrivez-vous ici</a>
+        <p class="form_title">LOGIN</p>
+        <form id="loginForm" onsubmit="event.preventDefault(); AuthLb.login2fa();">
+            <p class="form_label">USERNAME</p>
+            <input id="username" class="form_field" type="text" required/>
+            <p class="form_label">PASSWORD</p>
+            <input id="password" class="form_field" type="password" required/>
+            <button type="submit" class="form_main_button">LOGIN</button>
+        </form>
+        <p class="form_bottom">Don't have an account?</p>
+        <a href="#register" class="form_link">Register here</a>
     </div>
 </div>
