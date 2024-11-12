@@ -53,9 +53,30 @@ async function LoadProfile() {
         const data = await response.json();
         console.log(data);
         document.getElementById('pr_username').textContent = data.user.user;
+        if (data.user.requests.length != 0)
+            document.getElementById('pr_friend_count_number').textContent = data.user.friends.length + ' (' + data.user.requests.length + ')';
+        else
+            document.getElementById('pr_friend_count_number').textContent = data.user.friends.length;
+        data.user.requests.forEach(request => {
+            var template = document.getElementById('request_template').cloneNode(true);
+           if (request.profile_pic != null)
+                template.querySelector('img').src = request.profile_pic;
+            template.querySelector('#friend_username_template').textContent = request.user;
+            if (request.online)
+                template.querySelector('#friend_status_template').textContent = 'Online';
+            else {
+                template.querySelector('#friend_status_template').textContent = 'Offline';
+                template.querySelector('#friend_status_template').classList.add('pr_friend_status_off');
+                template.querySelector('#friend_status_template').classList.remove('pr_friend_status_on');
+            }
+            template.querySelector('#accept-template').id = 'accept-' + request.user;
+            template.querySelector('#decline-template').id = 'decline-' + request.user;
+            template.style.display = 'flex';
+            template.id = request.user;
+            document.getElementById('pr_friendbox').appendChild(template);
+        });
         data.user.friends.forEach(friend => {
             var template = document.getElementById('friend_template').cloneNode(true);
-            console.log(template);
             if (friend.profile_pic != null)
                 template.querySelector('img').src = friend.profile_pic;
             template.querySelector('#friend_username_template').textContent = friend.user;
@@ -70,6 +91,7 @@ async function LoadProfile() {
             template.id = friend.user;
             document.getElementById('pr_friendbox').appendChild(template);
         });
+        document
     }
 
     catch (error) {
@@ -77,6 +99,65 @@ async function LoadProfile() {
     }
 }
 
+async function acceptFriendRequest(friend, action) {
+    try {
+        const response = await fetch(apiurl + '/friend-request-accept/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                'user_sender': friend.parentNode.id,
+                'action': action
+            })
+        });
+    }
+    catch (error) {
+        console.error('Error:', error);
+    }
+    if (action == 'accept') {
+        var new_friend = document.getElementById(friend.parentNode.id).cloneNode(true);
+        new_friend.classList.remove('pr_friend_request_item');
+        new_friend.classList.add('pr_friend_item');
+        new_friend.querySelector('#accept-' + friend.parentNode.id).remove();
+        new_friend.querySelector('#decline-' + friend.parentNode.id).remove();
+        document.getElementById('pr_friendbox').appendChild(new_friend);
+        friend.parentNode.remove();
+    }
+    else
+        friend.parentNode.remove();
+    var requests = document.getElementById('pr_friend_count_number').textContent.split('(')[1].split(')')[0];
+    var friend_nbr = document.getElementById('pr_friend_count_number').textContent.split('(')[0];
+    if (requests > 1 && action == 'accept')
+        document.getElementById('pr_friend_count_number').textContent = (parseInt(friend_nbr) + 1).toString() + ' (' + (requests - 1) + ')';
+    else if (requests == 1 && action == 'accept')
+        document.getElementById('pr_friend_count_number').textContent = (parseInt(friend_nbr) + 1).toString();
+    else if (requests > 1 && action == 'decline')
+        document.getElementById('pr_friend_count_number').textContent = friend_nbr + ' (' + (requests - 1) + ')';
+    else
+        document.getElementById('pr_friend_count_number').textContent = friend_nbr;
+
+}
+
+async function DeleteFriend(friend) {
+    try {
+        const response = await fetch(apiurl + '/friend-request/', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                'user': friend
+            })
+        });
+    }
+    catch (error) {
+        console.error('Error:', error);
+    }
+    console.log(friend);
+}
 
 // Function to handle POST request when form is submitted
 async function submitProfileSettings(settingType, value) {
@@ -290,15 +371,11 @@ const CommonLb = {
 window.CommonLb = CommonLb;
 
 // Bootstrap alerts
-function setAlertText(text)
+function showAlert(id)
 {
-    document.getElementById('form-alert').innerHTML = text;
+    document.getElementById(id).style.display = 'block';
 }
-function showAlert()
+function hideAlert(node)
 {
-    document.getElementById('form-alert').style.display = 'block';
-}
-function hideAlert()
-{
-    document.getElementById('form-alert').style.display = 'none';
+    node.style.display = 'none';
 }

@@ -328,6 +328,19 @@ class FriendRequestView(APIView):
 
         FriendRequest.objects.create(userSender=user_sender, userReceiver=user_receiver)
         return Response({'success': 'Friend request sent'}, status=status.HTTP_201_CREATED)
+    
+    def delete(self, request):
+        # Deletes a friend
+        user = request.user
+        friend = User.objects.get(username=request.data.get('user'))
+        if FriendShip.objects.filter(user1=user, user2=friend).exists():
+            FriendShip.objects.filter(user1=user, user2=friend).delete()
+            return Response({'success': 'Friendship deleted'}, status=status.HTTP_200_OK)
+        elif FriendShip.objects.filter(user2=user, user1=friend).exists():
+            FriendShip.objects.filter(user2=user, user1=friend).delete()
+            return Response({'success': 'Friendship deleted'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Friendship does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
     
