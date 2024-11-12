@@ -80,11 +80,11 @@ class SignUpAPIViewJWT(APIView):
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
-
+    
         if User.objects.filter(username=username).exists():
-            return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'user-exists-alert'}, status=status.HTTP_400_BAD_REQUEST)
         if User.objects.filter(email=email).exists():
-            return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'email-exists-alert'}, status=status.HTTP_400_BAD_REQUEST)
         
         user = User.objects.create_user(
             username=username,
@@ -100,6 +100,14 @@ class SignUpAPIViewJWT(APIView):
             'access_token': access_token,
             'refresh_token': refresh_token
         }, status=status.HTTP_201_CREATED)
+        
+
+class LoginAPIViewJWT(APIView):
+     permission_classes = [AllowAny]
+
+     def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
 
 class LoginAPIViewJWT(APIView):
      permission_classes = [AllowAny]
@@ -109,6 +117,9 @@ class LoginAPIViewJWT(APIView):
         password = request.data.get('password')
 
         user = authenticate(username=username, password=password)
+        if user.deleted == True:
+            return Response({'error': 'deleted-account'}, status=status.HTTP_400_BAD_REQUEST) 
+
         if user is not None:
             if user.is_2fa_enabled:
                 user.otp_secret = pyotp.random_base32()
@@ -119,7 +130,7 @@ class LoginAPIViewJWT(APIView):
                 message = f'Your 2fa code is {token}'
                 from_email = settings.EMAIL_HOST_USER
                 send_mail(subject, message, from_email, [user.email])
-                return Response({'success': '2fa required'}, status=status.HTTP_200_OK)
+                return Response({'success': '2fa-required'}, status=status.HTTP_200_OK)
             else:
                 access_token = create_token(user.id, 'access')
                 refresh_token = create_token(user.id, 'refresh')
@@ -128,7 +139,7 @@ class LoginAPIViewJWT(APIView):
                     'refresh_token': refresh_token
                 }, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'invalid-credentials-alert'}, status=status.HTTP_400_BAD_REQUEST)
 
 # class Login2fViewJWT(APIView):
 #     permission_classes = [AllowAny]
@@ -165,16 +176,16 @@ class Login2fViewJWT(APIView):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            return Response({'error': 'Invalid username'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid-username'}, status=status.HTTP_400_BAD_REQUEST)
         
         if not user.otp_secret:
-            return Response({'error': 'OTP not set for user'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'OTP-not-set'}, status=status.HTTP_400_BAD_REQUEST)
 
         totp = pyotp.TOTP(user.otp_secret, interval=300)
         is_valid = totp.verify(otp, valid_window=2)
 
         if not is_valid:
-            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid-OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
         access_token = create_token(user.id, 'access')
         refresh_token = create_token(user.id, 'refresh')
@@ -218,15 +229,15 @@ class LogoutAPIViewJWT(APIView):
         refresh_token = request.data.get('refresh_token')
 
         if BlackListedToken.objects.filter(token=token).exists():
-            return Response({'error': 'Token already blacklisted'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Already-logged-out'}, status=status.HTTP_400_BAD_REQUEST)
 
         if refresh_token:
             if BlackListedToken.objects.filter(token=refresh_token).exists():
-                return Response({'error': 'Token already blacklisted'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Already-logged-out'}, status=status.HTTP_400_BAD_REQUEST)
             BlackListedToken.objects.create(token=refresh_token)
 
         BlackListedToken.objects.create(token=token)
-        return Response({'success': 'Successfully logged out'}, status=status.HTTP_200_OK)
+        return Response({'success': 'Successfully-logged-out'}, status=status.HTTP_200_OK)
 
 
 
@@ -258,7 +269,7 @@ class ProfileSettingsView(APIView):
         if 'delete_account' in data:
             user.deleted = True
             user.save()
-            return Response({'success': 'Account deleted'}, status=status.HTTP_200_OK)
+            return Response({'success': 'Account-deleted-succes'}, status=status.HTTP_200_OK)
         if 'anonymize_account' in data:
             user.deleted = True
             user.username = 'anon'+str(user.id)
@@ -267,9 +278,11 @@ class ProfileSettingsView(APIView):
 
         # Check if new username or email already exists
         if 'username' in data and User.objects.filter(username=data['username']).exclude(id=user.id).exists():
-            return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'user-exists-alert'}, status=status.HTTP_400_BAD_REQUEST)
         if 'email' in data and User.objects.filter(email=data['email']).exclude(id=user.id).exists():
-            return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'email-exists-alert'}, status=status.HTTP_400_BAD_REQUEST)
+        if 'language_preference' in data and data['language_preference'] not in ['en', 'es', 'fr']:
+            return Response({'error': 'Invalid-language-preference'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Update user fields if they are provided in the request
         if 'username' in data:
@@ -290,7 +303,7 @@ class ProfileSettingsView(APIView):
         return Response({
             'access_token': access_token,
             'refresh_token': refresh_token,
-            'success': 'Profile updated successfully'
+            'success': 'Profile-updated'
         }, status=status.HTTP_200_OK)
     
 
