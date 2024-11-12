@@ -256,8 +256,14 @@ class ProfileSettingsView(APIView):
         data = request.data
 
         if 'delete_account' in data:
-            user.delete()
+            user.deleted = True
+            user.save()
             return Response({'success': 'Account deleted'}, status=status.HTTP_200_OK)
+        if 'anonymize_account' in data:
+            user.deleted = True
+            user.username = 'anon'+str(user.id)
+            user.email = 'anon'+str(user.id)+'@anon.com'
+            user.save()
 
         # Check if new username or email already exists
         if 'username' in data and User.objects.filter(username=data['username']).exclude(id=user.id).exists():
