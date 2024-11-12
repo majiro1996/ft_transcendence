@@ -1,14 +1,18 @@
+
+
 <div class="form_container">
     <div class="form_body_xl">
-        <p class="form_title">S'INSCRIRE</p>
-        <p class="form_label">NOM</p>
-        <input class="form_field" type="text"/>
-        <p class="form_label">EMAIL</p>
-        <input class="form_field" type="text"/>
-        <p class="form_label">MOT DE PASSE</p>
-        <input class="form_field" type="password"/>
-        <button class="form_main_button">S'INSCRIRE</button>
-        <p class="form_bottom">Vous avez déjà un compte?</p>
-        <a href="#login" class="form_link">Connectez-vous ici</a>
+        <p class="form_title">SIGNUP</p>
+        <form id="registerForm" onsubmit="event.preventDefault(); AuthLb.register();">
+            <p class="form_label">NAME</p>
+            <input id="username" class="form_field" type="text" required/>
+            <p class="form_label">EMAIL</p>
+            <input id="email" class="form_field" type="text" required/>
+            <p class="form_label">PASSWORD</p>
+            <input id="password" class="form_field" type="password" required/>
+            <button type="submit" class="form_main_button">SIGNUP</button>
+        </form>
+        <p class="form_bottom">Already have an account?</p>
+        <a href="#login" class="form_link">Login here</a>
     </div>
 </div>
