@@ -26,18 +26,19 @@ async function register() {
 
         const result = await response.json();
 
-        if (result.error) {
-            alert('Error: ' + result.error);
+        //if status is not ok
+        if (!response.ok) {
+            showAlert(result.error);
         } else {
-            alert('Registration successful');
+            showAlert(result.success);
             localStorage.setItem('access_token', result.access_token);
             localStorage.setItem('refresh_token', result.refresh_token);
             window.location.hash = '#';  // redirect to home page
             RouterLb.setPreferredLanguage();
         }
     } catch (error) {
-        alert('Error: ' + error);
-        console.error('Error:', error);
+       //get the alert id from the erro message
+       showAlert(error);
     }
 }
 
@@ -58,11 +59,11 @@ async function login2fa() {
 
         const result = await response.json();
 
-        if (result.success === '2fa required') {
-            console.log('valid credentials, proceed to 2fa');
+        if (result.success === '2fa-required') {
+            showAlert(result.success);
             window.location.hash = '#auth2fa';
         } else if (result.access_token && result.refresh_token) {
-            console.log('Login successful');
+            showAlert(result.success);
             // Handle successful login without 2FA
             localStorage.setItem('access_token', result.access_token);
             localStorage.setItem('refresh_token', result.refresh_token);
@@ -70,11 +71,11 @@ async function login2fa() {
             RouterLb.updateHeaderAndFooter(currentLang);
             RouterLb.setPreferredLanguage();
         } else if (result.error) {
-            alert('Invalid credentials, please try again');
+            showAlert(result.error);
         }
     } catch (error) {
+        alert('Error: ' + error);
         console.error('Error:', error);
-        alert('An error occurred, please try again');
     }
 }
 
@@ -95,16 +96,15 @@ async function verify2fa() {
 
         const result = await response.json();
 
-        if (!response.ok) {
-            alert(result.error || 'Something went wrong');
+        if (result.error) {
+            showAlert(result.error);
             return;
         }
-
         if (!result.access_token || !result.refresh_token) {
-            alert('Something went wrong');
+            alert('Something went wrong');//remove
             return;
         }
-
+        showAlert(result.success);
         localStorage.setItem('access_token', result.access_token);
         localStorage.setItem('refresh_token', result.refresh_token);
         console.log('Login successful');
@@ -113,7 +113,7 @@ async function verify2fa() {
         RouterLb.setPreferredLanguage();
     } catch (error) {
         console.error('Error:', error);
-        alert('Invalid OTP, please try again');
+        alert('Error: ' + error);
     }
 }
 
@@ -133,7 +133,10 @@ async function logout() {
         const data = await response.json();
 
         if (data.error) {
-            throw new Error(data.error);
+            showAlert(data.error);
+        }
+        else if (data.success) {
+            showAlert(data.success);
         }
 
         // Clear tokens from localStorage or sessionStorage
@@ -143,7 +146,6 @@ async function logout() {
         // Redirect to login page or home
         window.location.hash = '#login';
         RouterLb.updateHeaderAndFooter(currentLang);
-        console.log('Logout successful');
     } catch (error) {
         console.error('Error:', error);
         alert('Logout failed: ' + error.message);
@@ -165,22 +167,21 @@ async function deleteAccount() {
         const data = await response.json();
 
         if (data.success) {
+            showAlert(data.success);
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             updateHeaderAndFooter(currentLang);
             window.location.hash = '#'; // redirect to home page
             console.log('Account deleted');
-        } else {
-            //wip show error alert
-            alert('Error deleting account');
+        }
+        else if (data.error) {
+            showAlert(data.error);
         }
 
     } catch (error) {
         console.error('Error:', error);
-        alert('Error deleting account');
-    }
-    //hideItem('delete_confirmation_overlay');
-    
+        alert(error);
+    } 
 }
 
 async function anonymizeAccount() {
@@ -197,29 +198,30 @@ async function anonymizeAccount() {
         const data = await response.json();
 
         if (data.success) {
+            showAlert(data.success);
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             updateHeaderAndFooter(currentLang);
             window.location.hash = '#'; // redirect to home page
             console.log('Account anonymized');
-        } else {
-            //wip show error alert
-            alert('Error anonymizing account');
+        }
+        else if (data.error) {
+            showAlert(data.error);
         }
 
     } catch (error) {
         console.error('Error:', error);
-        alert('Error anonymizing account');
+        alert('Error: ' + error);
     }
 }
 
 
 
-
-function isTokenExpired(token) {
-    const decodedToken = jwt_decode(token);
-    return decodedToken.exp < Date.now() / 1000;
-}
+// remove
+// function isTokenExpired(token) {
+//     const decodedToken = jwt_decode(token);
+//     return decodedToken.exp < Date.now() / 1000;
+// }
 
 async function refreshToken() {
     const refresh_token = localStorage.getItem('refresh_token');
@@ -282,7 +284,7 @@ const AuthLb = {
     login2fa,
     verify2fa,
     refreshToken,
-    isTokenExpired,
+    //isTokenExpired,
     isLoggedIn,
 };
 

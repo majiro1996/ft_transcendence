@@ -373,7 +373,11 @@ window.CommonLb = CommonLb;
 // Bootstrap alerts
 function showAlert(id)
 {
-    document.getElementById(id).style.display = 'block';
+    let alert = document.getElementById(id);
+    if (alert)
+    {
+        alert.style.display = 'block';
+    }
 }
 function hideAlert(node)
 {

@@ -49,3 +49,13 @@
 .overlay_content .form_settings_button {
     margin: 5px;
 }
+
+
+.alert_container {
+    padding-top: 100px;
+}
+
+
+.alert {
+    z-index: 1000;
+}
