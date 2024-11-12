@@ -1,5 +1,4 @@
-<div id="h_logo"><a id="logo_link_override" href="#" data-route="/">TRANSCENDENCE.</a></div>
-<!-- --------------- -->
+<!-- <div id="h_logo"><a id="logo_link_override" href="#" data-route="/">TRANSCENDENCE.</a></div>
 <div class="language_switcher_container" id="languageSwitcher">
 <button class="language-switcher" data-lang="en">EN</button>
 <button class="language-switcher" data-lang="es">ES</button>
@@ -8,4 +7,17 @@
 <div class="h_basic" id="h_tournaments"><a href="#tournaments">TOURNAMENT</a></div>
 <div class="h_basic" id="h_scores"><a href="#scores">SCORES</a></div>
 <div id="h_profile"> <a href="#profile">PROFILE</a></div>
-<div id="h_logout"> <a onclick="AuthLb.logout()">LOGOUT</a></div>
+<div id="h_logout"> <a onclick="AuthLb.logout()">LOGOUT</a></div> -->
+
+<div class="tr_header">
+    <div id="h_logo_container"><a href="#"><img id="h_logo" src="../media/Transcendence_Logo.svg"></a></div>
+    <div id="h_flag_container">
+        <button class="h_flag_button"><img class="h_flag" src="../media/spanish_flag.svg" data-lang="es"></button>
+        <button class="h_flag_button"><img class="h_flag" src="../media/uk_flag.svg" data-lang="en"></button>
+        <button class="h_flag_button"><img class="h_flag" src="../media/french_flag.svg" data-lang="fr"></button>
+    </div>
+    <div href="#tournaments" class="h_basic">TOURNAMENTS</div>
+    <a href="#scoreboard"><div class="h_basic">SCOREBOARD</div></a>
+    <a href="#profile"><div class="h_basic">PROFILE</div></a>
+    <button class="h_flag_button"><img id="h_logout" src="../media/logout_icon.svg" onclick="AuthLb.logout()"></button>
+</div>
