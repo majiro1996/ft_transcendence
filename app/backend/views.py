@@ -294,16 +294,16 @@ class FriendRequestView(APIView):
             return Response({'error': 'Invalid user'}, status=status.HTTP_400_BAD_REQUEST)
 
         if user_sender == user_receiver:
-            return Response({'error': 'You cannot send request to yourself'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'self-request'}, status=status.HTTP_400_BAD_REQUEST)
 
         if FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
-            return Response({'error': 'Request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'request-sent'}, status=status.HTTP_400_BAD_REQUEST)
 
         if FriendShip.objects.filter(user1=user_sender, user2=user_receiver).exists():
-            return Response({'error': 'You are already friends'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'alredy-friends'}, status=status.HTTP_400_BAD_REQUEST)
 
         FriendRequest.objects.create(userSender=user_sender, userReceiver=user_receiver)
-        return Response({'success': 'Friend request sent'}, status=status.HTTP_201_CREATED)
+        return Response({'success': 'request-sent'}, status=status.HTTP_201_CREATED)
     
     def delete(self, request):
         # Deletes a friend
@@ -311,11 +311,11 @@ class FriendRequestView(APIView):
         friend = User.objects.get(username=request.data.get('user'))
         if FriendShip.objects.filter(user1=user, user2=friend).exists():
             FriendShip.objects.filter(user1=user, user2=friend).delete()
-            return Response({'success': 'Friendship deleted'}, status=status.HTTP_200_OK)
+            return Response({'success': 'Friendship-deleted'}, status=status.HTTP_200_OK)
         elif FriendShip.objects.filter(user2=user, user1=friend).exists():
             FriendShip.objects.filter(user2=user, user1=friend).delete()
-            return Response({'success': 'Friendship deleted'}, status=status.HTTP_200_OK)
-        return Response({'error': 'Friendship does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success': 'Friendship-deleted'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Friendship-does-not-exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

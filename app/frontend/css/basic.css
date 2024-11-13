@@ -58,4 +58,9 @@
 
 .alert {
     z-index: 1000;
+    position: fixed; /* or fixed if you want it to be relative to the viewport */
+    top: 25%; /* Adjust as needed */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Center horizontally */
+    width: 100%; /* Adjust as needed */
 }
