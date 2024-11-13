@@ -97,12 +97,12 @@ async function verify2fa() {
 
         const result = await response.json();
 
-        if (result.error) {
+        if (!response.ok) {
             showAlert(result.error);
             return;
         }
         if (!result.access_token || !result.refresh_token) {
-            alert('Something went wrong');//remove
+            showAlert("login-error");
             return;
         }
         showAlert(result.success);

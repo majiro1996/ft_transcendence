@@ -374,10 +374,10 @@ window.CommonLb = CommonLb;
 function showAlert(id)
 {
     let alert = document.getElementById(id);
-    if (alert)
-    {
-        alert.style.display = 'block';
-    }
+    if(!alert)
+        return;
+    alert.style.display = 'block';
+    setTimeout(() => hideAlert(alert), 5000); // 5 seconds
 }
 function hideAlert(node)
 {
