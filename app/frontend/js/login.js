@@ -133,13 +133,13 @@ async function logout() {
 
         const data = await response.json();
 
-        if (data.error) {
+        if (!response.ok) {
             showAlert(data.error);
+            return;
         }
-        else if (data.success) {
+        if (data.success) {
             showAlert(data.success);
         }
-
         // Clear tokens from localStorage or sessionStorage
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
@@ -167,6 +167,10 @@ async function deleteAccount() {
 
         const data = await response.json();
 
+        if (!response.ok) {
+            showAlert(data.error);
+            return;
+        }
         if (data.success) {
             showAlert(data.success);
             localStorage.removeItem('access_token');
@@ -174,9 +178,6 @@ async function deleteAccount() {
             updateHeaderAndFooter(currentLang);
             window.location.hash = '#'; // redirect to home page
             console.log('Account deleted');
-        }
-        else if (data.error) {
-            showAlert(data.error);
         }
 
     } catch (error) {
@@ -198,6 +199,10 @@ async function anonymizeAccount() {
 
         const data = await response.json();
 
+        if (!response.ok) {
+            showAlert(data.error);
+            return;
+        }
         if (data.success) {
             showAlert(data.success);
             localStorage.removeItem('access_token');
@@ -206,23 +211,12 @@ async function anonymizeAccount() {
             window.location.hash = '#'; // redirect to home page
             console.log('Account anonymized');
         }
-        else if (data.error) {
-            showAlert(data.error);
-        }
 
     } catch (error) {
         console.error('Error:', error);
         alert('Error: ' + error);
     }
 }
-
-
-
-// remove
-// function isTokenExpired(token) {
-//     const decodedToken = jwt_decode(token);
-//     return decodedToken.exp < Date.now() / 1000;
-// }
 
 async function refreshToken() {
     const refresh_token = localStorage.getItem('refresh_token');
@@ -285,7 +279,6 @@ const AuthLb = {
     login2fa,
     verify2fa,
     refreshToken,
-    //isTokenExpired,
     isLoggedIn,
 };
 

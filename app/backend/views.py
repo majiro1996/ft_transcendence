@@ -195,6 +195,7 @@ class RefreshTokenAPIViewJWT(APIView):
 
 class LogoutAPIViewJWT(APIView):
      def post(self, request):
+        permission_classes = [IsAuthenticated]
         auth_header = request.headers.get('Authorization')
         if not auth_header or not auth_header.startswith('Bearer '):
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -249,6 +250,7 @@ class ProfileSettingsView(APIView):
             user.username = 'anon'+str(user.id)
             user.email = 'anon'+str(user.id)+'@anon.com'
             user.save()
+            return Response({'success': 'Account-anonymized-succes'}, status=status.HTTP_200_OK)
 
         # Check if new username or email already exists
         if 'username' in data and User.objects.filter(username=data['username']).exclude(id=user.id).exists():
