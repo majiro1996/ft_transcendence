@@ -329,16 +329,16 @@ class FriendRequestAcceptView(APIView):
         action = request.data.get('action')
 
         if not FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
-            return Response({'error': 'Request does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Request-does-not-exist'}, status=status.HTTP_400_BAD_REQUEST)
         
         if action == 'reject':
             FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
-            return Response({'success': 'Friend request rejected'}, status=status.HTTP_200_OK)
+            return Response({'success': 'Friend-request-rejected'}, status=status.HTTP_200_OK)
 
         FriendShip.objects.create(user1=user_sender, user2=user_receiver)
         FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
 
-        return Response({'success': 'Friend request accepted'}, status=status.HTTP_200_OK)
+        return Response({'success': 'Friend-request-accepted'}, status=status.HTTP_200_OK)
 
 class FriendRequestListView(APIView):
     permission_classes = [IsAuthenticated]
@@ -360,10 +360,15 @@ class CreateTournamentView(APIView):
         user = request.user
         tournament_name = request.data.get('tournament_name')
         user_guests = request.data.get('user_guests')
+        game_type = request.data.get('game_type')
+
+        if game_type not in ['pong', 'tic-tac-toe']:
+            return Response({'error': 'Invalid game type'}, status=status.HTTP_400_BAD_REQUEST)
+        
 
         #if there is a tournament of this host witout a winner, return error
         if Tournament.objects.filter(userHost=user, status=1).exists():
-            return Response({'error': 'You already have an ongoing tournament'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'tournament-already-open'}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(user_guests) != 7:
             return Response({'error': 'There must be 7 guests'}, status=status.HTTP_400_BAD_REQUEST)
