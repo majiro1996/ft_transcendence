@@ -113,18 +113,12 @@ class LoginAPIViewJWT(APIView):
         username = request.data.get('username')
         password = request.data.get('password')
 
-class LoginAPIViewJWT(APIView):
-     permission_classes = [AllowAny]
-
-     def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-
         user = authenticate(username=username, password=password)
-        if user.deleted == True:
-            return Response({'error': 'deleted-account'}, status=status.HTTP_400_BAD_REQUEST) 
 
         if user is not None:
+            if user.deleted:
+                return Response({'error': 'deleted-account'}, status=status.HTTP_400_BAD_REQUEST)
+
             if user.is_2fa_enabled:
                 user.otp_secret = pyotp.random_base32()
                 user.save()

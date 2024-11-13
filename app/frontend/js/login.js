@@ -59,7 +59,9 @@ async function login2fa() {
 
         const result = await response.json();
 
-        if (result.success === '2fa-required') {
+        if (!response.ok) {
+            showAlert(result.error);
+        } else if (result.success === '2fa-required') {
             showAlert(result.success);
             window.location.hash = '#auth2fa';
         } else if (result.access_token && result.refresh_token) {
@@ -70,9 +72,8 @@ async function login2fa() {
             window.location.hash = '#'  // redirect to home page
             RouterLb.updateHeaderAndFooter(currentLang);
             RouterLb.setPreferredLanguage();
-        } else if (result.error) {
-            showAlert(result.error);
         }
+
     } catch (error) {
         alert('Error: ' + error);
         console.error('Error:', error);
