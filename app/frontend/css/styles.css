@@ -26,6 +26,10 @@ a {
     margin: 0px;
 }
 
+.hr_form_separator {
+    margin-top: 25px;
+}
+
 .tr_header {
     height: 75px;
     background-color: black;
@@ -655,6 +659,96 @@ a {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+.tour_options_subscroll::-webkit-scrollbar {
+    display: none;
+}
+
+.tour_options_subscroll {
+    color: white;
+    overflow-y: scroll;
+    height: 465px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.tour_home_subscroll::-webkit-scrollbar {
+    display: none;
+}
+
+.tour_home_subscroll {
+    color: white;
+    overflow-y: scroll;
+    width: 75%;
+    margin-left: 12.5%;
+    height: 485px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.tour_request_item {
+    display: flex;
+    border: solid 1px #d9d441;
+    background-color: rgba(217, 212, 65, 0.2);
+    flex-direction: row;
+    width: 100%;
+    height: 78px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.tour_accepted_item {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 78px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.tour_name {
+    font-family: "JetBrains Mono";
+    color: #A6A6A7;
+    font-size: 10pt;
+    margin: 16px;
+    margin-top: 0px;
+}
+
+.lobby_player_card {
+    display: flex;
+    flex-direction: row;
+    width: 75%;
+    height: 50px;
+    margin-left: 12.5%;
+    margin-top: 15px;
+}
+
+.lobby_player_username {
+    font-size: 16pt;
+    margin-top: 10px;
+    flex-grow: 1;
+}
+
+.lobby_player_image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+
+.lobby_player_status_confirmed {
+    font-size: 24pt;
+    margin-top: 3px;
+    color: #2E9843;
+}
+
+.lobby_player_status_pending {
+    font-size: 24pt;
+    margin-top: 3px;
+    color: #D95C41;
+}
+
 
 #bg_video {
     position: fixed;
