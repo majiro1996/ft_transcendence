@@ -54,24 +54,7 @@ const routes = {
             description: "Ceci est la page d'accueil",
         }
     },
-    tournaments: {
-        onLoad: null,
-        en: {
-            template: "/html/templates/en/tournaments.html",
-            title: "Tournaments | " + pageTitle,
-            description: "This is the tournaments page",
-        },
-        es: {
-            template: "/html/templates/es/tournaments.html",
-            title: "Torneos | " + pageTitle,
-            description: "Esta es la página de torneos",
-        },
-        fr: {
-            template: "/html/templates/fr/tournaments.html",
-            title: "Tournois | " + pageTitle,
-            description: "Ceci est la page des tournois",
-        }
-    },
+
     register: {
         onLoad: null,
         en: {
@@ -183,25 +166,6 @@ const routes = {
         }
     },
 
-    createTournament: {
-        onLoad: undefined,
-        en: {
-            template: "/html/templates/en/create-tournament.html",
-            title: "Create Tournament | " + pageTitle,
-            description: "This is the create tournament page",
-        },
-        es: {
-            template: "/html/templates/es/create-tournament.html",
-            title: "Crear Torneo | " + pageTitle,
-            description: "Esta es la página de creación de torneos",
-        },
-        fr: {
-            template: "/html/templates/fr/create-tournament.html",
-            title: "Créer un tournoi | " + pageTitle,
-            description: "Ceci est la page de création de tournois",
-        }
-    },
-
     settings: {
         onLoad: CommonLb.getProfileSettings,
         en: {
@@ -221,6 +185,43 @@ const routes = {
         }
     },
 
+    createTournament: {
+        onLoad: undefined,
+        en: {
+            template: "/html/templates/en/tournament_create.html",
+            title: "Create Tournament | " + pageTitle,
+            description: "This is the create tournament page",
+        },
+        es: {
+            template: "/html/templates/es/tournament_create.html",
+            title: "Crear Torneo | " + pageTitle,
+            description: "Esta es la página de creación de torneos",
+        },
+        fr: {
+            template: "/html/templates/fr/tournament_create.html",
+            title: "Créer un tournoi | " + pageTitle,
+            description: "Ceci est la page de création de tournois",
+        }
+    },
+
+    tournaments: {
+        onLoad: LoadTournamentsHome,
+        en: {
+            template: "/html/templates/en/tournament_home.html",
+            title: "Tournaments | " + pageTitle,
+            description: "This is the tournaments page",
+        },
+        es: {
+            template: "/html/templates/es/tournament_home.html",
+            title: "Torneos | " + pageTitle,
+            description: "Esta es la página de torneos",
+        },
+        fr: {
+            template: "/html/templates/fr/tournament_home.html",
+            title: "Tournois | " + pageTitle,
+            description: "Ceci est la page des tournois",
+        }
+    },
     
     // Add other routes here
 };
