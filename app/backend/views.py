@@ -363,15 +363,17 @@ class CreateTournamentView(APIView):
         game_type = request.data.get('game_type')
 
         if game_type not in ['pong', 'tic-tac-toe']:
-            return Response({'error': 'Invalid game type'}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({'error': 'invalid-game-type'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if Tournament.objects.filter(tournamet_name=tournament_name).exists():
+            return Response({'error': 'tournament-name-taken'}, status=status.HTTP_400_BAD_REQUEST)
 
         #if there is a tournament of this host witout a winner, return error
         if Tournament.objects.filter(userHost=user, status=1).exists():
             return Response({'error': 'tournament-already-open'}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(user_guests) != 7:
-            return Response({'error': 'There must be 7 guests'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'not-enough-players'}, status=status.HTTP_400_BAD_REQUEST)
 
         if user in user_guests:
             return Response({'error': 'You cannot invite yourself'}, status=status.HTTP_400_BAD_REQUEST)
