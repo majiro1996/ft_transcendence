@@ -376,7 +376,7 @@ class CreateTournamentView(APIView):
             return Response({'error': 'not-enough-players'}, status=status.HTTP_400_BAD_REQUEST)
 
         if user in user_guests:
-            return Response({'error': 'You cannot invite yourself'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'self-request'}, status=status.HTTP_400_BAD_REQUEST)
         #guest must be unique and valid users
         for u in user_guests:
             if not User.objects.filter(username=u).exists():
@@ -440,19 +440,43 @@ class tournamentInviteAcceptView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        tournament_name = request.data.get('tournament_name')
         user_sender = request.data.get('user_sender')
         user_receiver = request.user
         action = request.data.get('action')
 
         if not TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
-            return Response({'error': 'Request does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'no-invite'}, status=status.HTTP_400_BAD_REQUEST)
         
         if action == 'reject':
             TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
             return Response({'success': 'Tournament invite rejected'}, status=status.HTTP_200_OK)
         
         tournament = TournamentInvite.objects.get(userSender=user_sender, userReceiver=user_receiver).tournament
-        tournament.accepted_invites += 1
+
+        # check what position the user is in the tournament
+        if tournament.userGuest0 == user_receiver.username:
+            position = 0
+        elif tournament.userGuest1 == user_receiver.username:
+            position = 1
+        elif tournament.userGuest2 == user_receiver.username:
+            position = 2
+        elif tournament.userGuest3 == user_receiver.username:
+            position = 3
+        elif tournament.userGuest4 == user_receiver.username:
+            position = 4
+        elif tournament.userGuest5 == user_receiver.username:
+            position = 5
+        elif tournament.userGuest6 == user_receiver.username:
+            position = 6
+        else:
+            return Response({'error': 'User not in tournament'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # set the user position to 1 in the accepted_invites field
+        accepted_invites = list(tournament.accepted_invites)
+        accepted_invites[position] = '1'
+        tournament.accepted_invites = ''.join(accepted_invites)
+
         tournament.save()
         TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
 
@@ -464,6 +488,7 @@ class TournamentInviteListView(APIView):
     def get(self, request):
         user = request.user
         tournament_invites = TournamentInvite.objects.filter(userReceiver=user)
+        
         return Response({
             'tournament_invites': [t.userSender.username for t in tournament_invites]
         }, status=status.HTTP_200_OK)
