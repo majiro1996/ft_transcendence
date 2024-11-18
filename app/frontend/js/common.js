@@ -383,10 +383,8 @@ async function acceptTourInvite(tournament, action) {
 
 }
 
-async function createTournament() {
+async function createTournament(game_type) {
     const tournament_name = document.getElementById('tournament_name').value;
-    const host = document.getElementById('host').value;
-    const game_type = document.getElementById('game_type').value;
     const guest0 = document.getElementById('guest0').value;
     const guest1 = document.getElementById('guest1').value;
     const guest2 = document.getElementById('guest2').value;
@@ -404,27 +402,21 @@ async function createTournament() {
             },
             body: JSON.stringify({
                 tournament_name: tournament_name,
-                host: host,
                 game_type: game_type,
-                guest0: guest0,
-                guest1: guest1,
-                guest2: guest2,
-                guest3: guest3,
-                guest4: guest4,
-                guest5: guest5,
-                guest6: guest6
+                user_guests: [guest0, guest1, guest2, guest3, guest4, guest5, guest6]
             })
         });
 
         const data = await response.json();
 
-        if (data.success) {
-            // redirect to tournament starting page // wip
-
+        if (!response.ok) {
+            showAlert(data.error);
+            console.log(data.error);
         }
 
-        else {
-            //show error alert // wip
+        if (data.success) {
+            // redirect to tournament starting page // wip
+            showAlert(data.success);
         }
 
     } catch (error) {
