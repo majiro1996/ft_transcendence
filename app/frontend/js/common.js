@@ -260,11 +260,11 @@ async function submitProfileSettings(settingType, value) {
     payload[settingType] = value;
     console.log(value);
 
-    if (value.length > 1)
+    if (value.length > 1 && settingType === 'password')
     {
         if (value[0] != value[1])
         {
-            alert('Passwords do not match');
+            showAlert('password-not-match');
             return;
         }
         payload[settingType] = value[0];
