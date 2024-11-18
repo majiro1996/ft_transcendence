@@ -64,7 +64,7 @@ async function LoadProfile() {
         data.user.requests.forEach(request => {
             var template = document.getElementById('request_template').cloneNode(true);
             if (request.profile_pic != null)
-                template.querySelector('img').src = request.profile_pic;
+                template.querySelector('img').src = "data:image/png;base64," + request.profile_pic;
             template.querySelector('#friend_username_template').textContent = request.user;
             if (request.online)
                 template.querySelector('#friend_status_template').textContent = 'Online';
@@ -82,7 +82,7 @@ async function LoadProfile() {
         data.user.friends.forEach(friend => {
             var template = document.getElementById('friend_template').cloneNode(true);
             if (friend.profile_pic != null)
-                template.querySelector('img').src = friend.profile_pic;
+                template.querySelector('img').src = "data:image/png;base64," + friend.profile_pic;
             template.querySelector('#friend_username_template').textContent = friend.user;
             if (friend.online)
                 template.querySelector('#friend_status_template').textContent = 'Online';
@@ -95,7 +95,41 @@ async function LoadProfile() {
             template.id = friend.user;
             document.getElementById('pr_friendbox').appendChild(template);
         });
-        //docume
+        data.user.history.forEach(game => {
+            if (game.winner == data.user.user) {
+                template = document.getElementById('pr_history_template_won').cloneNode(true);
+                template.querySelector('#pr_history_title_template').textContent = game.game;
+                template.querySelector('#pr_history_winner_template').textContent = data.user.user;
+                if (game.user1 == data.user.user)
+                    template.querySelector('#pr_history_opponent_template').textContent = game.user2;
+                else
+                    template.querySelector('#pr_history_opponent_template').textContent = game.user1;
+            }
+            else {
+                template = document.getElementById('pr_history_template_lost').cloneNode(true);
+                template.querySelector('#pr_history_title_template').textContent = game.game;
+                if (game.user1 == data.user.user)
+                    template.querySelector('#pr_history_opponent_template').textContent = game.user2;
+                else
+                    template.querySelector('#pr_history_opponent_template').textContent = game.user1;
+                template.querySelector('#pr_history_loser_template').textContent = data.user.user;
+            }
+            template.id = game.id;
+            document.getElementById('pr_history').appendChild(template);
+            if (document.getElementById('pr_history').style.display == 'none')
+                document.getElementById('pr_history').style = '';
+        });
+        document.getElementById('pr_history_template_won').remove();
+        document.getElementById('pr_history_template_lost').remove();
+        document.getElementById('pong_wins').textContent = data.user.game_stats["pong"].wins;
+        document.getElementById('pong_losses').textContent = data.user.game_stats["pong"].losses;
+        document.getElementById('pong_wr_text').textContent = data.user.game_stats["pong"].win_rate + '%';
+        document.getElementById('ttt_wins').textContent = data.user.game_stats["tic-tac-toe"].wins;
+        document.getElementById('ttt_losses').textContent = data.user.game_stats["tic-tac-toe"].losses;
+        document.getElementById('ttt_ties').textContent = data.user.game_stats["tic-tac-toe"].ties;
+        document.getElementById('ttt_wr_text').textContent = data.user.game_stats["tic-tac-toe"].win_rate + '%';
+        document.getElementById('pong_wr_bar').style.width = data.user.game_stats["pong"].bar_size + "px";
+        document.getElementById('ttt_wr_bar').style.width = data.user.game_stats["tic-tac-toe"].bar_size + "px";
     }
 
     catch (error) {
@@ -236,7 +270,8 @@ async function submitProfilePic() {
         const response = await fetch(apiurl + '/profile-settings/', {
             method: 'PUT',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('access_token'),            },
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+            },
             body: formData
         });
         const data = await response.json();
@@ -260,10 +295,8 @@ async function submitProfileSettings(settingType, value) {
     payload[settingType] = value;
     console.log(value);
 
-    if (value.length > 1 && settingType === 'password')
-    {
-        if (value[0] != value[1])
-        {
+    if (settingType === 'password') {
+        if (value[0] != value[1]) {
             showAlert('password-not-match');
             return;
         }
@@ -312,7 +345,7 @@ function LoadTicTacToe() {
     document.getElementById('two-players').addEventListener('click', () => {
         showGameBoard();
         loadGame('../TicTacToe/tictactoe.js');
-        });
+    });
 
     document.getElementById('one-player').addEventListener('click', () => {
         showDifficultySelection();
@@ -320,14 +353,12 @@ function LoadTicTacToe() {
 }
 
 
-function showDifficultySelection()
-{
+function showDifficultySelection() {
     document.getElementById('selection-screen').style.display = 'none';
     document.getElementById('difficulty-screen').style.display = 'flex';
 }
 
-function startGameWithDifficulty(difficulty)
-{
+function startGameWithDifficulty(difficulty) {
     localStorage.setItem('tictactoeDifficulty', difficulty);
 
     document.getElementById('difficulty-screen').style.display = 'none';
@@ -338,14 +369,12 @@ function startGameWithDifficulty(difficulty)
     document.body.appendChild(script);
 }
 
-function showGameBoard()
-{
+function showGameBoard() {
     document.getElementById('selection-screen').style.display = 'none';
     document.getElementById('game-board').style.display = 'block';
 }
 
-function loadGame(scriptName)
-{
+function loadGame(scriptName) {
     const script = document.createElement('script');
     script.src = scriptName;
     document.body.appendChild(script);
@@ -427,8 +456,8 @@ async function LoadTournamentsHome() {
             template.id = tournament.tournament_name;
         });
 
-    } 
-    
+    }
+
     catch (error) {
         console.error('Error:', error);
     }
@@ -510,11 +539,11 @@ async function getTournament() {
         const data = await response.json();
         //if there is no tournament 
     }
-    
-        catch (error) {
-            //if no tournament available  redirect to create tournament page // wip
-            window.location.href = '#/createTournament';
-        }
+
+    catch (error) {
+        //if no tournament available  redirect to create tournament page // wip
+        window.location.href = '#/createTournament';
+    }
 
 }
 
@@ -526,15 +555,13 @@ const CommonLb = {
 window.CommonLb = CommonLb;
 
 // Bootstrap alerts
-function showAlert(id)
-{
+function showAlert(id) {
     let alert = document.getElementById(id);
-    if(!alert)
+    if (!alert)
         return;
     alert.style.display = 'block';
     setTimeout(() => hideAlert(alert), 5000); // 5 seconds
 }
-function hideAlert(node)
-{
+function hideAlert(node) {
     node.style.display = 'none';
 }

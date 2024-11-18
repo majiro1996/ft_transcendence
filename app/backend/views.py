@@ -17,6 +17,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.postgres.fields import ArrayField 
+from django.db.models import Q
 import pyotp
 import logging
 import json
@@ -39,40 +40,9 @@ ONLINE_THRESHOLD = 60
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
-
-def index(request):
-	return render(request, 'html/index.html')
-
-def base_styles(request):
-	f = open('frontend/css/styles.css', 'r')
-	return HttpResponse(f.read(), content_type='text/css')
-
-def bootstrap_styles(request):
-	f = open('frontend/bootstrap/css/bootstrap.min.css', 'r')
-	return HttpResponse(f.read(), content_type='text/css')
-
-def bootstrap_js(request):
-	f = open('frontend/bootstrap/js/bootstrap.min.js', 'r')
-	return HttpResponse(f.read(), content_type='text/javascript')
-
-
-def font_base(request):
-	f = open('frontend/media/fonts/JetBrainsMono-Regular.woff2', 'rb')
-	return HttpResponse(f.read(), content_type='file/woff2')
-
-
-def font_bold(request):
-	f = open('frontend/media/fonts/JetBrainsMono-Bold.woff2', 'rb')
-	return HttpResponse(f.read(), content_type='file/woff2')
-
-def logo(request):
-	f = open('frontend/media/logo.svg', 'r')
-	return HttpResponse(f.read(), content_type='image/svg+xml')
-
-def bg_video(request):
-	f = open('frontend/media/LANDING_VIDEO.mp4', 'rb')
-	return FileResponse(f, content_type='video/mp4')
-    
+def update_last_online(user: User):
+    user.last_online = datetime.datetime.now(tz=datetime.timezone.utc)
+    user.save()
 
 #--------------------------------------------#
 #custom jwt api views
@@ -136,6 +106,7 @@ class LoginAPIViewJWT(APIView):
             else:
                 access_token = create_token(user.id, 'access')
                 refresh_token = create_token(user.id, 'refresh')
+                update_last_online(user)
                 return Response({
                     'access_token': access_token,
                     'refresh_token': refresh_token
@@ -168,6 +139,7 @@ class Login2fViewJWT(APIView):
         access_token = create_token(user.id, 'access')
         refresh_token = create_token(user.id, 'refresh')
 
+        update_last_online(user)
         return Response({
             'access_token': access_token,
             'refresh_token': refresh_token
@@ -193,6 +165,11 @@ class RefreshTokenAPIViewJWT(APIView):
         
         user_id = payload.get('user_id')
         token = create_token(user_id, 'access')
+
+        try:
+            update_last_online(User.objects.get(id=user_id))
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'token': token}, status=status.HTTP_200_OK)
 
@@ -234,6 +211,7 @@ class ProfileSettingsView(APIView):
 
     def get(self, request):
         user = request.user
+        update_last_online(user)
         return Response({
             'username': user.username,
             'email': user.email,
@@ -281,6 +259,8 @@ class ProfileSettingsView(APIView):
         access_token = create_token(user.id, 'access')
         refresh_token = create_token(user.id, 'refresh')
 
+        update_last_online(user)
+
         return Response({
             'access_token': access_token,
             'refresh_token': refresh_token,
@@ -301,21 +281,28 @@ class ProfileSettingsView(APIView):
             user = request.user
             user.profile_picture = picture.decode('utf-8')
             user.save()
+            update_last_online(user)
             return Response({'success': 'pic-updated'}, status=status.HTTP_200_OK)
         if not request.data.get('profile-picture'):
             user = request.user
             user.profile_picture = None
             user.save()
+            update_last_online(user)
             return Response({'success': 'pic-removed'}, status=status.HTTP_200_OK)
+        update_last_online(user)
         return Response({'error': 'Invalid-request'}, status=status.HTTP_400_BAD_REQUEST)
 
 class FriendRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_sender = User.objects.get(username=request.user)
-        user_receiver = User.objects.get(username=request.data.get('user_receiver'))
+        try:
+            user_sender = request.user
+            user_receiver = User.objects.get(username=request.data.get('user_receiver'))
+        except User.DoesNotExist:
+            return Response({'error': 'Invalid-user'}, status=status.HTTP_400_BAD_REQUEST)
 
+        update_last_online(user_sender)
         if user_sender != request.user:
             return Response({'error': 'Invalid user'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -332,9 +319,11 @@ class FriendRequestView(APIView):
         return Response({'success': 'request-sent'}, status=status.HTTP_201_CREATED)
     
     def delete(self, request):
-        # Deletes a friend
         user = request.user
-        friend = User.objects.get(username=request.data.get('user'))
+        try:
+            friend = User.objects.get(username=request.data.get('user'))
+        except User.DoesNotExist:
+            return Response({'error': 'Invalid-user'}, status=status.HTTP_400_BAD_REQUEST)
         if FriendShip.objects.filter(user1=user, user2=friend).exists():
             FriendShip.objects.filter(user1=user, user2=friend).delete()
             return Response({'success': 'Friendship-deleted'}, status=status.HTTP_200_OK)
@@ -350,7 +339,11 @@ class FriendRequestAcceptView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_sender = User.objects.get(username=request.data.get('user_sender'))
+        try:
+            user_sender = User.objects.get(username=request.data.get('user_sender'))
+        except User.DoesNotExist:
+            return Response({'error': 'Invalid-user'}, status=status.HTTP_400_BAD_REQUEST)
+        update_last_online(user_sender)
         user_receiver = request.user
         action = request.data.get('action')
 
@@ -372,6 +365,7 @@ class FriendRequestListView(APIView):
     def get(self, request):
         user = request.user
         friend_requests = FriendRequest.objects.filter(userReceiver=user)
+        update_last_online(user)
         return Response({
             'friend_requests': [f.userSender.username for f in friend_requests]
         }, status=status.HTTP_200_OK)
@@ -387,6 +381,8 @@ class CreateTournamentView(APIView):
         tournament_name = request.data.get('tournament_name')
         user_guests = request.data.get('user_guests')
         game_type = request.data.get('game_type')
+
+        update_last_online(user)
 
         if game_type not in ['pong', 'tic-tac-toe']:
             return Response({'error': 'invalid-game-type'}, status=status.HTTP_400_BAD_REQUEST)
@@ -431,10 +427,9 @@ class GetTournamenReadyView(APIView):
 
     def get(self, request):
         user = request.user
-        #returns the tournament that has all invites accepted and has not started
         tournament = Tournament.objects.filter(userHost=user, accepted_invites=7, status=0)
+        update_last_online(user)
         if not tournament.exists():
-        # returns the tournament that exists, but has not all invites accepted
             tournament = Tournament.objects.filter(userHost=user, status=0).filter(Q(accepted_invites__lt=7))
         if not tournament.exists():
             return Response({'error': 'no-tournament'}, status=status.HTTP_400_BAD_REQUEST)
@@ -457,6 +452,7 @@ class tournamentInviteAcceptView(APIView):
         tournament_name = request.data.get('tournament_name')
         user_sender = request.data.get('user_sender')
         user_receiver = request.user
+        update_last_online(user_receiver)
         action = request.data.get('action')
 
         if not TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
@@ -491,6 +487,7 @@ class GetTournamentView(APIView):
 
     def get(self, request):
         user = request.user
+        update_last_online(user)
         tournament_invites = TournamentInvite.objects.filter(userReceiver=user)
         tournaments = Tournament.objects.filter(userHost=user, guests__contains=[user.username], status=0)
 
@@ -542,7 +539,8 @@ class SetMatchResultView(APIView):
             user1_score=user1_score,
             user2_score=user2_score
         )
-
+        update_last_online(User.objects.get(username=user1))
+        update_last_online(User.objects.get(username=user2))
         return Response({'success': 'Match result recorded'}, status=status.HTTP_201_CREATED)
 
 
@@ -555,12 +553,13 @@ class GetMatchResultsView(APIView):
         match_results = MatchResult.objects.filter(game_type=game_type, user1=user)
         match_results2 = MatchResult.objects.filter(game_type=game_type, user2=user)
         match_results = match_results.union(match_results2)
+        update_last_online(User.objects.get(username=user))
         return Response({
             'match_results': [f'{m.user1.username} vs {m.user2.username} - {m.winner.username} won at {m.date}' for m in match_results]
         }, status=status.HTTP_200_OK)
         
 
-class GetGameStatsView(APIView):
+class GameStatsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -582,12 +581,40 @@ class GetGameStatsView(APIView):
         else:
             win_rate = 0
             bar_px = 0
+        update_last_online(User.objects.get(username=user))
         return Response({
             'wins': wins,
             'losses': losses,
             'win_rate': win_rate,
             'bar_size': bar_px
         }, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        try:
+            user1 = User.objects.get(username=request.data.get('user1'))
+            user2 = User.objects.get(username=request.data.get('user2'))
+            if request.data.get("winner") == "tie" and request.data.get("game_type") == "tic-tac-toe":
+                winner = None
+            else:
+                winner = User.objects.get(username=request.data.get('winner'))
+            if winner is not None and winner not in [user1, user2]:
+                return Response({'error': 'Invalid winner'}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({'error': 'Invalid user'}, status=status.HTTP_400_BAD_REQUEST)
+        game_type = request.data.get('game_type')
+        user1_score = request.data.get('user1_score')
+        user2_score = request.data.get('user2_score')
+        MatchResult.objects.create(
+            user1=user1,
+            user2=user2,
+            winner=winner,
+            game_type=game_type,
+            user1_score=user1_score,
+            user2_score=user2_score
+        )
+        update_last_online(User.objects.get(username=user1))
+        update_last_online(User.objects.get(username=user2))
+        return Response({'success': 'Match result recorded'}, status=status.HTTP_201_CREATED)
 
 
 class UsersListView(APIView):
@@ -615,42 +642,63 @@ class UsersListView(APIView):
                 'last_online': user.last_online,
                 'time_since_online': int(round((datetime.datetime.now(tz=datetime.timezone.utc) - user.last_online).total_seconds(), 0)),
                 'online': (datetime.datetime.now(tz=datetime.timezone.utc) - user.last_online).total_seconds() < ONLINE_THRESHOLD,
-                'deleted': user.deleted
+                'deleted': user.deleted,
+                'history': [],
+                'game_stats': {
+                    'pong': {
+                        'wins': 0,
+                        'losses': 0,
+                        'win_rate': 0,
+                        'bar_size': 0
+                    },
+                    'tic-tac-toe': {
+                        'wins': 0,
+                        'losses': 0,
+                        'win_rate': 0,
+                        'bar_size': 0
+                    }
+                }
             }
             user_json['friends'].extend([{"user": f.user1.username, "profile_pic": f.user1.profile_picture, "online": (datetime.datetime.now(tz=datetime.timezone.utc) - f.user1.last_online).total_seconds() < ONLINE_THRESHOLD} for f in FriendShip.objects.filter(user2=user)])
             if user == request.user and request.user.is_authenticated:
                 user_json['requests'] = [{"user": f.userSender.username, "profile_pic": f.userSender.profile_picture, "online": (datetime.datetime.now(tz=datetime.timezone.utc) - f.userSender.last_online).total_seconds() < ONLINE_THRESHOLD} for f in FriendRequest.objects.filter(userReceiver=user)]
+            match_results = []
+            for match in MatchResult.objects.filter(Q(user1=user) | Q(user2=user)):
+                if match.winner is None:
+                    continue
+                else:
+                    match_results.append({
+                        'user1': match.user1.username,
+                        'user2': match.user2.username,
+                        'winner': match.winner.username,
+                        'game': match.game_type.capitalize()
+                    })
+            user_json['history'] = match_results
+            user_json['history'] = user_json['history'][-5:]
+            user_json['history'] = user_json['history'][::-1]
+            total_pong = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='pong').count()
+            wins_pong = MatchResult.objects.filter(game_type='pong', winner=user).count()
+            losses_pong = total_pong - wins_pong
+            user_json['game_stats']['pong'] = {
+                'wins': wins_pong,
+                'losses': losses_pong,
+                'win_rate': (wins_pong / total_pong * 100) if total_pong > 0 else 0,
+                'bar_size': int((wins_pong / total_pong) * 600) if total_pong > 0 else 0
+            }
+            total_ttt = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='tic-tac-toe').count()
+            wins_ttt = MatchResult.objects.filter(game_type='tic-tac-toe', winner=user).count()
+            losses_ttt = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='tic-tac-toe').exclude(Q(winner=user) | Q(winner=None)).count()
+            ties_ttt = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='tic-tac-toe', winner=None).count()
+            user_json['game_stats']['tic-tac-toe'] = {
+                'wins': wins_ttt,
+                'losses': losses_ttt,
+                'ties': ties_ttt,
+                'win_rate': round(wins_ttt / total_ttt * 100, 2) if total_ttt > 0 else 0,
+                'bar_size': int((wins_ttt / total_ttt) * 600) if total_ttt > 0 else 0
+            }
             return Response({
                 'user': user_json
             }, status=status.HTTP_200_OK)
-        users = User.objects.all()
-        user_json_base = {
-            'user': '',
-            'friends': [],
-            'last_online': '',
-            'online': False,
-            'time_since_online': '',
-            'deleted': False
-        }
-        user_jsons = []
-        for u in users:
-            user_json = user_json_base.copy()
-            user_json['user'] = u.username
-            user_json['friends'] = [f.user2.username for f in FriendShip.objects.filter(user1=u)]
-            user_json['friends'].extend([f.user1.username for f in FriendShip.objects.filter(user2=u)])
-            user_json['last_online'] = u.last_online
-            time_since_online = datetime.datetime.now(tz=datetime.timezone.utc) - u.last_online
-            user_json['online'] = time_since_online.total_seconds() < ONLINE_THRESHOLD
-            user_json['time_since_online'] = time_since_online
-            user_json['deleted'] = u.deleted
-            user_jsons.append(user_json)
-        return Response({
-            'users': user_jsons 
-        }, status=status.HTTP_200_OK)
+        return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request):
-        user = User.objects.get(username=request.user)
-        user.last_online = datetime.datetime.now(tz=datetime.timezone.utc)
-        user.save()
-        return Response({'success': 'User online status updated'}, status=status.HTTP_200_OK)
 

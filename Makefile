@@ -12,8 +12,7 @@ down:
 re: down init up
 
 frontend:
-	docker compose down frontend
-	docker compose up frontend --force-recreate --build -d
+	docker compose down frontend && docker compose up frontend --force-recreate --build -d
 
 backend:
 	docker compose down backend
@@ -36,4 +35,4 @@ init:
 dbclean:
 	./scripts/dbclean.sh
 
-.PHONY: all build up down re fre attach prune fclean init dbclean
+.PHONY: all build up down re fre attach prune fclean init dbclean frontend backend
