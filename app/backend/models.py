@@ -56,7 +56,10 @@ class Tournament(models.Model):
     userGuest5 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest5')
     userGuest6 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest6')
 
-    accepted_invites = models.IntegerField(default=0)
+    #accepted_invites = models.IntegerField(default=0)
+    #store accetped invites in a number with a default value of 0000000
+    #each digit represents a user, 1 for accepted, 0 for not accepted
+    accepted_invites = models.CharField(max_length=7, default='0000000')
 
     firstMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='firstMatch', null=True, blank=True)
     secondMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='secondMatch', null=True, blank=True)

@@ -91,7 +91,7 @@ async function LoadProfile() {
             template.id = friend.user;
             document.getElementById('pr_friendbox').appendChild(template);
         });
-        document
+        //docume
     }
 
     catch (error) {
@@ -325,6 +325,63 @@ function pong_startGameWithDifficulty(difficulty) {
 // ----------------------
 
 //TOURNAMENTS
+
+async function LoadTournamentsHome() {
+    try {
+        const response = await fetch(apiurl + '/tournaments/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            showAlert(result.error);
+            return;
+        }
+        result.user.invites.forEach(invite => {
+            var template = document.getElementById('tour_invite_template').cloneNode(true);
+            template.querySelector('#tour_hostname_template').textContent = invite.host;
+            template.querySelector('#tour_name_template').textContent = invite.tournament_name;
+            template.querySelector('#tour_accept_template').id = 'accept-' + invite.tournament_name;
+            template.querySelector('#tour_decline_template').id = 'decline-' + invite.tournament_name;
+            template.style.display = 'flex';
+            template.id = invite.tournament_name;
+            document.getElementById('tour_home_subscoll').appendChild(template);
+        });
+        result.user.tournaments.forEach(tournament => {
+            var template = document.getElementById('tour_accepted_template').cloneNode(true);
+            template.querySelector('#tour_hostname_template').textContent = tournament.host;
+            template.querySelector('#tour_name_template').textContent = tournament.tournament_name;
+            template.style.display = 'flex';
+            template.id = tournament.tournament_name;
+        });
+
+    } 
+    
+    catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function acceptTourInvite(tournament, action) {
+    try {
+        const response = await fetch(apiurl + '/tournament-invite-accept/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                'action': action
+            })
+        });
+    }
+    catch (error) {
+        console.error('Error:', error);
+    }
+
+}
 
 async function createTournament() {
     const tournament_name = document.getElementById('tournament_name').value;
