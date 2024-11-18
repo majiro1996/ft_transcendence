@@ -15,6 +15,10 @@ frontend:
 	docker compose down frontend
 	docker compose up frontend --force-recreate --build -d
 
+backend:
+	docker compose down backend
+	docker compose up backend --force-recreate --build -d
+
 fre: fclean init up
 
 attach:

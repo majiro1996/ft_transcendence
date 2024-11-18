@@ -1,22 +1,20 @@
-
-
 <form>
     <div class="form_container">
         <div class="form_body_xl">
-            <p class="form_title">Crear nuevo torneo</p>
+            <p class="form_title">Create new Tournament</p>
             <div class="tour_create_subscroll">
-                <input class="form_field_with_margin" type="text" placeholder="Nombre del torneo"/>
-                <input class="form_field_with_margin" type="text" placeholder="Jugador 1"/>
-                <input class="form_field_with_margin" type="text" placeholder="Jugador 2"/>
-                <input class="form_field_with_margin" type="text" placeholder="Jugador 3"/>
-                <input class="form_field_with_margin" type="text" placeholder="Jugador 4"/>
-                <input class="form_field_with_margin" type="text" placeholder="Jugador 5"/>
-                <input class="form_field_with_margin" type="text" placeholder="Jugador 6"/>
-                <input class="form_field_with_margin" type="text" placeholder="Jugador 7"/>
+                <input id="tournament_name" class="form_field_with_margin" type="text" placeholder="Tournament Name"/>
+                <input id="guest0" class="form_field_with_margin" type="text" placeholder="Jugador 1"/>
+                <input id="guest1" class="form_field_with_margin" type="text" placeholder="Jugador 2"/>
+                <input id="guest2" class="form_field_with_margin" type="text" placeholder="Jugador 3"/>
+                <input id="guest3" class="form_field_with_margin" type="text" placeholder="Jugador 4"/>
+                <input id="guest4" class="form_field_with_margin" type="text" placeholder="Jugador 5"/>
+                <input id="guest5" class="form_field_with_margin" type="text" placeholder="Jugador 6"/>
+                <input id="guest6" class="form_field_with_margin" type="text" placeholder="Jugador 7"/>
             </div>
-            <button class="form_main_button">Crear Torneo [Pong]</button>
-            <button class="form_main_button_reduced_margin">Crear Torneo [Tic-Tac-Toe]</button>
-            <button class="form_settings_button">Volver</button>
+            <button class="form_main_button" onclick="createTournament('pong')" >Create Tournament [Pong]</button>
+            <button class="form_main_button_reduced_margin" onclick="createTournament('tic-tac-toe')" >Create Tournament [Tic-Tac-Toe]</button>
+            <button class="form_settings_button">Back</button>
         </div>
     </div>
 </form>

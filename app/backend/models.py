@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
 
 
 class Person(models.Model):
@@ -48,17 +49,8 @@ class FriendRequest(models.Model):
 class Tournament(models.Model):
     tournamet_name = models.CharField(max_length=30, unique=True, null=True)
     userHost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userHost')
-    userGuest0 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest0')
-    userGuest1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest1')
-    userGuest2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest2')
-    userGuest3 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest3')
-    userGuest4 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest4')
-    userGuest5 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest5')
-    userGuest6 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userGuest6')
+    guests = ArrayField(models.CharField(max_length=30), size=7, default=list)
 
-    #accepted_invites = models.IntegerField(default=0)
-    #store accetped invites in a number with a default value of 0000000
-    #each digit represents a user, 1 for accepted, 0 for not accepted
     accepted_invites = models.CharField(max_length=7, default='0000000')
 
     firstMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='firstMatch', null=True, blank=True)
@@ -80,7 +72,7 @@ class Tournament(models.Model):
     ]
 
     status = models.IntegerField(choices=STATUS_CHOICES, default=0)
-    game_type = models.CharField(max_length=30, default= 'pong')
+    game_type = models.CharField(max_length=30, default='pong')
 
 
 class TournamentInvite(models.Model):

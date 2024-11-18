@@ -16,6 +16,7 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import authenticate
+from django.contrib.postgres.fields import ArrayField 
 import pyotp
 import logging
 import json
@@ -405,20 +406,15 @@ class CreateTournamentView(APIView):
         #guest must be unique and valid users
         for u in user_guests:
             if not User.objects.filter(username=u).exists():
-                return Response({'error': f'User {u} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'user-not-exists', 'user': u}, status=status.HTTP_400_BAD_REQUEST)
             if user_guests.count(u) > 1:
-                return Response({'error': f'User {u} is duplicated'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'duplicated-user', 'user': u}, status=status.HTTP_400_BAD_REQUEST)
 
         tournament = Tournament.objects.create(
             tournamet_name=tournament_name,
             userHost=user,
-            userGuest0=user_guests[0],
-            userGuest1=user_guests[1],
-            userGuest2=user_guests[2],
-            userGuest3=user_guests[3],
-            userGuest4=user_guests[4],
-            userGuest5=user_guests[5],
-            userGuest6=user_guests[6]
+            game_type=game_type,
+            guests=user_guests
         )
 
         for u in user_guests:
@@ -441,23 +437,16 @@ class GetTournamenReadyView(APIView):
         # returns the tournament that exists, but has not all invites accepted
             tournament = Tournament.objects.filter(userHost=user, status=0).filter(Q(accepted_invites__lt=7))
         if not tournament.exists():
-            return Response({'error': 'No tournament available'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'no-tournament'}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response({
             'tournament': tournament.first().tournamet_name,
             'game_type': tournament.first().game_type,
-            'user_guests': [
-                tournament.first().userGuest0.username,
-                tournament.first().userGuest1.username,
-                tournament.first().userGuest2.username,
-                tournament.first().userGuest3.username,
-                tournament.first().userGuest4.username,
-                tournament.first().userGuest5.username,
-                tournament.first().userGuest6.username
-            ],
+            'guests': tournament.first().guests,
             'status': tournament.first().status,
+            'accepted_invites': tournament.first().accepted_invites
+        }, status=status.HTTP_200_OK)   
 
-        }, status=status.HTTP_200_OK)
         
 
         
@@ -474,58 +463,56 @@ class tournamentInviteAcceptView(APIView):
             return Response({'error': 'no-invite'}, status=status.HTTP_400_BAD_REQUEST)
         
         if action == 'reject':
-            TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
+            TournamentInvite.objects.filter(tournament=tournament_name, userSender=user_sender, userReceiver=user_receiver).delete()
             return Response({'success': 'Tournament invite rejected'}, status=status.HTTP_200_OK)
         
         tournament = TournamentInvite.objects.get(userSender=user_sender, userReceiver=user_receiver).tournament
+        
 
-        # check what position the user is in the tournament
-        if tournament.userGuest0 == user_receiver.username:
-            position = 0
-        elif tournament.userGuest1 == user_receiver.username:
-            position = 1
-        elif tournament.userGuest2 == user_receiver.username:
-            position = 2
-        elif tournament.userGuest3 == user_receiver.username:
-            position = 3
-        elif tournament.userGuest4 == user_receiver.username:
-            position = 4
-        elif tournament.userGuest5 == user_receiver.username:
-            position = 5
-        elif tournament.userGuest6 == user_receiver.username:
-            position = 6
-        else:
-            return Response({'error': 'User not in tournament'}, status=status.HTTP_400_BAD_REQUEST)
-
+        position = None
+        # check what position the user is in the guests list
+        for i, u in enumerate(tournament.guests):
+            if u == user_receiver:
+                position = i
+                break
+        
         # set the user position to 1 in the accepted_invites field
         accepted_invites = list(tournament.accepted_invites)
         accepted_invites[position] = '1'
         tournament.accepted_invites = ''.join(accepted_invites)
 
         tournament.save()
-        TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).delete()
+        TournamentInvite.objects.filter(tournament=tournament_name, userSender=user_sender, userReceiver=user_receiver).delete()
 
         return Response({'success': 'Tournament invite accepted'}, status=status.HTTP_200_OK)
 
-class TournamentInviteListView(APIView):
+class GetTournamentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
         tournament_invites = TournamentInvite.objects.filter(userReceiver=user)
-        
-        return Response({
-            'tournament_invites': [t.userSender.username for t in tournament_invites]
-        }, status=status.HTTP_200_OK)
+        tournaments = Tournament.objects.filter(userHost=user, guests__contains=[user.username], status=0)
 
-class TournamentGetView(APIView):
-    permission_classes = [IsAuthenticated]
+        invites_data = []
+        for invite in tournament_invites:
+            invites_data.append({
+                'host': invite.userSender.username,
+                'tournament_name': invite.tournament.tournamet_name
+            })
 
-    def get(self, request):
-        user = request.user
-        tournaments = Tournament.objects.filter(userHost=user)
+        tournaments_data = []
+        for tournament in tournaments:
+            tournaments_data.append({
+                'host': tournament.userHost.username,
+                'tournament_name': tournament.tournamet_name
+            })
+
         return Response({
-            'tournaments': [t.userGuest0.username for t in tournaments]
+            'user': {
+                'invites': invites_data,
+                'tournaments': tournaments_data
+            }
         }, status=status.HTTP_200_OK)
 
 
