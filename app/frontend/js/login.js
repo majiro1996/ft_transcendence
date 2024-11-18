@@ -3,7 +3,7 @@ const backendUrl = BACKEND_API_URL;
 const backendPort = BACKEND_PORT;
 
 //let apiurl = `${backendUrl}:${backendPort}`;
-let apiurl = "http://" + backendUrl + ":" + backendPort;
+let apiurl = "//" + backendUrl;
 
 window.apiurl = apiurl;
 

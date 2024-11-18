@@ -221,6 +221,24 @@ const routes = {
         }
     },
 
+    friends: {
+        onLoad: LoadFriends,
+        en: {
+            template: "/html/templates/en/friends.html",
+            title: "Friends | " + pageTitle,
+            description: "This is the friends page",
+        },
+        es: {
+            template: "/html/templates/es/friends.html",
+            title: "Amigos | " + pageTitle,
+            description: "Esta es la página de amigos",
+        },
+        fr: {
+            template: "/html/templates/fr/friends.html",
+            title: "Amis | " + pageTitle,
+            description: "Ceci est la page des amis",
+        }
+    },
     
     // Add other routes here
 };
@@ -229,7 +247,6 @@ const routes = {
 async function locationHandler() {
     const path = window.location.hash.substring(1) || '/';
     const route = routes[path] ? routes[path][currentLang] : routes['404'][currentLang];
-    console.log(route);
 
     //check if the path does indeed exist as a file
     const response = await fetch(route.template);

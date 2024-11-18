@@ -28,7 +28,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AUTH_USER_MODEL = 'backend.User'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -61,13 +61,25 @@ frontend_url = os.getenv('FRONTEND_URL')
 frontend_port = os.getenv('FRONTEND_PORT')
 frontend_port_ssl = os.getenv('FRONTEND_PORT_SSL')
 
-#CORS_ALLOWED_ALL_ORIGINS = True # development only # remove
 CORS_ALLOWED_ORIGINS = [
 	f'http://{frontend_url}:{frontend_port}',
 	f'https://{frontend_url}:{frontend_port_ssl}',
 	f'http://{frontend_url}',
 	f'https://{frontend_url}',
 ]
+CORS_ALLOW_CREDENTIALS = True  # Allow cookies/auth headers
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+    "x-csrftoken",
+]
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+
+# Optional: Allow wildcard origins in development
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+	CORS_ALLOW_ALL_ORIGINS = False
 
 ROOT_URLCONF = 'backend.urls'
 

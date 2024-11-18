@@ -15,7 +15,7 @@ for var in $env_vars; do
 done
 
 # Replace variables in nginx.conf file
-envsubst '$FRONTEND_PORT $FRONTEND_PORT_SSL' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+envsubst '$FRONTEND_PORT $FRONTEND_PORT_SSL $BACKEND_PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 
 # Start the Nginx server

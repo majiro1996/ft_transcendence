@@ -1,0 +1,20 @@
+<div class="form_container">
+    <div class="form_body_xs">
+        <p class="form_title">Editar lista de amigos</p>
+        <div class="form_field_with_button_container">
+            <input class="form_field_with_button" placeholder="Nombre del amigo" type="text"/>
+            <button class="form_embedded_submit_button"> +</button>
+        </div>
+        <div id="pr_friendbox_editor">
+            <div class="pr_friend_item_editor" id="friend_template" hidden>
+                <img id="template_image" class="pr_friend_image" src="../media/placeholders/CK.jpg">
+                <div class="pr_friend_info">
+                    <p id="template_username" class="pr_friend_username">Amigo1</p>
+                    <p id="template_status" class="pr_friend_status_on">Conectado</p>
+                </div>
+                <button class="pr_friend_delete" onclick="DeleteFriend(this.parentNode.id)">X</button>
+            </div>
+        </div>
+        <a href="settings.html"><button class="form_main_button_fle">Volver</button></a>
+    </div>
+</div>

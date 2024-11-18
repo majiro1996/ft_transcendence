@@ -59,7 +59,7 @@ async function LoadProfile() {
             document.getElementById('pr_friend_count_number').textContent = data.user.friends.length;
         data.user.requests.forEach(request => {
             var template = document.getElementById('request_template').cloneNode(true);
-           if (request.profile_pic != null)
+            if (request.profile_pic != null)
                 template.querySelector('img').src = request.profile_pic;
             template.querySelector('#friend_username_template').textContent = request.user;
             if (request.online)
@@ -140,22 +140,58 @@ async function acceptFriendRequest(friend, action) {
 
 }
 
-async function DeleteFriend(friend) {
+async function LoadFriends() {
     try {
-        const response = await fetch(apiurl + '/friend-request/', {
-            method: 'DELETE',
+        const response = await fetch(apiurl + '/users/', {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem('access_token')
-            },
-            body: JSON.stringify({
-                'user': friend
-            })
+            }
+        });
+        const data = await response.json();
+        console.log(data);
+        data.user.friends.forEach(friend => {
+            var template = document.getElementById('friend_template').cloneNode(true);
+            if (friend.profile_pic != null)
+                template.querySelector('img').src = friend.profile_pic;
+            else
+                template.querySelector('img').src = '/media/Profile_avatar_placeholder_large.png';
+            template.querySelector('#template_username').textContent = friend.user;
+            if (friend.online)
+                template.querySelector('#template_status').textContent = 'Online';
+            else {
+                template.querySelector('#template_status').textContent = 'Offline';
+                template.querySelector('#template_status').classList.add('pr_friend_status_off');
+                template.querySelector('#template_status').classList.remove('pr_friend_status_on');
+            }
+            template.style.display = 'flex';
+            template.id = friend.user;
+            template.hidden = false;
+            document.getElementById('pr_friendbox_editor').appendChild(template);
         });
     }
     catch (error) {
         console.error('Error:', error);
     }
+}
+
+async function DeleteFriend(friend) {
+    // try {
+    //     const response = await fetch(apiurl + '/friend-request/', {
+    //         method: 'DELETE',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+    //         },
+    //         body: JSON.stringify({
+    //             'user': friend
+    //         })
+    //     });
+    // }
+    // catch (error) {
+    //     console.error('Error:', error);
+    // }
     console.log(friend);
 }
 
