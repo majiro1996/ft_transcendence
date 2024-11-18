@@ -2,8 +2,8 @@
     <div class="form_body_xs">
         <p class="form_title">Editar lista de amigos</p>
         <div class="form_field_with_button_container">
-            <input class="form_field_with_button" placeholder="Nombre del amigo" type="text"/>
-            <button class="form_embedded_submit_button"> +</button>
+            <input id="friend_name" class="form_field_with_button" placeholder="Nombre del amigo" type="text"/>
+            <button class="form_embedded_submit_button" onclick="SendFriendRequest()"> +</button>
         </div>
         <div id="pr_friendbox_editor">
             <div class="pr_friend_item_editor" id="friend_template" hidden>

@@ -8,3 +8,4 @@ djangorestframework-simplejwt>=5.0.0
 setuptools==65.5.0
 pyotp
 django-cors-headers
+Pillow

@@ -53,6 +53,10 @@ async function LoadProfile() {
         const data = await response.json();
         console.log(data);
         document.getElementById('pr_username').textContent = data.user.user;
+        if (data.user.profile_pic != null)
+            document.getElementById('pr_user_image').src = "data:image/png;base64," + data.user.profile_pic;
+        else
+            document.getElementById('pr_user_image').src = '/media/Profile_avatar_placeholder_large.png';
         if (data.user.requests.length != 0)
             document.getElementById('pr_friend_count_number').textContent = data.user.friends.length + ' (' + data.user.requests.length + ')';
         else
@@ -177,28 +181,94 @@ async function LoadFriends() {
 }
 
 async function DeleteFriend(friend) {
-    // try {
-    //     const response = await fetch(apiurl + '/friend-request/', {
-    //         method: 'DELETE',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Authorization': 'Bearer ' + localStorage.getItem('access_token')
-    //         },
-    //         body: JSON.stringify({
-    //             'user': friend
-    //         })
-    //     });
-    // }
-    // catch (error) {
-    //     console.error('Error:', error);
-    // }
+    try {
+        const response = await fetch(apiurl + '/friend-request/', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                'user': friend
+            })
+        });
+        document.getElementById(friend).remove();
+    }
+    catch (error) {
+        console.error('Error:', error);
+    }
     console.log(friend);
+}
+
+async function SendFriendRequest() {
+    const friend = document.getElementById('friend_name').value;
+    try {
+        const response = await fetch(apiurl + '/friend-request/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                'user_receiver': friend
+            })
+        });
+        const data = await response.json();
+        if (data.success) {
+            //show success alert
+            alert('Friend request sent');
+        }
+        else {
+            //show error alert
+            alert('Error sending friend request');
+        }
+    }
+    catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function submitProfilePic() {
+    const profile_pic = document.getElementById('profile_picture').files[0];
+    const formData = new FormData();
+    formData.append('profile-picture', profile_pic);
+    try {
+        const response = await fetch(apiurl + '/profile-settings/', {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token'),            },
+            body: formData
+        });
+        const data = await response.json();
+        console.log(data);
+        if (data.success) {
+            showAlert(data.success);
+        }
+        else {
+            showAlert(data.error);
+        }
+    }
+    catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 // Function to handle POST request when form is submitted
 async function submitProfileSettings(settingType, value) {
     const payload = {};
+    debugger;
     payload[settingType] = value;
+    console.log(value);
+
+    if (value.length > 1)
+    {
+        if (value[0] != value[1])
+        {
+            alert('Passwords do not match');
+            return;
+        }
+        payload[settingType] = value[0];
+    }
 
     try {
         const response = await fetch(apiurl + '/profile-settings/', {

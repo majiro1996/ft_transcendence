@@ -9,6 +9,14 @@
             <input class="form_field_with_button" placeholder="Change email" type="text" id="email"/>
             <button class="form_embedded_submit_button" onclick="submitProfileSettings('email', document.getElementById('email').value)"> -></button>
         </div>
+        <div class="form_field_with_button_container">
+            <input class="form_field_with_button" placeholder="Change password" type="password" id="password"/>
+            <!-- <button class="form_embedded_submit_button" onclick="submitProfileSettings('password', document.getElementById('email').value)"> -></button> -->
+        </div>
+        <div class="form_field_with_button_container">
+            <input class="form_field_with_button" placeholder="Confirm password" type="password" id="password-confirm"/>
+            <button class="form_embedded_submit_button" onclick="submitProfileSettings('password', [document.getElementById('password').value, document.getElementById('password-confirm').value])"> -></button>
+        </div>
         <div class="form_label_with_checkbox_container">
             <p class="form_checkbox_label">Enable 2FA</p>
             <input type="checkbox" class="form_embedded_checkbox" id="2fa_enabled" onchange="submitProfileSettings('2fa_enabled', this.checked)">
@@ -22,8 +30,8 @@
             </select>
             <button class="form_embedded_submit_button" onclick="submitProfileSettings('language_preference', document.getElementById('language_preference').value)"> -></button>
         </div>
-        
-        <button class="form_settings_button">Change profile picture</button>
+        <button class="form_settings_button" onclick="document.getElementById('profile_picture').click()">Change profile picture</button>
+        <input type="file" id="profile_picture" style="display: none;" onchange="submitProfilePic()" accept="image/*">
         <a href="#friends"><button class="form_settings_button">Add/Remove friends</button></a>
         <button class="form_settings_button" onclick="showItem('anonymize_confirmation_overlay')">Anonymize account</button>
         <button class="form_settings_button" onclick="showItem('delete_confirmation_overlay')">Delete account [!]</button>

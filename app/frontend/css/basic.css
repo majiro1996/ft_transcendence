@@ -52,15 +52,8 @@
 
 
 .alert_container {
-    padding-top: 100px;
-}
-
-
-.alert {
-    z-index: 1000;
-    position: fixed; /* or fixed if you want it to be relative to the viewport */
-    top: 25%; /* Adjust as needed */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Center horizontally */
-    width: 100%; /* Adjust as needed */
+    padding-top: 90px;
+    padding-left: 20px;
+    padding-right: 20px;
+    z-index: 1;
 }

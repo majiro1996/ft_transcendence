@@ -141,7 +141,7 @@ a {
     font-family: "JetBrains Mono";
     background-color: black;
     width: 550px;
-    height: 900px;
+    height: 1100px;
     border: 1px solid white;
     margin-bottom: 20px;
 }
@@ -203,7 +203,7 @@ a {
     padding-left: 11.5%;
     border: 1px solid white;
     background-color: black;
-    flex-grow: 2;
+    flex-grow: 0;
 }
 
 .form_embedded_submit_button {

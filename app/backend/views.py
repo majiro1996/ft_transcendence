@@ -20,6 +20,9 @@ import pyotp
 import logging
 import json
 import datetime
+import base64
+from PIL import Image
+import io
 
 # for custom jwt
 from django.contrib.auth import authenticate
@@ -251,7 +254,6 @@ class ProfileSettingsView(APIView):
             user.email = 'anon'+str(user.id)+'@anon.com'
             user.save()
             return Response({'success': 'Account-anonymized-succes'}, status=status.HTTP_200_OK)
-
         # Check if new username or email already exists
         if 'username' in data and User.objects.filter(username=data['username']).exclude(id=user.id).exists():
             return Response({'error': 'user-exists-alert'}, status=status.HTTP_400_BAD_REQUEST)
@@ -269,6 +271,8 @@ class ProfileSettingsView(APIView):
             user.is_2fa_enabled = data['2fa_enabled']
         if 'language_preference' in data:
             user.language_preference = data['language_preference']
+        if 'password' in data:
+            user.set_password(data['password'])
 
         user.save()
 
@@ -282,12 +286,33 @@ class ProfileSettingsView(APIView):
             'success': 'Profile-updated'
         }, status=status.HTTP_200_OK)
     
+    def put(self, request):
+        if (request.user.is_authenticated and request.data.get('profile-picture')):
+            picture = base64.b64encode(request.data.get('profile-picture').read())
+            pil_image = Image.open(io.BytesIO(base64.b64decode(picture)))
+            width, height = pil_image.size
+            if len(picture) > 8000000:
+                return Response({'error': 'file-size'}, status=status.HTTP_400_BAD_REQUEST)
+            if pil_image.format not in ['JPEG', 'PNG']:
+                return Response({'error': 'file-type'}, status=status.HTTP_400_BAD_REQUEST)
+            if width > 500 or height > 500:
+                return Response({'error': 'file-dimensions'}, status=status.HTTP_400_BAD_REQUEST)
+            user = request.user
+            user.profile_picture = picture.decode('utf-8')
+            user.save()
+            return Response({'success': 'pic-updated'}, status=status.HTTP_200_OK)
+        if not request.data.get('profile-picture'):
+            user = request.user
+            user.profile_picture = None
+            user.save()
+            return Response({'success': 'pic-removed'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Invalid-request'}, status=status.HTTP_400_BAD_REQUEST)
 
 class FriendRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_sender = User.objects.get(username=request.data.get('user'))
+        user_sender = User.objects.get(username=request.user)
         user_receiver = User.objects.get(username=request.data.get('user_receiver'))
 
         if user_sender != request.user:
