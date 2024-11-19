@@ -33,7 +33,7 @@ async function getProfileSettings() {
         document.getElementById('2fa_enabled').checked = data['2fa_enabled'];
         document.getElementById('language_preference').value = data.language_preference;
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");
     }
 }
 
@@ -51,7 +51,6 @@ async function LoadProfile() {
         }
 
         const data = await response.json();
-        console.log(data);
         document.getElementById('pr_username').textContent = data.user.user;
         if (data.user.profile_pic != null)
             document.getElementById('pr_user_image').src = "data:image/png;base64," + data.user.profile_pic;
@@ -133,7 +132,7 @@ async function LoadProfile() {
     }
 
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
@@ -152,7 +151,7 @@ async function acceptFriendRequest(friend, action) {
         });
     }
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
     if (action == 'accept') {
         var new_friend = document.getElementById(friend.parentNode.id).cloneNode(true);
@@ -188,11 +187,10 @@ async function LoadFriends() {
             }
         });
         const data = await response.json();
-        console.log(data);
         data.user.friends.forEach(friend => {
             var template = document.getElementById('friend_template').cloneNode(true);
             if (friend.profile_pic != null)
-                template.querySelector('img').src = friend.profile_pic;
+                template.querySelector('img').src = "data:image/png;base64," + friend.profile_pic;
             else
                 template.querySelector('img').src = '/media/Profile_avatar_placeholder_large.png';
             template.querySelector('#template_username').textContent = friend.user;
@@ -210,7 +208,7 @@ async function LoadFriends() {
         });
     }
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
@@ -229,9 +227,8 @@ async function DeleteFriend(friend) {
         document.getElementById(friend).remove();
     }
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
-    console.log(friend);
 }
 
 async function SendFriendRequest() {
@@ -248,17 +245,13 @@ async function SendFriendRequest() {
             })
         });
         const data = await response.json();
-        if (data.success) {
-            //show success alert
-            alert('Friend request sent');
-        }
-        else {
-            //show error alert
-            alert('Error sending friend request');
-        }
+        if (data.success) 
+            showAlert(data.success);
+        else 
+            showAlert(data.error);
     }
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");
     }
 }
 
@@ -275,7 +268,6 @@ async function submitProfilePic() {
             body: formData
         });
         const data = await response.json();
-        console.log(data);
         if (data.success) {
             showAlert(data.success);
         }
@@ -284,7 +276,7 @@ async function submitProfilePic() {
         }
     }
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
@@ -293,7 +285,6 @@ async function submitProfileSettings(settingType, value) {
     const payload = {};
     debugger;
     payload[settingType] = value;
-    console.log(value);
 
     if (settingType === 'password') {
         if (value[0] != value[1]) {
@@ -317,7 +308,7 @@ async function submitProfileSettings(settingType, value) {
 
         if (data.success) {
             // show success alert
-            alert('Settings updated successfully');
+            showAlert(data.success);
             // reset the jwt tokens if provided
             if (data.access_token) {
                 localStorage.setItem('access_token', data.access_token);
@@ -326,7 +317,7 @@ async function submitProfileSettings(settingType, value) {
                 localStorage.setItem('refresh_token', data.refresh_token);
             }
         } else {
-            alert('Error updating settings');
+            showAlert(data.error);
         }
 
         if (settingType === 'language_preference') {
@@ -334,7 +325,7 @@ async function submitProfileSettings(settingType, value) {
             RouterLb.setLanguage(value);
         }
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
@@ -460,7 +451,7 @@ async function LoadTournamentsHome() {
     }
 
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
@@ -497,7 +488,7 @@ async function acceptTourInvite(tournament, action) {
             document.getElementById(tournament.parentNode.id).remove();
     }
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 
 }
@@ -530,7 +521,6 @@ async function createTournament(game_type) {
 
         if (!response.ok) {
             showAlert(data.error);
-            console.log(data.error);
         }
 
         if (data.success) {
@@ -540,7 +530,7 @@ async function createTournament(game_type) {
         }
 
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
@@ -607,6 +597,29 @@ async function getTournament() {
 
 }
 
+async function LoadScores() {
+    try {
+        const response = await fetch(apiurl + '/leaderboard/', {
+            method: 'GET',
+        });
+        const data = await response.json();
+        console.log(data);
+        data.leaderboard.forEach(user => {
+            var template = document.getElementById('template_score').cloneNode(true);
+            template.querySelector('#template_rank').textContent = user.rank;
+            template.querySelector('#template_name').textContent = user.user;
+            template.querySelector('#template_wins').textContent = user.wins;
+            template.style = '';
+            template.id = user.user;
+            document.getElementById('scoreboard').appendChild(template);
+        });
+        document.getElementById('template_score').remove();
+    }
+    catch (error) {
+        showAlert("something-went-wrong");;
+    }
+}
+
 const CommonLb = {
     getProfileSettings,
     submitProfileSettings
@@ -616,6 +629,7 @@ window.CommonLb = CommonLb;
 
 // Bootstrap alerts
 function showAlert(id) {
+    hideAllAlerts();
     let alert = document.getElementById(id);
     if (!alert)
         return;
@@ -624,6 +638,12 @@ function showAlert(id) {
 }
 function hideAlert(node) {
     node.style.display = 'none';
+}
+
+function hideAllAlerts() {
+    document.querySelectorAll('.alert').forEach(alert => {
+        alert.style.display = 'none';
+    });
 }
 
 

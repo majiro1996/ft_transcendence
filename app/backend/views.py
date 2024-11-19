@@ -58,6 +58,18 @@ class SignUpAPIViewJWT(APIView):
         #checks if the username is a combination of anon and a number
         if username[:4] == 'anon' and username[4:].isdigit():
             return Response({'error': 'invalid-username'}, status=status.HTTP_400_BAD_REQUEST)
+
+        #checks if username is longer than 16 characters
+        if len(username) > 16:
+            return Response({'error': 'username-too-long'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        #checks if password is shorter than 8 characters, doesn't have a number, a capital letter and a special character
+        if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isupper() for char in password) or not any(not char.isalnum() for char in password) or not any(char.islower() for char in password):
+            return Response({'error': 'invalid-password'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        #checks if email is valid
+        if not '@' in email or not '.' in email:
+            return Response({'error': 'invalid-email'}, status=status.HTTP_400_BAD_REQUEST)
     
         if User.objects.filter(username=username).exists():
             return Response({'error': 'user-exists-alert'}, status=status.HTTP_400_BAD_REQUEST)
@@ -241,6 +253,15 @@ class ProfileSettingsView(APIView):
         if 'language_preference' in data and data['language_preference'] not in ['en', 'es', 'fr']:
             return Response({'error': 'Invalid-language-preference'}, status=status.HTTP_400_BAD_REQUEST)
 
+        if 'username' in data and data['username'][:4] == 'anon' and data['username'][4:].isdigit():
+            return Response({'error': 'invalid-username'}, status=status.HTTP_400_BAD_REQUEST)
+        if 'username' in data and len(data['username']) > 16:
+            return Response({'error': 'username-too-long'}, status=status.HTTP_400_BAD_REQUEST)
+        if 'password' in data and (len(data['password']) < 8 or not any(char.isdigit() for char in data['password']) or not any(char.isupper() for char in data['password']) or not any(not char.isalnum() for char in data['password']) or not any(char.islower() for char in data['password'])):
+            return Response({'error': 'invalid-password'}, status=status.HTTP_400_BAD_REQUEST)
+        if 'email' in data and (not '@' in data['email'] or not '.' in data['email']):
+            return Response({'error': 'invalid-email'}, status=status.HTTP_400_BAD_REQUEST)
+
         # Update user fields if they are provided in the request
         if 'username' in data:
             user.username = data['username']
@@ -316,7 +337,7 @@ class FriendRequestView(APIView):
             return Response({'error': 'alredy-friends'}, status=status.HTTP_400_BAD_REQUEST)
 
         FriendRequest.objects.create(userSender=user_sender, userReceiver=user_receiver)
-        return Response({'success': 'request-sent'}, status=status.HTTP_201_CREATED)
+        return Response({'success': 'request-sent-ok'}, status=status.HTTP_201_CREATED)
     
     def delete(self, request):
         user = request.user
@@ -691,7 +712,7 @@ class UsersListView(APIView):
             user_json['game_stats']['pong'] = {
                 'wins': wins_pong,
                 'losses': losses_pong,
-                'win_rate': (wins_pong / total_pong * 100) if total_pong > 0 else 0,
+                'win_rate': round((wins_pong / total_pong * 100), 2) if total_pong > 0 else 0,
                 'bar_size': int((wins_pong / total_pong) * 600) if total_pong > 0 else 0
             }
             total_ttt = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='tic-tac-toe').count()
@@ -710,6 +731,25 @@ class UsersListView(APIView):
             }, status=status.HTTP_200_OK)
         return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
+class LeaderboardView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        users = User.objects.all()
+        user_data = []
+        for user in users:
+            total_wins = MatchResult.objects.filter(winner=user).count()
+            user_data.append({
+                'rank': 0,
+                'user': user.username,
+                'wins': total_wins,
+            })
+        user_data = sorted(user_data, key=lambda x: x['wins'], reverse=True)
+        for i, user in enumerate(user_data):
+            user['rank'] = i + 1
+        return Response({
+            'leaderboard': user_data
+        }, status=status.HTTP_200_OK)
 
 
 class TournamentOptionsView(APIView):

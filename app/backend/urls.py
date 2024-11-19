@@ -52,4 +52,5 @@ urlpatterns = [
 
 	#TEST REMOVE
 	path('test-users/', TestUsersAPIView.as_view(), name='test-users'),
+	path('leaderboard/', views.LeaderboardView.as_view(), name='leaderboard'),
 ]

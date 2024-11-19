@@ -258,7 +258,24 @@ const routes = {
             description: "Ceci est la page des options de tournoi",
         }
     },
-    
+    scoreboard: {
+        onLoad: LoadScores,
+        en: {
+            template: "/html/templates/en/scores.html",
+            title: "Scores | " + pageTitle,
+            description: "This is the scores page",
+        },
+        es: {
+            template: "/html/templates/es/scores.html",
+            title: "Puntuaciones | " + pageTitle,
+            description: "Esta es la página de puntuaciones",
+        },
+        fr: {
+            template: "/html/templates/fr/scores.html",
+            title: "Scores | " + pageTitle,
+            description: "Ceci est la page des scores",
+        }
+    },
     // Add other routes here
 };
 
@@ -270,7 +287,6 @@ async function locationHandler() {
     //check if the path does indeed exist as a file
     const response = await fetch(route.template);
     if (!response.ok) {
-        console.log('File not found');
         route = routes['404'][currentLang];
     }
 
@@ -309,7 +325,7 @@ async function updateHeaderAndFooter(lang) {
         attachLanguageSwitcherListeners(); // Re-attach event listeners to language switcher buttons
     }
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
@@ -360,7 +376,7 @@ async function setPreferredLanguage() {
         currentLang = data.language_preference;
         RouterLb.setLanguage(data.language_preference);
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
