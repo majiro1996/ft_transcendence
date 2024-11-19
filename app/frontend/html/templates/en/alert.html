@@ -74,7 +74,7 @@
     Your are already friends
 </div>
 
-<div class="alert text-center alert-info" role="alert" id="request-sent" onclick="hideAlert(this)" style="display: none;">
+<div class="alert text-center alert-success" role="alert" id="request-sent-ok" onclick="hideAlert(this)" style="display: none;">
     Request sent
 </div>
 
@@ -139,3 +139,24 @@
 <div class="alert alert-danger" role="alert" id="password-not-match" onclick="hideAlert(this)" style="display: none;">
     Passwords do not match
 </div>
+
+<div class="alert alert-danger" role="alert" id="something-went-wrong" onclick="hideAlert(this)" style="display: none;">
+    Something went wrong :(
+</div>
+
+<div class="alert alert-danger" role="alert" id="invalid-username" onclick="hideAlert(this)" style="display: none;">
+    Username can't begin with 'anon' and a number
+</div>
+
+<div class="alert alert-danger" role="alert" id="username-too-long" onclick="hideAlert(this)" style="display: none;">
+    Username can't exceed 16 characters
+</div>
+
+<div class="alert alert-danger" role="alert" id="invalid-email" onclick="hideAlert(this)" style="display: none;">
+    Email is not valid
+</div>
+
+<div class="alert alert-danger" role="alert" id="invalid-password" onclick="hideAlert(this)" style="display: none;">
+    Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
+</div>
+

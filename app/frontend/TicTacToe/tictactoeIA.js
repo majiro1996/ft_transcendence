@@ -109,13 +109,11 @@ function aiMove() {
     {
         // Use Minimax to find the best move
         bestMove = getBestMove();
-        console.log("AI used Minimax to decide the move.");
     }
     else
     {
         // Make a random move
         bestMove = getRandomMove();
-        console.log("AI made a random move.");
     }
 
     makeMove(bestMove, 'O');

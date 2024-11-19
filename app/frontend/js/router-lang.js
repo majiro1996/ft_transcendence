@@ -252,7 +252,6 @@ async function locationHandler() {
     //check if the path does indeed exist as a file
     const response = await fetch(route.template);
     if (!response.ok) {
-        console.log('File not found');
         route = routes['404'][currentLang];
     }
 
@@ -291,7 +290,7 @@ async function updateHeaderAndFooter(lang) {
         attachLanguageSwitcherListeners(); // Re-attach event listeners to language switcher buttons
     }
     catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
@@ -342,7 +341,7 @@ async function setPreferredLanguage() {
         currentLang = data.language_preference;
         RouterLb.setLanguage(data.language_preference);
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
