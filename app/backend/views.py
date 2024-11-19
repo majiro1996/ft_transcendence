@@ -703,7 +703,7 @@ class UsersListView(APIView):
             user_json['game_stats']['pong'] = {
                 'wins': wins_pong,
                 'losses': losses_pong,
-                'win_rate': round((wins_pong / total_pong * 100, 2)) if total_pong > 0 else 0,
+                'win_rate': round((wins_pong / total_pong * 100), 2) if total_pong > 0 else 0,
                 'bar_size': int((wins_pong / total_pong) * 600) if total_pong > 0 else 0
             }
             total_ttt = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='tic-tac-toe').count()
@@ -722,4 +722,23 @@ class UsersListView(APIView):
             }, status=status.HTTP_200_OK)
         return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
+class LeaderboardView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        users = User.objects.all()
+        user_data = []
+        for user in users:
+            total_wins = MatchResult.objects.filter(winner=user).count()
+            user_data.append({
+                'rank': 0,
+                'user': user.username,
+                'wins': total_wins,
+            })
+        user_data = sorted(user_data, key=lambda x: x['wins'], reverse=True)
+        for i, user in enumerate(user_data):
+            user['rank'] = i + 1
+        return Response({
+            'leaderboard': user_data
+        }, status=status.HTTP_200_OK)
 

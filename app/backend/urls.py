@@ -46,4 +46,5 @@ urlpatterns = [
 	path('tournaments/', GetTournamentView.as_view(), name='tournaments'),
     
 	path('users/', views.UsersListView.as_view(), name='users'),
+	path('leaderboard/', views.LeaderboardView.as_view(), name='leaderboard'),
 ]

@@ -55,7 +55,7 @@ async function send_results()
 			}),
 		});
 	} catch (error) {
-		console.log(`Error: ${error}`)
+		showAlert(response.error);
 	}
 }
 

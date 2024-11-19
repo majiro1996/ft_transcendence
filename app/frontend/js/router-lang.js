@@ -240,7 +240,24 @@ const routes = {
             description: "Ceci est la page des amis",
         }
     },
-    
+    scoreboard: {
+        onLoad: LoadScores,
+        en: {
+            template: "/html/templates/en/scores.html",
+            title: "Scores | " + pageTitle,
+            description: "This is the scores page",
+        },
+        es: {
+            template: "/html/templates/es/scores.html",
+            title: "Puntuaciones | " + pageTitle,
+            description: "Esta es la página de puntuaciones",
+        },
+        fr: {
+            template: "/html/templates/fr/scores.html",
+            title: "Scores | " + pageTitle,
+            description: "Ceci est la page des scores",
+        }
+    },
     // Add other routes here
 };
 

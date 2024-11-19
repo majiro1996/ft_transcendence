@@ -537,6 +537,29 @@ async function getTournament() {
 
 }
 
+async function LoadScores() {
+    try {
+        const response = await fetch(apiurl + '/leaderboard/', {
+            method: 'GET',
+        });
+        const data = await response.json();
+        console.log(data);
+        data.leaderboard.forEach(user => {
+            var template = document.getElementById('template_score').cloneNode(true);
+            template.querySelector('#template_rank').textContent = user.rank;
+            template.querySelector('#template_name').textContent = user.user;
+            template.querySelector('#template_wins').textContent = user.wins;
+            template.style = '';
+            template.id = user.user;
+            document.getElementById('scoreboard').appendChild(template);
+        });
+        document.getElementById('template_score').remove();
+    }
+    catch (error) {
+        showAlert("something-went-wrong");;
+    }
+}
+
 const CommonLb = {
     getProfileSettings,
     submitProfileSettings
