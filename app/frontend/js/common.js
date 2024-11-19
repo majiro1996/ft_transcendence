@@ -494,7 +494,7 @@ async function acceptTourInvite(tournament, action) {
             document.getElementById(tournament.parentNode.id).remove();
         }
         else
-            document.getElementById(tournament).remove();
+            document.getElementById(tournament.parentNode.id).remove();
     }
     catch (error) {
         console.error('Error:', error);
@@ -543,6 +543,45 @@ async function createTournament(game_type) {
         console.error('Error:', error);
     }
 }
+
+async function LoadTournamentOptions() {
+    try {
+        const response = await fetch(apiurl + '/get-tournament/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+
+        // Populate the tournament options
+        document.getElementById('tournament_name').textContent = data.tournament_name;
+        document.getElementById('game_type').textContent = data.game_type;
+
+        const playerContainer = document.getElementById('player_container');
+        playerContainer.innerHTML = ''; // Clear existing players
+
+        data.players.forEach(player => {
+            const playerCard = document.createElement('div');
+            playerCard.className = 'lobby_player_card';
+            playerCard.innerHTML = `
+                <img class="lobby_player_image" src="${player.profile_pic || '../media/placeholders/CK.jpg'}">
+                <p class="lobby_player_username">${player.username}</p>
+                <p class="lobby_player_status_${player.status}">${player.status === 'confirmed' ? '✓' : '✕'}</p>
+            `;
+            playerContainer.appendChild(playerCard);
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 
 async function getTournament() {
     try {

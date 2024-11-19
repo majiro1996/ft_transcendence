@@ -712,6 +712,20 @@ class UsersListView(APIView):
 
 
 
+class TournamentOptionsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        update_last_online(user)
+        tournaments = Tournament.objects.filter(userHost=user, status=0)
+        if not tournaments.exists():
+            return Response({'error': 'No-tournaments'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            'tournaments': [t.tournament_name for t in tournaments]
+        }, status=status.HTTP_200_OK)
+
+
 # create test users api view #remove
 class TestUsersAPIView(APIView):
     permission_classes = [AllowAny]
@@ -728,3 +742,4 @@ class TestUsersAPIView(APIView):
             )
             user.save()
         return Response({'success': 'Test users created'}, status=status.HTTP_201_CREATED)
+
