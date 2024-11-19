@@ -328,6 +328,23 @@ a {
     border-color: #78a4bc;
 }
 
+.form_settings_popup_button {
+    font-size: 16pt;
+    width: 75%;
+    margin-top: 25px;
+    padding: 8px;
+    color: black;
+    border-style: solid;
+    border-color: #9fc2d5;
+    border-width: 1px;
+    background-color: #9fc2d5;
+}
+
+.form_settings_popup_button:hover {
+    background-color: #78a4bc;
+    border-color: #78a4bc;
+}
+
 .form_bottom {
     margin-top: 100px;
     font-size: 14pt;
