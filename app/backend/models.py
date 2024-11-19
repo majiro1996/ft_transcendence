@@ -49,9 +49,10 @@ class FriendRequest(models.Model):
 class Tournament(models.Model):
     tournament_name = models.CharField(max_length=30, unique=True, null=True)
     userHost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userHost')
-    guests = ArrayField(models.CharField(max_length=30), size=7, default=list)
+    # guests = ArrayField(models.CharField(max_length=30), size=7, default=list)
+    guests = models.ManyToManyField(User, related_name='guests')
 
-    accepted_invites = models.CharField(max_length=7, default='0000000')
+    # accepted_invites = models.CharField(max_length=7, default='0000000')
 
     firstMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='firstMatch', null=True, blank=True)
     secondMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='secondMatch', null=True, blank=True)
@@ -79,6 +80,7 @@ class TournamentInvite(models.Model):
     userSender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userSender_tournament')
     userReceiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userReceiver_tournament')
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    accepted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.userSender.username + ' to ' + self.userReceiver.username + ' for ' + self.tournament.id
