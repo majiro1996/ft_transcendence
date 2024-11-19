@@ -536,6 +536,7 @@ async function createTournament(game_type) {
         if (data.success) {
             // redirect to tournament starting page // wip
             showAlert(data.success);
+            changeLocation("#tournamentOptions");
         }
 
     } catch (error) {

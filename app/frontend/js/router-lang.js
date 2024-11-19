@@ -240,6 +240,24 @@ const routes = {
             description: "Ceci est la page des amis",
         }
     },
+    tournamentOptions: {
+        onLoad: null,
+        en: {
+            template: "/html/templates/en/tournament_options.html",
+            title: "Tournament Options | " + pageTitle,
+            description: "This is the tournament options page",
+        },
+        es: {
+            template: "/html/templates/es/tournament_options.html",
+            title: "Opciones de Torneo | " + pageTitle,
+            description: "Esta es la página de opciones de torneo",
+        },
+        fr: {
+            template: "/html/templates/fr/tournament_options.html",
+            title: "Options de tournoi | " + pageTitle,
+            description: "Ceci est la page des options de tournoi",
+        }
+    },
     
     // Add other routes here
 };
