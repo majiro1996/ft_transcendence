@@ -394,17 +394,24 @@ class CreateTournamentView(APIView):
         if Tournament.objects.filter(userHost=user, status=1).exists():
             return Response({'error': 'tournament-already-open'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if len(user_guests) != 7:
+        if len(user_guests) != 7 or "" in user_guests or None in user_guests:
             return Response({'error': 'not-enough-players'}, status=status.HTTP_400_BAD_REQUEST)
 
         if user in user_guests:
             return Response({'error': 'self-request'}, status=status.HTTP_400_BAD_REQUEST)
+        
         #guest must be unique and valid users
         for u in user_guests:
-            if not User.objects.filter(username=u).exists():
-                return Response({'error': 'user-not-exists', 'user': u}, status=status.HTTP_400_BAD_REQUEST)
             if user_guests.count(u) > 1:
                 return Response({'error': 'duplicated-user', 'user': u}, status=status.HTTP_400_BAD_REQUEST)
+
+        valid_user_guests = []
+        for u in user_guests:
+            try:
+                valid_user = User.objects.get(username=u)
+                valid_user_guests.append(valid_user)
+            except User.DoesNotExist:
+                return Response({'error': 'user-not-exists', 'user': u}, status=status.HTTP_400_BAD_REQUEST)
 
         tournament = Tournament.objects.create(
             tournamet_name=tournament_name,
@@ -413,12 +420,8 @@ class CreateTournamentView(APIView):
             guests=user_guests
         )
 
-        for u in user_guests:
-            TournamentInvite.objects.create(
-                userSender=user,
-                userReceiver=u,
-                tournament=tournament
-            )
+        for guest in valid_user_guests:
+            TournamentInvite.objects.create(userSender=user, userReceiver=guest, tournament=tournament)
 
         return Response({'success': 'Tournament created'}, status=status.HTTP_201_CREATED)
 
@@ -450,16 +453,16 @@ class tournamentInviteAcceptView(APIView):
 
     def post(self, request):
         tournament_name = request.data.get('tournament_name')
-        user_sender = request.data.get('user_sender')
+        # user_sender = request.data.get('user_sender')
         user_receiver = request.user
         update_last_online(user_receiver)
         action = request.data.get('action')
 
-        if not TournamentInvite.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
+        if not TournamentInvite.objects.filter(tournament=tournament_name, userReceiver=user_receiver).exists():
             return Response({'error': 'no-invite'}, status=status.HTTP_400_BAD_REQUEST)
         
         if action == 'reject':
-            TournamentInvite.objects.filter(tournament=tournament_name, userSender=user_sender, userReceiver=user_receiver).delete()
+            TournamentInvite.objects.filter(tournament=tournament_name, userReceiver=user_receiver).delete()
             return Response({'success': 'Tournament invite rejected'}, status=status.HTTP_200_OK)
         
         tournament = TournamentInvite.objects.get(userSender=user_sender, userReceiver=user_receiver).tournament

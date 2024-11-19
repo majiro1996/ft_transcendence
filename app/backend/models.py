@@ -63,7 +63,7 @@ class Tournament(models.Model):
 
     finalMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='finalMatch', null=True, blank=True)
 
-    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_tournament')
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_tournament', null=True, blank=True)
     
     STATUS_CHOICES = [
         (0, 'Not Started'),

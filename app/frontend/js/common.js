@@ -446,7 +446,7 @@ async function LoadTournamentsHome() {
             template.querySelector('#tour_decline_template').id = 'decline-' + invite.tournament_name;
             template.style.display = 'flex';
             template.id = invite.tournament_name;
-            document.getElementById('tour_home_subscoll').appendChild(template);
+            document.getElementById('tournaments_bar').appendChild(template);
         });
         result.user.tournaments.forEach(tournament => {
             var template = document.getElementById('tour_accepted_template').cloneNode(true);
@@ -454,6 +454,7 @@ async function LoadTournamentsHome() {
             template.querySelector('#tour_name_template').textContent = tournament.tournament_name;
             template.style.display = 'flex';
             template.id = tournament.tournament_name;
+            document.getElementById('tournaments_bar').appendChild(template);
         });
 
     }
@@ -472,9 +473,28 @@ async function acceptTourInvite(tournament, action) {
                 'Authorization': 'Bearer ' + localStorage.getItem('access_token')
             },
             body: JSON.stringify({
-                'action': action
+                'action': action,
+                'tournament_name': tournament.parentNode.id
             })
         });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+            showAlert(result.error);
+            return;
+        }
+        if (action == 'accept') {
+            var new_tour = document.getElementById(tournament).cloneNode(true);
+            new_tour.classList.remove('tour_invite_item');
+            new_tour.classList.add('tour_accepted_item');
+            new_tour.querySelector('#accept-' + tournament).remove();
+            new_tour.querySelector('#decline-' + tournament).remove();
+            document.getElementById('tournaments_bar').appendChild(new_tour);
+            document.getElementById(tournament).remove();
+        }
+        else
+            document.getElementById(tournament).remove();
     }
     catch (error) {
         console.error('Error:', error);

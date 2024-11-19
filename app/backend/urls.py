@@ -19,6 +19,7 @@ from .views import (
 	FriendRequestAcceptView,
 	GetTournamenReadyView,
 	GetTournamentView,
+	tournamentInviteAcceptView
 )
 
 
@@ -44,6 +45,7 @@ urlpatterns = [
 	path('create-tournament/', CreateTournamentView.as_view(), name='create-tournament'),
 	path('get-tournament-ready/', GetTournamenReadyView.as_view(), name='get-tournament-ready'),
 	path('tournaments/', GetTournamentView.as_view(), name='tournaments'),
+	path('tournament-invite-accept/', tournamentInviteAcceptView.as_view(), name='tournament-invite-accept'),
     
 	path('users/', views.UsersListView.as_view(), name='users'),
 ]
