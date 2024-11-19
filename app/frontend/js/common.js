@@ -429,6 +429,18 @@ async function LoadTournamentsHome() {
             showAlert(result.error);
             return;
         }
+        //if the host has an open tournament redirect to the tournament options page
+        if (result.success) {
+            if (result.success == 'ongoing-tournament') {
+            changeLocation("#tournament");
+            return;
+            }
+            if (result.success == 'ready-tournament') {
+                changeLocation("#tournamentOptions");
+                return;
+            }
+        }
+
         result.user.invites.forEach(invite => {
             var template = document.getElementById('tour_invite_template').cloneNode(true);
             template.querySelector('#tour_hostname_template').textContent = invite.host;
@@ -536,18 +548,19 @@ async function createTournament(game_type) {
 
 async function LoadTournamentOptions() {
     try {
-        const response = await fetch(apiurl + '/get-tournament/', {
+        const response = await fetch(apiurl + '/tournament-options/', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('access_token')
             }
         });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
         const data = await response.json();
+
+        if (!response.ok) {
+            showAlert(data.error);
+            return;
+        }
 
         // Populate the tournament options
         document.getElementById('tournament_name').textContent = data.tournament_name;
@@ -560,42 +573,95 @@ async function LoadTournamentOptions() {
             const playerCard = document.createElement('div');
             playerCard.className = 'lobby_player_card';
             playerCard.innerHTML = `
-                <img class="lobby_player_image" src="${player.profile_pic || '../media/placeholders/CK.jpg'}">
+                <img class="lobby_player_image" src="${player.profile_pic || '../media/Profile_avatar_placeholder_large.png'}">
                 <p class="lobby_player_username">${player.username}</p>
                 <p class="lobby_player_status_${player.status}">${player.status === 'confirmed' ? '✓' : '✕'}</p>
             `;
             playerContainer.appendChild(playerCard);
         });
 
+        if (data.players.every(player => player.status === 'confirmed')) {
+            document.getElementById('start_tournament').style.display = 'block';
+            document.getElementById('refresh_players').style.display = 'none';
+        } else {
+            document.getElementById('start_tournament').style.display = 'none';
+            document.getElementById('refresh_players').style.display = 'block';
+        }
+
     } catch (error) {
         console.error('Error:', error);
     }
 }
 
-
-async function getTournament() {
+async function DeleteTournament() {
     try {
-        const response = await fetch(apiurl + '/get-tournament/', {
+        const response = await fetch(apiurl + '/delete-tournament/', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                tournament_name: document.getElementById('tournament_name').textContent
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            showAlert(data.error);
+            return;
+        }
+        if (data.success) {
+            changeLocation("#tournaments");
+            showAlert(data.success);
+        }
+    }
+    catch (error) {
+        showAlert("something-went-wrong");
+    }
+}
+
+async function LoadTournament() {
+    try {
+        const response = await fetch(apiurl + '/start-tournament/', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('access_token')
             }
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            //show error alert // wip
+            showAlert(data.error);
+            return;
         }
 
-        const data = await response.json();
-        //if there is no tournament 
-    }
+        if (data.success) {
+            showAlert(data.success);
 
-    catch (error) {
-        //if no tournament available  redirect to create tournament page // wip
-        window.location.href = '#/createTournament';
-    }
+            const players = data.players;
+            for (let i = 0; i < players.length; i++) {
+                const qualPosition = document.getElementById(`bracket_qual${i + 1}`);
+                if (qualPosition) {
+                    qualPosition.querySelector('p').textContent = players[i];
+                }
+            }
 
+            const semiFinals = data.semi_finals;
+            for (let i = 0; i < semiFinals.length; i++) {
+                const semiPosition = document.getElementById(`bracket_semi${i + 1}`);
+                if (semiPosition) {
+                    semiPosition.querySelector('p').textContent = semiFinals[i];
+                }
+            }
+        }
+    } catch (error) {
+        showAlert("something-went-wrong");
+    }
 }
+
 
 async function LoadScores() {
     try {

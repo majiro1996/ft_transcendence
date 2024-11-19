@@ -241,7 +241,7 @@ const routes = {
         }
     },
     tournamentOptions: {
-        onLoad: null,
+        onLoad: LoadTournamentOptions,
         en: {
             template: "/html/templates/en/tournament_options.html",
             title: "Tournament Options | " + pageTitle,
@@ -274,6 +274,24 @@ const routes = {
             template: "/html/templates/fr/scores.html",
             title: "Scores | " + pageTitle,
             description: "Ceci est la page des scores",
+        }
+    },
+    tournament: {
+        onLoad: LoadTournament,
+        en: {
+            template: "/html/templates/en/tournament_bracket.html",
+            title: "Tournament | " + pageTitle,
+            description: "This is the tournament page",
+        },
+        es: {
+            template: "/html/templates/es/tournament_bracket.html",
+            title: "Torneo | " + pageTitle,
+            description: "Esta es la página de torneo",
+        },
+        fr: {
+            template: "/html/templates/fr/tournament_bracket.html",
+            title: "Tournoi | " + pageTitle,
+            description: "Ceci est la page de tournoi",
         }
     },
     // Add other routes here

@@ -20,7 +20,9 @@ from .views import (
 	GetTournamenReadyView,
 	GetTournamentView,
 	tournamentInviteAcceptView,
-	TestUsersAPIView
+	TestUsersAPIView,
+	TournamentOptionsView,
+	DeleteTournamentView,
 )
 
 
@@ -47,10 +49,13 @@ urlpatterns = [
 	path('get-tournament-ready/', GetTournamenReadyView.as_view(), name='get-tournament-ready'),
 	path('tournaments/', GetTournamentView.as_view(), name='tournaments'),
 	path('tournament-invite-accept/', tournamentInviteAcceptView.as_view(), name='tournament-invite-accept'),
-    
+    path('tournament-options/', TournamentOptionsView.as_view(), name='tournament-options'),
+	path('delete-tournament/', DeleteTournamentView.as_view(), name='delete-tournament'),
+	path('start-tournament/', views.StartTournamentView.as_view(), name='start-tournament'),
+
 	path('users/', views.UsersListView.as_view(), name='users'),
+	path('leaderboard/', views.LeaderboardView.as_view(), name='leaderboard'),
 
 	#TEST REMOVE
 	path('test-users/', TestUsersAPIView.as_view(), name='test-users'),
-	path('leaderboard/', views.LeaderboardView.as_view(), name='leaderboard'),
 ]

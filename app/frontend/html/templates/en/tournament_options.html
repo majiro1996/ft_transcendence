@@ -49,13 +49,15 @@
 
 <div class="form_container">
     <div class="form_body_xl">
-        <p class="form_title">Esperando a los jugadores...</p>
-        <p id="tournament_name"></p>
-        <p id="game_type"></p>
+        <p class="form_title">Waiting for players...</p>
+        <p id="tournament_name" class="form_label"></p>
+        <p id="game_type" class="form_label"></p>
         <div class="tour_options_subscroll" id="player_container">
             <!-- Player cards will be dynamically inserted here -->
         </div>
-        <button class="form_main_button">Iniciar Torneo</button>
-        <button class="form_main_button_reduced_margin">Eliminar Torneo</button>
+        <!-- refresh button -->
+        <button class="form_main_button" id="refresh_players" onclick="LoadTournamentOptions()">Refresh</button>
+        <button class="form_main_button" id="start_tournament" style="display: none;" onclick="changeLocation('#tournament')">Start Tournament</button>
+        <button class="form_main_button_reduced_margin" onclick="DeleteTournament()">Delete Tournament</button>
     </div>
 </div>
