@@ -47,7 +47,7 @@ class FriendRequest(models.Model):
         return self.userSender.username + ' to ' + self.userReceiver.username
 
 class Tournament(models.Model):
-    tournamet_name = models.CharField(max_length=30, unique=True, null=True)
+    tournament_name = models.CharField(max_length=30, unique=True, null=True)
     userHost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userHost')
     guests = ArrayField(models.CharField(max_length=30), size=7, default=list)
 

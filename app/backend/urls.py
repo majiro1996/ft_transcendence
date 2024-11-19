@@ -19,7 +19,8 @@ from .views import (
 	FriendRequestAcceptView,
 	GetTournamenReadyView,
 	GetTournamentView,
-	tournamentInviteAcceptView
+	tournamentInviteAcceptView,
+	TestUsersAPIView
 )
 
 
@@ -48,4 +49,7 @@ urlpatterns = [
 	path('tournament-invite-accept/', tournamentInviteAcceptView.as_view(), name='tournament-invite-accept'),
     
 	path('users/', views.UsersListView.as_view(), name='users'),
+
+	#TEST REMOVE
+	path('test-users/', TestUsersAPIView.as_view(), name='test-users'),
 ]

@@ -485,13 +485,13 @@ async function acceptTourInvite(tournament, action) {
             return;
         }
         if (action == 'accept') {
-            var new_tour = document.getElementById(tournament).cloneNode(true);
+            var new_tour = document.getElementById(tournament.parentNode.id).cloneNode(true);
             new_tour.classList.remove('tour_invite_item');
             new_tour.classList.add('tour_accepted_item');
-            new_tour.querySelector('#accept-' + tournament).remove();
-            new_tour.querySelector('#decline-' + tournament).remove();
+            new_tour.querySelector('#accept-' + tournament.parentNode.id).remove();
+            new_tour.querySelector('#decline-' + tournament.parentNode.id).remove();
             document.getElementById('tournaments_bar').appendChild(new_tour);
-            document.getElementById(tournament).remove();
+            document.getElementById(tournament.parentNode.id).remove();
         }
         else
             document.getElementById(tournament).remove();
@@ -585,4 +585,29 @@ function showAlert(id) {
 }
 function hideAlert(node) {
     node.style.display = 'none';
+}
+
+
+// TEST FUNCTIONS
+
+async function TestCreateUsers() {
+    try {
+        const response = await fetch(apiurl + '/test-users/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log(data); 
+    }
+    catch (error) {
+        console.error('Error:', error);
+    }
+
 }

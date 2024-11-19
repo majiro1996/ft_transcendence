@@ -387,7 +387,7 @@ class CreateTournamentView(APIView):
         if game_type not in ['pong', 'tic-tac-toe']:
             return Response({'error': 'invalid-game-type'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if Tournament.objects.filter(tournamet_name=tournament_name).exists():
+        if Tournament.objects.filter(tournament_name=tournament_name).exists():
             return Response({'error': 'tournament-name-taken'}, status=status.HTTP_400_BAD_REQUEST)
 
         #if there is a tournament of this host witout a winner, return error
@@ -414,7 +414,7 @@ class CreateTournamentView(APIView):
                 return Response({'error': 'user-not-exists', 'user': u}, status=status.HTTP_400_BAD_REQUEST)
 
         tournament = Tournament.objects.create(
-            tournamet_name=tournament_name,
+            tournament_name=tournament_name,
             userHost=user,
             game_type=game_type,
             guests=user_guests
@@ -438,7 +438,7 @@ class GetTournamenReadyView(APIView):
             return Response({'error': 'no-tournament'}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response({
-            'tournament': tournament.first().tournamet_name,
+            'tournament': tournament.first().tournament_name,
             'game_type': tournament.first().game_type,
             'guests': tournament.first().guests,
             'status': tournament.first().status,
@@ -458,30 +458,36 @@ class tournamentInviteAcceptView(APIView):
         update_last_online(user_receiver)
         action = request.data.get('action')
 
-        if not TournamentInvite.objects.filter(tournament=tournament_name, userReceiver=user_receiver).exists():
+        try:
+            tournamentObj = Tournament.objects.get(tournament_name=tournament_name)
+        except Tournament.DoesNotExist:
+            return Response({'error': 'Invalid-tournament'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not TournamentInvite.objects.filter(tournament=tournamentObj, userReceiver=user_receiver).exists():
             return Response({'error': 'no-invite'}, status=status.HTTP_400_BAD_REQUEST)
         
         if action == 'reject':
-            TournamentInvite.objects.filter(tournament=tournament_name, userReceiver=user_receiver).delete()
+            TournamentInvite.objects.filter(tournament=tournamentObj, userReceiver=user_receiver).delete()
             return Response({'success': 'Tournament invite rejected'}, status=status.HTTP_200_OK)
-        
-        tournament = TournamentInvite.objects.get(userSender=user_sender, userReceiver=user_receiver).tournament
         
 
         position = None
         # check what position the user is in the guests list
-        for i, u in enumerate(tournament.guests):
-            if u == user_receiver:
+        for i, u in enumerate(tournamentObj.guests):
+            if u == user_receiver.username:
                 position = i
                 break
         
+        if position is None:
+            return Response({'error': 'not-in-tournament'}, status=status.HTTP_400_BAD_REQUEST)
+        
         # set the user position to 1 in the accepted_invites field
-        accepted_invites = list(tournament.accepted_invites)
+        accepted_invites = list(tournamentObj.accepted_invites)
         accepted_invites[position] = '1'
-        tournament.accepted_invites = ''.join(accepted_invites)
+        tournamentObj.accepted_invites = ''.join(accepted_invites)
 
-        tournament.save()
-        TournamentInvite.objects.filter(tournament=tournament_name, userSender=user_sender, userReceiver=user_receiver).delete()
+        tournamentObj.save()
+        TournamentInvite.objects.filter(tournament=tournamentObj, userReceiver=user_receiver).delete()
 
         return Response({'success': 'Tournament invite accepted'}, status=status.HTTP_200_OK)
 
@@ -498,14 +504,14 @@ class GetTournamentView(APIView):
         for invite in tournament_invites:
             invites_data.append({
                 'host': invite.userSender.username,
-                'tournament_name': invite.tournament.tournamet_name
+                'tournament_name': invite.tournament.tournament_name
             })
 
         tournaments_data = []
         for tournament in tournaments:
             tournaments_data.append({
                 'host': tournament.userHost.username,
-                'tournament_name': tournament.tournamet_name
+                'tournament_name': tournament.tournament_name
             })
 
         return Response({
@@ -705,3 +711,20 @@ class UsersListView(APIView):
         return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+# create test users api view #remove
+class TestUsersAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        if(User.objects.filter(username='user1').exists()):
+            return Response({'error': 'Test users already created'}, status=status.HTTP_400_BAD_REQUEST)
+
+        for i in range(1, 11):
+            user = User.objects.create_user(
+                username=f'user{i}',
+                password=f'pass{i}',
+                email=f'user{i}@test.42'
+            )
+            user.save()
+        return Response({'success': 'Test users created'}, status=status.HTTP_201_CREATED)
