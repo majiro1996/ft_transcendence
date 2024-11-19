@@ -23,41 +23,58 @@
 
 function getCookie(cname)
 {
-	let name = cname + "=";
-	let decodedCookie = decodeURIComponent(document.cookie);
-	let ca = decodedCookie.split(';');
-	for(let i = 0; i <ca.length; i++)
-	{
-		let c = ca[i];
-		while (c.charAt(0) == ' ')
-			c = c.substring(1);
-		if (c.indexOf(name) == 0)
-			return c.substring(name.length, c.length);
-	}
-	return "";
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i <ca.length; i++)
+        {
+                let c = ca[i];
+                while (c.charAt(0) == ' ')
+                        c = c.substring(1);
+                if (c.indexOf(name) == 0)
+                        return c.substring(name.length, c.length);
+        }
+        return "";
 }
 
 async function send_results()
-{
-	if (winnerPlayer == undefined)
-		winnerPlayer = "tie";
-	try
-	{
-		const response = await fetch("/",
-		{
-			method: "POST",
-			headers: {
-				"X-CSRFToken": getCookie("csrftoken"),
-			},
-			body: JSON.stringify({
-				game_id: getCookie("game_id"),
-				results: winnerPlayer
-			}),
-		});
-	} catch (error) {
-		console.log(`Error: ${error}`)
-	}
-}
+        {
+                        if (!isTournament)
+                        {
+                                        window.location.hash = "#";
+                                        return;
+                        }
+                        try
+                        {
+                                        let p_winner = null;
+                                        if (winnerPlayer === 'X')
+                                                         p_winner = localStorage.getItem("user1");
+                                        else if (winnerPlayer === 'O')
+                                                         p_winner = localStorage.getItem("user2");
+                                        else
+                                                         p_winner = "tie";
+                                        const response = await fetch(apiurl + "/game-stats/", {
+                                                        method: "POST",
+                                                        headers: {
+                                                                        'Content-Type': 'application/json',
+                                                                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                                                        },
+                                                        body: JSON.stringify({
+                                                                        user1: localStorage.getItem("user1"),
+                                                                        user2: localStorage.getItem("user2"),
+                                                                        winner: p_winner,
+                                                                        game_type: "tic-tac-toe",
+                                                                        user1_score: 0,
+                                                                        user2_score: 0,
+                                                        }),
+                                        });
+                                        localStorage.removeItem("user1");
+                                        localStorage.removeItem("user2");
+                        } catch (error){
+                                        console.log(`Error: ${error}`);
+                        }
+                        window.location.hash = "#tournaments";
+        }
 
 message.onclick = send_results
 
@@ -92,6 +109,7 @@ board.addEventListener('click', (event) => {
     {
         gameActive = false;
         message.textContent = `It's a tie!`;
+        winnerPlayer = "tie"
         return;
     }
      //Change to polayer X or player O
