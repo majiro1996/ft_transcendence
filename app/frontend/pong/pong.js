@@ -320,7 +320,7 @@ function pongGame(){
 							}),
 					});
 			} catch (error){
-					console.log(`Error: ${error}`);
+					console.error(`Error: ${error}`);
 			}
 			window.location.hash = "#tournaments";
 	}
@@ -350,7 +350,6 @@ function pongGame(){
 			// Time Calc
 			DeltaTime();
 			counter += delta_time;
-			//console.log(counter / 1000);
 	
 			// Check if any player has won (score >= 10)
 			if (player1.score >= 10) {

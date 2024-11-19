@@ -76,7 +76,7 @@ async function login2fa() {
 
     } catch (error) {
         alert('Error: ' + error);
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
     }
 }
 
@@ -108,12 +108,11 @@ async function verify2fa() {
         showAlert(result.success);
         localStorage.setItem('access_token', result.access_token);
         localStorage.setItem('refresh_token', result.refresh_token);
-        console.log('Login successful');
         window.location.hash = '#';  // redirect to home page
         RouterLb.updateHeaderAndFooter(currentLang);
         RouterLb.setPreferredLanguage();
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
         alert('Error: ' + error);
     }
 }
@@ -148,7 +147,7 @@ async function logout() {
         window.location.hash = '#login';
         RouterLb.updateHeaderAndFooter(currentLang);
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
         alert('Logout failed: ' + error.message);
     }
 }
@@ -177,11 +176,10 @@ async function deleteAccount() {
             localStorage.removeItem('refresh_token');
             updateHeaderAndFooter(currentLang);
             window.location.hash = '#'; // redirect to home page
-            console.log('Account deleted');
         }
 
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
         alert(error);
     } 
 }
@@ -209,11 +207,10 @@ async function anonymizeAccount() {
             localStorage.removeItem('refresh_token');
             updateHeaderAndFooter(currentLang);
             window.location.hash = '#'; // redirect to home page
-            console.log('Account anonymized');
         }
 
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
         alert('Error: ' + error);
     }
 }
@@ -238,9 +235,8 @@ async function refreshToken() {
 
         // Update the access token in localStorage
         localStorage.setItem('access_token', result.token);
-        console.log('Token refreshed successfully');
     } catch (error) {
-        console.error('Error:', error);
+        showAlert("something-went-wrong");;
         alert('Token refresh failed: ' + error.message);
     }
 }
@@ -266,7 +262,7 @@ async function isLoggedIn() {
         return (true);
         
     } catch (error) {
-        console.error('Error checking login status:', error);
+        showAlert("something-went-wrong");
         return false;
     }
 }
