@@ -311,8 +311,8 @@ function pongGame(){
 																	'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
 													},
 													body: JSON.stringify({
-																	user1: localStorage.getItem("user1"),
-																	user2: localStorage.getItem("user2"),
+																	user1: tUser1,
+																	user2: tUser2,
 																	winner: p_winner,
 																	game_type: "pong",
 																	user1_score: player1.score,
@@ -321,6 +321,9 @@ function pongGame(){
 									});
 									localStorage.removeItem("user1");
 									localStorage.removeItem("user2");
+									isTournament = false;
+									tUser1 = null;
+									tUser2 = null;
 					} catch (error){
 									console.log(`Error: ${error}`);
 					}
@@ -356,12 +359,12 @@ function pongGame(){
 
 					// Check if any player has won (score >= 10)
 					if (player1.score >= 10) {
-									p_winner = localStorage.getItem("user1");
+									p_winner = tUser1;
 									message.textContent = "Player 1 wins!";
 									message.style.display = 'block';
 									return;
 					} else if (player2.score >= 10) {
-									p_winner = localStorage.getItem("user2");
+									p_winner = tUser2;
 									message.textContent = "Player 2 wins!";
 									message.style.display = 'block';
 									return;

@@ -48,9 +48,9 @@ async function send_results()
                         {
                                         let p_winner = null;
                                         if (winnerPlayer === 'X')
-                                                         p_winner = localStorage.getItem("user1");
+                                                         p_winner = tUser1;
                                         else if (winnerPlayer === 'O')
-                                                         p_winner = localStorage.getItem("user2");
+                                                         p_winner = tUser2;
                                         else
                                                          p_winner = "tie";
                                         const response = await fetch(apiurl + "/game-stats/", {
@@ -60,8 +60,8 @@ async function send_results()
                                                                         'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
                                                         },
                                                         body: JSON.stringify({
-                                                                        user1: localStorage.getItem("user1"),
-                                                                        user2: localStorage.getItem("user2"),
+                                                                        user1: tUser1,
+                                                                        user2: tUser2,
                                                                         winner: p_winner,
                                                                         game_type: "tic-tac-toe",
                                                                         user1_score: 0,
@@ -70,6 +70,9 @@ async function send_results()
                                         });
                                         localStorage.removeItem("user1");
                                         localStorage.removeItem("user2");
+					isTournament = false;
+					tUser1 = null;
+					tUser2 = null;
                         } catch (error){
                                         console.log(`Error: ${error}`);
                         }

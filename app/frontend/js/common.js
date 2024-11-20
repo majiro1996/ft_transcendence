@@ -1,4 +1,13 @@
-let isTournament = false
+let isTournament = false;
+let tUser1 = null;
+let tUser2 = null;
+
+function setupTournament(u1, u2)
+{
+	tUser1 = u1;
+	tUser2 = u2;
+	isTournament = true;
+}
 
 function showItem(item) {
     document.getElementById(item).style.display = 'block';
