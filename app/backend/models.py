@@ -49,10 +49,7 @@ class FriendRequest(models.Model):
 class Tournament(models.Model):
     tournament_name = models.CharField(max_length=30, unique=True, null=True)
     userHost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userHost')
-    # guests = ArrayField(models.CharField(max_length=30), size=7, default=list)
     guests = models.ManyToManyField(User, related_name='guests')
-
-    # accepted_invites = models.CharField(max_length=7, default='0000000')
 
     firstMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='firstMatch', null=True, blank=True)
     secondMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='secondMatch', null=True, blank=True)
@@ -93,6 +90,8 @@ class MatchResult(models.Model):
     date = models.DateTimeField(auto_now=True)
     game_type = models.CharField(max_length=30)
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_match', null=True, blank=True)
+    pending = models.BooleanField(default=True)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.user1.username + ' vs ' + self.user2.username

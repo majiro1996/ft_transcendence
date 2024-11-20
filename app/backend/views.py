@@ -805,21 +805,23 @@ class StartTournamentView(APIView):
             return Response({'error': 'No-tournaments'}, status=status.HTTP_400_BAD_REQUEST)
         tournament = tournaments.first()
 
-        if tournament.status == 0:
-            tournament.status = 1
-            guests_list = list(tournament.guests.all())
-            # random.shuffle(guests_list)
-            tournament.guests.set(guests_list)
-            tournament.save()
+
 
         players = []
         for guest in tournament.guests.all():
             players.append(guest.username)
+        players.append(user.username)
+
+        if tournament.status == 0:
+            random.shuffle(players)
+            tournament.status = 1
+            tournament.save()
 
         return Response({
             'tournament_name': tournament.tournament_name,
             'game_type': tournament.game_type,
-            'players': players
+            'players': players,
+            'success': 'Tournament-started'
         }, status=status.HTTP_200_OK)
 
 

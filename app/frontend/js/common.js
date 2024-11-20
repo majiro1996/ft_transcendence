@@ -573,10 +573,12 @@ async function LoadTournamentOptions() {
             const playerCard = document.createElement('div');
             playerCard.className = 'lobby_player_card';
             playerCard.innerHTML = `
-                <img class="lobby_player_image" src="${player.profile_pic || '../media/Profile_avatar_placeholder_large.png'}">
+                <img class="lobby_player_image" src="${'../media/Profile_avatar_placeholder_large.png'}">
                 <p class="lobby_player_username">${player.username}</p>
                 <p class="lobby_player_status_${player.status}">${player.status === 'confirmed' ? '✓' : '✕'}</p>
             `;
+            if (player.profile_pic != null)
+                playerCard.querySelector('img').src = "data:image/png;base64," + player.profile_pic;
             playerContainer.appendChild(playerCard);
         });
 
@@ -623,6 +625,7 @@ async function DeleteTournament() {
 }
 
 async function LoadTournament() {
+    debugger
     try {
         const response = await fetch(apiurl + '/start-tournament/', {
             method: 'GET',
