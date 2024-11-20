@@ -618,7 +618,7 @@ async function createTournament(game_type) {
                 window.location.hash = '#login';
             }
             else
-                showAlert("something-went-wrong");
+                showAlert(data.error);
             return;
         }
 
@@ -636,6 +636,34 @@ async function createTournament(game_type) {
             showAlert("something-went-wrong");
     }
 }
+
+async function CreateTournamentCheck() {
+    try {
+        const response = await fetch(apiurl + '/protected/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
+            return;
+        }
+    }
+    catch (error) {
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else {
+            showAlert("something-went-wrong");
+        }
+    }
+}
+
 
 async function LoadTournamentOptions() {
     try {

@@ -186,7 +186,7 @@ const routes = {
     },
 
     createTournament: {
-        onLoad: undefined,
+        onLoad: CreateTournamentCheck,
         en: {
             template: "/html/templates/en/tournament_create.html",
             title: "Create Tournament | " + pageTitle,
@@ -335,10 +335,10 @@ async function updateHeaderAndFooter(lang) {
 
         // Fetch the header and footer templates
         let headerTemplate = await fetch(headerPath).then((response) => response.text());
-        let footerTemplate = await fetch(footerPath).then((response) => response.text());
+        // let footerTemplate = await fetch(footerPath).then((response) => response.text());
         // Set the header and footer divs HTML to the templates
         document.getElementById("header").innerHTML = headerTemplate;
-        document.getElementById("footer_container").innerHTML = footerTemplate;
+        // document.getElementById("footer_container").innerHTML = footerTemplate;
 
         attachLanguageSwitcherListeners(); // Re-attach event listeners to language switcher buttons
     }

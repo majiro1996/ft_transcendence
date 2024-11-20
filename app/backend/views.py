@@ -407,6 +407,9 @@ class CreateTournamentView(APIView):
 
         update_last_online(user)
 
+        if not tournament_name.isalnum() or len(tournament_name) < 1:
+            return Response({'error': 'invalid-tournament-name'}, status=status.HTTP_400_BAD_REQUEST)
+
         if game_type not in ['pong', 'tic-tac-toe']:
             return Response({'error': 'invalid-game-type'}, status=status.HTTP_400_BAD_REQUEST)
 
