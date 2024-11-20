@@ -193,6 +193,11 @@ a {
     display: flex;
 }
 
+.form_field_with_button_container_password
+{
+    display: flex;
+}
+
 .form_field_with_button
 {
     font-size: 16pt;
@@ -201,6 +206,19 @@ a {
     color: white;
     padding: 8px;
     padding-left: 11.5%;
+    border: 1px solid white;
+    background-color: black;
+    flex-grow: 0;
+}
+
+.form_field_with_button_password
+{
+    font-size: 16pt;
+    width: 75%;
+    margin-left: 12.5%;
+    color: white;
+    padding: 8px;
+    padding-left: 12px;
     border: 1px solid white;
     background-color: black;
     flex-grow: 0;
