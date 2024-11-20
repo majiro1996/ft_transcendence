@@ -96,6 +96,8 @@ function AiPongGame(){
                             {
                                     player2.score++;
                                     ball = new Ball(this.radius, this.color, this.speed);
+				    player1.ypos = (canvas.height / 2) - player1.height / 2;
+				    player2.ypos = (canvas.height / 2) - player2.height / 2;
                             }
                     }
                     else if (final_x + this.radius >= canvas.width) // Right
@@ -109,6 +111,8 @@ function AiPongGame(){
                             } else {
                                     player1.score++;
                                     ball = new Ball(this.radius, this.color, this.speed);
+				    player1.ypos = (canvas.height / 2) - player1.height / 2;
+                                    player2.ypos = (canvas.height / 2) - player2.height / 2;
                             }
                     }
             }
