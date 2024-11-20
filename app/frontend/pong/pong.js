@@ -317,6 +317,7 @@ function pongGame(){
 																	game_type: "pong",
 																	user1_score: player1.score,
 																	user2_score: player2.score,
+																	tournament_name: tName,
 													}),
 									});
 									localStorage.removeItem("user1");
@@ -324,6 +325,7 @@ function pongGame(){
 									isTournament = false;
 									tUser1 = null;
 									tUser2 = null;
+									tName = null;
 					} catch (error){
 									console.log(`Error: ${error}`);
 					}

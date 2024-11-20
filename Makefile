@@ -33,6 +33,6 @@ init:
 	cp .env app/.env
 
 dbclean:
-	./scripts/dbclean.sh
+	sudo ./scripts/dbclean.sh
 
 .PHONY: all build up down re fre attach prune fclean init dbclean frontend backend

@@ -1,11 +1,13 @@
 let isTournament = false;
 let tUser1 = null;
 let tUser2 = null;
+let tName = null;
 
-function setupTournament(u1, u2)
+function setupTournament(u1, u2, name)
 {
 	tUser1 = u1;
 	tUser2 = u2;
+    tName = name;
 	isTournament = true;
 }
 
@@ -47,7 +49,7 @@ async function getProfileSettings() {
         document.getElementById('2fa_enabled').checked = data['2fa_enabled'];
         document.getElementById('language_preference').value = data.language_preference;
     } catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -155,7 +157,7 @@ async function LoadProfile() {
     }
 
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -178,7 +180,7 @@ async function acceptFriendRequest(friend, action) {
         });
     }
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -247,7 +249,7 @@ async function LoadFriends() {
         });
     }
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -270,7 +272,7 @@ async function DeleteFriend(friend) {
         document.getElementById(friend).remove();
     }
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -298,7 +300,7 @@ async function SendFriendRequest() {
             showAlert(data.error);
     }
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -327,7 +329,7 @@ async function submitProfilePic() {
         }
     }
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -380,7 +382,7 @@ async function submitProfileSettings(settingType, value) {
             RouterLb.setLanguage(value);
         }
     } catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -440,6 +442,9 @@ function LoadPong() {
     document.getElementById('one-player').addEventListener('click', () => {
         pong_showDifficultySelection();
     });
+    if (isTournament && tUser1 != null && tUser2 != null) {
+        pong_startTwoPlayerGame();
+    }
 }
 
 function pong_showDifficultySelection() {
@@ -534,7 +539,7 @@ async function LoadTournamentsHome() {
     }
 
     catch (error) {
-        if (error.response.status === 401)
+        if (response.status === 401)
             window.location.hash = '#login';
         else
             showAlert("something-went-wrong");
@@ -578,7 +583,7 @@ async function acceptTourInvite(tournament, action) {
             document.getElementById(tournament.parentNode.id).remove();
     }
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -629,7 +634,7 @@ async function createTournament(game_type) {
         }
 
     } catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -655,7 +660,7 @@ async function CreateTournamentCheck() {
         }
     }
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else {
@@ -663,6 +668,41 @@ async function CreateTournamentCheck() {
         }
     }
 }
+
+async function StartMatch() {
+    try {
+        const response = await fetch(apiurl + '/start-match/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                tournament_name: document.getElementById('tournament_name').textContent
+            })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
+            return;
+        }
+        setupTournament(data.user1, data.user2, document.getElementById('tournament_name').textContent);
+        changeLocation("#pong");
+    }
+    catch (error) {
+        if (response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else {
+            showAlert("something-went-wrong");
+        }
+    }
+}
+
 
 
 async function LoadTournamentOptions() {
@@ -714,7 +754,7 @@ async function LoadTournamentOptions() {
         }
 
     } catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -751,7 +791,7 @@ async function DeleteTournament() {
         }
     }
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -791,7 +831,7 @@ async function LoadTournament() {
             }
 
             const semiFinals = data.semifinals;
-            if (semiFinals == [null, null, null, null]) {
+            if (semiFinals.length === 4 && semiFinals.every(player => player === null)) {
                 return
             }
 
@@ -813,12 +853,12 @@ async function LoadTournament() {
                 document.getElementById('bracket_winner').querySelector('p').textContent = final[0] + ' vs ???';
             }
             if (final[1] != null) {
-                document.getElementById('bracket_semi2').querySelector('p').textContent = final[0] + ' vs ' + final[1];
+                document.getElementById('bracket_winner').querySelector('p').textContent = final[0] + ' vs ' + final[1];
             }
 
         }
     } catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else
@@ -846,7 +886,7 @@ async function LoadScores() {
         document.getElementById('template_score').remove();
     }
     catch (error) {
-        if (error.response.status === 401) {
+        if (response.status === 401) {
             window.location.hash = '#login';
         }
         else

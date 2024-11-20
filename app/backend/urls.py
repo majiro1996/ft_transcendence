@@ -52,6 +52,7 @@ urlpatterns = [
     path('tournament-options/', TournamentOptionsView.as_view(), name='tournament-options'),
 	path('delete-tournament/', DeleteTournamentView.as_view(), name='delete-tournament'),
 	path('start-tournament/', views.StartTournamentView.as_view(), name='start-tournament'),
+	path('start-match/', views.TournamentGame.as_view(), name='start-match'),
 
 	path('users/', views.UsersListView.as_view(), name='users'),
 	path('leaderboard/', views.LeaderboardView.as_view(), name='leaderboard'),

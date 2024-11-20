@@ -92,6 +92,8 @@ class MatchResult(models.Model):
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_match', null=True, blank=True)
     pending = models.BooleanField(default=True)
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, null=True, blank=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    later = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user1.username + ' vs ' + self.user2.username

@@ -627,28 +627,61 @@ class GameStatsView(APIView):
         try:
             user1 = User.objects.get(username=request.data.get('user1'))
             user2 = User.objects.get(username=request.data.get('user2'))
+            tournament = Tournament.objects.get(tournament_name=request.data.get('tournament_name'))
             if request.data.get("winner") == "tie" and request.data.get("game_type") == "tic-tac-toe":
                 winner = None
             else:
                 winner = User.objects.get(username=request.data.get('winner'))
             if winner is not None and winner not in [user1, user2]:
                 return Response({'error': 'Invalid winner'}, status=status.HTTP_400_BAD_REQUEST)
-        except:
-            return Response({'error': 'Invalid user'}, status=status.HTTP_400_BAD_REQUEST)
-        game_type = request.data.get('game_type')
-        user1_score = request.data.get('user1_score')
-        user2_score = request.data.get('user2_score')
-        MatchResult.objects.create(
-            user1=user1,
-            user2=user2,
-            winner=winner,
-            game_type=game_type,
-            user1_score=user1_score,
-            user2_score=user2_score
-        )
+        except User.DoesNotExist:
+            return Response({'error': f'Invalid user {request.data.get("user1")} - {request.data.get("user2")}'}, status=status.HTTP_400_BAD_REQUEST)
+        except Tournament.DoesNotExist:
+            return Response({'error': f'Invalid tournament {request.data.get("tournament_name")}'}, status=status.HTTP_400_BAD_REQUEST)
+        match = MatchResult.objects.filter(Q(user1=user1, user2=user2) | Q(user1=user2, user2=user1), tournament=tournament, pending=True)[0]
+        match.winner = winner
+        match.pending = False
+        match.user1_score = request.data.get('user1_score')
+        match.user2_score = request.data.get('user2_score')
+        match.save()
+        match = MatchResult.objects.filter(Q(user1=None) | Q(user2=None), tournament=tournament, pending=True).order_by('creation_date')[0]
+        if match.user1 is None:
+            match.user1 = winner
+        else:
+            match.user2 = winner
+        match.save()
+        last_match = MatchResult.objects.filter(tournament=tournament, pending=True).count()
+        if last_match == 0:
+            tournament.status = 2
+            tournament.save()
         update_last_online(User.objects.get(username=user1))
         update_last_online(User.objects.get(username=user2))
         return Response({'success': 'Match result recorded'}, status=status.HTTP_201_CREATED)
+    
+    def put(self, request):
+        try:
+            tournament = Tournament.objects.get(tournament_name=request.data.get('tournament_name'))
+            matches = MatchResult.objects.filter(tournament=tournament).order_by('creation_date')
+        except Tournament.DoesNotExist:
+            return Response({'error': f'Invalid tournament {request.data.get("tournament_name")}'}, status=status.HTTP_400_BAD_REQUEST)
+        except MatchResult.DoesNotExist:
+            return Response({'error': 'No matches found'}, status=status.HTTP_400_BAD_REQUEST)
+        matches_json = []
+        for match in matches:
+            match_obj = {
+                'user1': None if match.user1 is None else match.user1.username,
+                'user2': None if match.user2 is None else match.user2.username,
+                'winner': None if match.winner is None else match.winner.username,
+                'game_type': match.game_type,
+                'pending': match.pending,
+                'user1_score': match.user1_score,
+                'user2_score': match.user2_score,
+                'creation_date': match.creation_date
+            }
+            matches_json.append(match_obj)
+        return Response({
+            'matches': matches_json
+        }, status=status.HTTP_200_OK)
 
 
 class UsersListView(APIView):
@@ -840,33 +873,52 @@ class StartTournamentView(APIView):
                     user1_score=0,
                     user2_score=0,
                     pending=True,
-                    tournament=tournament
+                    tournament=tournament,
+                    later=True
                 )
             tournament.status = 1
             tournament.save()
 
         players_json = []
-        for match in MatchResult.objects.filter(tournament=tournament):
+        for match in MatchResult.objects.filter(tournament=tournament).order_by('creation_date'):
             if match is not None and match.user1:
                 players_json.append(match.user1.username)
             if match is not None and match.user2:
                 players_json.append(match.user2.username)
 
-        pending_matches = MatchResult.objects.filter(Q(user1=None) & Q(user2=None), tournament=tournament)
-        pending_count = pending_matches.count()
+        pending_matches = MatchResult.objects.filter(later=True, tournament=tournament).order_by('creation_date')
+        semifinals = []
+        final = []
+        null_players = 0
+        for match in pending_matches:
+            if match.user1 is None:
+                null_players += 1
+            if match.user2 is None:
+                null_players += 1
         
-        if pending_count == 3:
+        if null_players == 6:
             semifinals = [None, None, None, None]
             final = [None, None]
-        elif pending_count == 2:
-            semifinals = [pending_matches[0].user1, pending_matches[0].user2, None, None]
+        elif null_players == 5:
+            semifinals = [pending_matches[0].user1.username, None, None, None]
             final = [None, None]
-        elif pending_count == 1:
-            semifinals = [pending_matches[0].user1, pending_matches[0].user2, pending_matches[1].user1, pending_matches[1].user2]
+        elif null_players == 4:
+            semifinals = [pending_matches[0].user1.username, pending_matches[0].user2.username, None, None]
             final = [None, None]
-        elif pending_count == 0:
-            semifinals = [pending_matches[0].user1, pending_matches[0].user2, pending_matches[1].user1, pending_matches[1].user2]
-            final = [pending_matches[2].user1, pending_matches[2].user2]
+        elif null_players == 3:
+            semifinals = [pending_matches[0].user1.username, pending_matches[0].user2.username, pending_matches[1].user1.username, None]
+            final = [None, None]
+        elif null_players == 2:
+            semifinals = [pending_matches[0].user1.username, pending_matches[0].user2.username, pending_matches[1].user1.username, pending_matches[1].user2.username]
+            final = [None, None]
+        elif null_players == 1:
+            semifinals = [pending_matches[0].user1.username, pending_matches[0].user2.username, pending_matches[1].user1.username, pending_matches[1].user2.username]
+            final = [pending_matches[2].user1.username, None]
+        elif null_players == 0:
+            semifinals = [pending_matches[0].user1.username, pending_matches[0].user2.username, pending_matches[1].user1.username, pending_matches[1].user2.username]
+            final = [pending_matches[2].user1.username, pending_matches[2].user2.username]
+        
+        
 
         return Response({
             'tournament_name': tournament.tournament_name,
@@ -894,4 +946,25 @@ class TestUsersAPIView(APIView):
             )
             user.save()
         return Response({'success': 'Test users created'}, status=status.HTTP_201_CREATED)
+
+class TournamentGame(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        tournament_name = request.data.get('tournament_name')
+        
+        try:
+            tournament = Tournament.objects.get(tournament_name=tournament_name, userHost=request.user, status=1)
+        except Tournament.DoesNotExist:
+            return Response({'error': 'bunkont'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        next_match = MatchResult.objects.filter(tournament=tournament, pending=True).first()
+
+        if next_match is None:
+            return Response({'error': 'something-went-wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({
+            'user1': next_match.user1.username,
+            'user2': next_match.user2.username
+        }, status=status.HTTP_200_OK)
 
