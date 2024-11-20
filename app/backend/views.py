@@ -244,6 +244,7 @@ class ProfileSettingsView(APIView):
             user.deleted = True
             user.username = 'anon'+str(user.id)
             user.email = 'anon'+str(user.id)+'@anon.com'
+            user.profile_picture = None
             user.save()
             return Response({'success': 'Account-anonymized-succes'}, status=status.HTTP_200_OK)
         # Check if new username or email already exists
@@ -406,6 +407,9 @@ class CreateTournamentView(APIView):
 
         update_last_online(user)
 
+        if not tournament_name.isalnum() or len(tournament_name) < 1:
+            return Response({'error': 'invalid-tournament-name'}, status=status.HTTP_400_BAD_REQUEST)
+
         if game_type not in ['pong', 'tic-tac-toe']:
             return Response({'error': 'invalid-game-type'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -504,6 +508,7 @@ class tournamentInviteAcceptView(APIView):
             return Response({'success': 'Tournament invite accepted'}, status=status.HTTP_200_OK)
         except TournamentInvite.DoesNotExist:
             return Response({'error': 'no-invite'}, status=status.HTTP_400_BAD_REQUEST)
+
 class GetTournamentView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -522,14 +527,16 @@ class GetTournamentView(APIView):
         for invite in tournament_invites:
             invites_data.append({
                 'host': invite.userSender.username,
-                'tournament_name': invite.tournament.tournament_name
+                'tournament_name': invite.tournament.tournament_name,
+                'profile_pic': invite.userSender.profile_picture
             })
 
         tournaments_data = []
         for tournament in tournaments:
             tournaments_data.append({
                 'host': tournament.userHost.username,
-                'tournament_name': tournament.tournament_name
+                'tournament_name': tournament.tournament_name,
+                'profile_pic': tournament.userHost.profile_picture
             })
 
         return Response({

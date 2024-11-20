@@ -510,6 +510,10 @@ async function LoadTournamentsHome() {
             template.querySelector('#tour_name_template').textContent = invite.tournament_name;
             template.querySelector('#tour_accept_template').id = 'accept-' + invite.tournament_name;
             template.querySelector('#tour_decline_template').id = 'decline-' + invite.tournament_name;
+            if (invite.profile_pic != null)
+                template.querySelector('#img_template').src = "data:image/png;base64," + invite.profile_pic;
+            else
+                template.querySelector('#img_template').src = '/media/Profile_avatar_placeholder_large.png';
             template.style.display = 'flex';
             template.id = invite.tournament_name;
             document.getElementById('tournaments_bar').appendChild(template);
@@ -518,6 +522,10 @@ async function LoadTournamentsHome() {
             var template = document.getElementById('tour_accepted_template').cloneNode(true);
             template.querySelector('#tour_hostname_template').textContent = tournament.host;
             template.querySelector('#tour_name_template').textContent = tournament.tournament_name;
+            if (tournament.profile_pic != null)
+                template.querySelector('#img_template').src = "data:image/png;base64," + tournament.profile_pic;
+            else
+                template.querySelector('#img_template').src = '/media/Profile_avatar_placeholder_large.png';
             template.style.display = 'flex';
             template.id = tournament.tournament_name;
             document.getElementById('tournaments_bar').appendChild(template);
@@ -610,7 +618,7 @@ async function createTournament(game_type) {
                 window.location.hash = '#login';
             }
             else
-                showAlert("something-went-wrong");
+                showAlert(data.error);
             return;
         }
 
@@ -628,6 +636,34 @@ async function createTournament(game_type) {
             showAlert("something-went-wrong");
     }
 }
+
+async function CreateTournamentCheck() {
+    try {
+        const response = await fetch(apiurl + '/protected/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
+            return;
+        }
+    }
+    catch (error) {
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else {
+            showAlert("something-went-wrong");
+        }
+    }
+}
+
 
 async function LoadTournamentOptions() {
     try {
