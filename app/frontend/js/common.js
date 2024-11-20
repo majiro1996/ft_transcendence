@@ -745,6 +745,7 @@ async function LoadTournament() {
         }
 
         if (data.success) {
+            document.getElementById('tournament_name').textContent = data.tournament_name;
             const players = data.players;
             for (let i = 0; i < players.length; i++) {
                 const qualPosition = document.getElementById(`bracket_qual${i + 1}`);
@@ -842,7 +843,6 @@ function hideAllAlerts() {
         alert.style.display = 'none';
     });
 }
-
 
 // TEST FUNCTIONS
 
