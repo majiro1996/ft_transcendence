@@ -33,7 +33,12 @@ async function getProfileSettings() {
         });
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
+            return;
         }
 
         const data = await response.json();
@@ -42,7 +47,11 @@ async function getProfileSettings() {
         document.getElementById('2fa_enabled').checked = data['2fa_enabled'];
         document.getElementById('language_preference').value = data.language_preference;
     } catch (error) {
-        showAlert("something-went-wrong");
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -56,7 +65,12 @@ async function LoadProfile() {
         });
 
         if (!response.ok) {
-            throw new Error('Network response was not ok')
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
+            return;
         }
 
         const data = await response.json();
@@ -141,7 +155,11 @@ async function LoadProfile() {
     }
 
     catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -160,7 +178,11 @@ async function acceptFriendRequest(friend, action) {
         });
     }
     catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
     if (action == 'accept') {
         var new_friend = document.getElementById(friend.parentNode.id).cloneNode(true);
@@ -195,6 +217,14 @@ async function LoadFriends() {
                 'Authorization': 'Bearer ' + localStorage.getItem('access_token')
             }
         });
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
+            return;
+        }
         const data = await response.json();
         data.user.friends.forEach(friend => {
             var template = document.getElementById('friend_template').cloneNode(true);
@@ -217,7 +247,11 @@ async function LoadFriends() {
         });
     }
     catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -236,7 +270,11 @@ async function DeleteFriend(friend) {
         document.getElementById(friend).remove();
     }
     catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -260,7 +298,11 @@ async function SendFriendRequest() {
             showAlert(data.error);
     }
     catch (error) {
-        showAlert("something-went-wrong");
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -285,7 +327,11 @@ async function submitProfilePic() {
         }
     }
     catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -334,7 +380,11 @@ async function submitProfileSettings(settingType, value) {
             RouterLb.setLanguage(value);
         }
     } catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -435,7 +485,11 @@ async function LoadTournamentsHome() {
         });
         const result = await response.json();
         if (!response.ok) {
-            showAlert(result.error);
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
             return;
         }
         //if the host has an open tournament redirect to the tournament options page
@@ -472,7 +526,10 @@ async function LoadTournamentsHome() {
     }
 
     catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401)
+            window.location.hash = '#login';
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -493,7 +550,11 @@ async function acceptTourInvite(tournament, action) {
         const result = await response.json();
         
         if (!response.ok) {
-            showAlert(result.error);
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
             return;
         }
         if (action == 'accept') {
@@ -509,7 +570,11 @@ async function acceptTourInvite(tournament, action) {
             document.getElementById(tournament.parentNode.id).remove();
     }
     catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 
 }
@@ -541,7 +606,12 @@ async function createTournament(game_type) {
         const data = await response.json();
 
         if (!response.ok) {
-            showAlert(data.error);
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
+            return;
         }
 
         if (data.success) {
@@ -551,7 +621,11 @@ async function createTournament(game_type) {
         }
 
     } catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -567,7 +641,11 @@ async function LoadTournamentOptions() {
         const data = await response.json();
 
         if (!response.ok) {
-            showAlert(data.error);
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
             return;
         }
 
@@ -600,7 +678,11 @@ async function LoadTournamentOptions() {
         }
 
     } catch (error) {
-        console.error('Error:', error);
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -620,7 +702,11 @@ async function DeleteTournament() {
         const data = await response.json();
 
         if (!response.ok) {
-            showAlert(data.error);
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
             return;
         }
         if (data.success) {
@@ -629,7 +715,11 @@ async function DeleteTournament() {
         }
     }
     catch (error) {
-        showAlert("something-went-wrong");
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -646,7 +736,11 @@ async function LoadTournament() {
         const data = await response.json();
 
         if (!response.ok) {
-            showAlert(data.error);
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
             return;
         }
 
@@ -687,7 +781,11 @@ async function LoadTournament() {
 
         }
     } catch (error) {
-        showAlert("something-went-wrong");
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -711,7 +809,11 @@ async function LoadScores() {
         document.getElementById('template_score').remove();
     }
     catch (error) {
-        showAlert("something-went-wrong");;
+        if (error.response.status === 401) {
+            window.location.hash = '#login';
+        }
+        else
+            showAlert("something-went-wrong");
     }
 }
 
@@ -754,7 +856,12 @@ async function TestCreateUsers() {
         });
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            if (response.status === 401) {
+                window.location.hash = '#login';
+            }
+            else
+                showAlert("something-went-wrong");
+            return;
         }
 
         const data = await response.json();

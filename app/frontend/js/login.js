@@ -136,9 +136,7 @@ async function logout() {
             showAlert(data.error);
             return;
         }
-        if (data.success) {
-            showAlert(data.success);
-        }
+
         // Clear tokens from localStorage or sessionStorage
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
