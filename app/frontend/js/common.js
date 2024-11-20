@@ -651,8 +651,6 @@ async function LoadTournament() {
         }
 
         if (data.success) {
-            showAlert(data.success);
-
             const players = data.players;
             for (let i = 0; i < players.length; i++) {
                 const qualPosition = document.getElementById(`bracket_qual${i + 1}`);
@@ -661,13 +659,32 @@ async function LoadTournament() {
                 }
             }
 
-            const semiFinals = data.semi_finals;
-            for (let i = 0; i < semiFinals.length; i++) {
-                const semiPosition = document.getElementById(`bracket_semi${i + 1}`);
-                if (semiPosition) {
-                    semiPosition.querySelector('p').textContent = semiFinals[i];
-                }
+            const semiFinals = data.semifinals;
+            if (semiFinals == [null, null, null, null]) {
+                return
             }
+
+            if (semiFinals[0] != null) {
+                document.getElementById('bracket_semi1').querySelector('p').textContent = semiFinals[0];
+            }
+            if (semiFinals[1] != null) {
+                document.getElementById('bracket_semi2').querySelector('p').textContent = semiFinals[1];
+            }
+            if (semiFinals[2] != null) {
+                document.getElementById('bracket_semi3').querySelector('p').textContent = semiFinals[2];
+            }
+            if (semiFinals[3] != null) {
+                document.getElementById('bracket_semi4').querySelector('p').textContent = semiFinals[3];
+            }
+
+            const final = data.final;
+            if (final[0] != null) {
+                document.getElementById('bracket_winner').querySelector('p').textContent = final[0] + ' vs ???';
+            }
+            if (final[1] != null) {
+                document.getElementById('bracket_semi2').querySelector('p').textContent = final[0] + ' vs ' + final[1];
+            }
+
         }
     } catch (error) {
         showAlert("something-went-wrong");

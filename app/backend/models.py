@@ -51,15 +51,15 @@ class Tournament(models.Model):
     userHost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userHost')
     guests = models.ManyToManyField(User, related_name='guests')
 
-    firstMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='firstMatch', null=True, blank=True)
-    secondMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='secondMatch', null=True, blank=True)
-    thirdMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='thirdMatch', null=True, blank=True)
-    fourthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fourthMatch', null=True, blank=True)
+    # firstMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='firstMatch', null=True, blank=True)
+    # secondMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='secondMatch', null=True, blank=True)
+    # thirdMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='thirdMatch', null=True, blank=True)
+    # fourthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fourthMatch', null=True, blank=True)
 
-    fifthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fifthMatch', null=True, blank=True)
-    sixthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='sixthMatch', null=True, blank=True)
+    # fifthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fifthMatch', null=True, blank=True)
+    # sixthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='sixthMatch', null=True, blank=True)
 
-    finalMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='finalMatch', null=True, blank=True)
+    # finalMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='finalMatch', null=True, blank=True)
 
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_tournament', null=True, blank=True)
     
@@ -83,8 +83,8 @@ class TournamentInvite(models.Model):
         return self.userSender.username + ' to ' + self.userReceiver.username + ' for ' + self.tournament.id
 
 class MatchResult(models.Model):
-    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1_match')
-    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2_match')
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1_match', null=True, blank=True)
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2_match', null=True, blank=True)
     user1_score = models.IntegerField()
     user2_score = models.IntegerField()
     date = models.DateTimeField(auto_now=True)

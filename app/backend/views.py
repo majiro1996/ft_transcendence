@@ -419,7 +419,7 @@ class CreateTournamentView(APIView):
         if len(user_guests) != 7 or "" in user_guests or None in user_guests:
             return Response({'error': 'not-enough-players'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if user in user_guests:
+        if user.username in user_guests:
             return Response({'error': 'self-request'}, status=status.HTTP_400_BAD_REQUEST)
         
         #guest must be unique and valid users
@@ -805,22 +805,68 @@ class StartTournamentView(APIView):
             return Response({'error': 'No-tournaments'}, status=status.HTTP_400_BAD_REQUEST)
         tournament = tournaments.first()
 
-
-
         players = []
         for guest in tournament.guests.all():
-            players.append(guest.username)
-        players.append(user.username)
+            players.append(guest)
+        players.append(user)
 
         if tournament.status == 0:
+            # create the first 4 matches with random opponents
             random.shuffle(players)
+            for i in range(0, 4):
+                MatchResult.objects.create(
+                    user1=players[i],
+                    user2=players[i+4],
+                    game_type=tournament.game_type,
+                    winner=None,
+                    user1_score=0,
+                    user2_score=0,
+                    pending=True,
+                    tournament=tournament
+                )
+            for i in range(4, 7):
+                MatchResult.objects.create(
+                    user1=None,
+                    user2=None,
+                    game_type=tournament.game_type,
+                    winner=None,
+                    user1_score=0,
+                    user2_score=0,
+                    pending=True,
+                    tournament=tournament
+                )
             tournament.status = 1
             tournament.save()
+
+        players_json = []
+        for match in MatchResult.objects.filter(tournament=tournament):
+            if match is not None and match.user1:
+                players_json.append(match.user1.username)
+            if match is not None and match.user2:
+                players_json.append(match.user2.username)
+
+        pending_matches = MatchResult.objects.filter(Q(user1=None) & Q(user2=None), tournament=tournament)
+        pending_count = pending_matches.count()
+        
+        if pending_count == 3:
+            semifinals = [None, None, None, None]
+            final = [None, None]
+        elif pending_count == 2:
+            semifinals = [pending_matches[0].user1, pending_matches[0].user2, None, None]
+            final = [None, None]
+        elif pending_count == 1:
+            semifinals = [pending_matches[0].user1, pending_matches[0].user2, pending_matches[1].user1, pending_matches[1].user2]
+            final = [None, None]
+        elif pending_count == 0:
+            semifinals = [pending_matches[0].user1, pending_matches[0].user2, pending_matches[1].user1, pending_matches[1].user2]
+            final = [pending_matches[2].user1, pending_matches[2].user2]
 
         return Response({
             'tournament_name': tournament.tournament_name,
             'game_type': tournament.game_type,
-            'players': players,
+            'players': players_json,
+            'semifinals': semifinals,
+            'final': final,
             'success': 'Tournament-started'
         }, status=status.HTTP_200_OK)
 
