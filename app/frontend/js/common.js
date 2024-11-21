@@ -920,7 +920,40 @@ function hideAllAlerts() {
     });
 }
 
+async function tournamentEnd(winner, tournament_n) {
+    try {
+        const response = await fetch(apiurl + '/end-tournament/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                tournament_name: tournament_n,
+                winner: winner
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok)
+        {
+            showAlert(data.error);
+            return;
+        }
+        if (data.success) {
+            showAlert(data.success);
+            changeLocation("#tournaments");
+        }
+    }
+    catch (error) {
+        showAlert("something-went-wrong");
+    }
+
+}
+
+
 // TEST FUNCTIONS
+
 
 async function TestCreateUsers() {
     try {

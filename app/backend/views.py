@@ -975,3 +975,18 @@ class TournamentGame(APIView):
             'user2': next_match.user2.username
         }, status=status.HTTP_200_OK)
 
+class TournamentEndView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        tournament_name = request.data.get('tournament_name')
+        winner = tournament
+        try:
+            tournament = Tournament.objects.get(tournament_name=tournament_name, userHost=request.user, status=1)
+        except Tournament.DoesNotExist:
+            return Response({'error': 'bunkont'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        tournament.status = 2
+        tournament.save()
+
+        return Response({'success': 'Tournament-ended'}, status=status.HTTP_200_OK)
