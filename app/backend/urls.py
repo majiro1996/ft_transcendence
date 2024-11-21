@@ -23,6 +23,7 @@ from .views import (
 	TestUsersAPIView,
 	TournamentOptionsView,
 	DeleteTournamentView,
+	TournamentEndView
 )
 
 
@@ -53,6 +54,8 @@ urlpatterns = [
 	path('delete-tournament/', DeleteTournamentView.as_view(), name='delete-tournament'),
 	path('start-tournament/', views.StartTournamentView.as_view(), name='start-tournament'),
 	path('start-match/', views.TournamentGame.as_view(), name='start-match'),
+	path('end-tournament/', TournamentEndView.as_view(), name='end-tournament'),
+
 
 	path('users/', views.UsersListView.as_view(), name='users'),
 	path('leaderboard/', views.LeaderboardView.as_view(), name='leaderboard'),

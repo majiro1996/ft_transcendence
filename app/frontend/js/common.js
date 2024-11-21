@@ -799,7 +799,6 @@ async function DeleteTournament() {
 }
 
 async function LoadTournament() {
-    debugger
     try {
         const response = await fetch(apiurl + '/start-tournament/', {
             method: 'GET',
@@ -809,6 +808,10 @@ async function LoadTournament() {
         });
 
         const data = await response.json();
+
+        if (data.matches[6].winner != null) {
+            tournamentEnd(data.matches[6].winner, data.tournament_name);
+        }
 
         if (!response.ok) {
             if (response.status === 401) {

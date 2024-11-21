@@ -993,9 +993,10 @@ class TournamentEndView(APIView):
         try:
             tournament = Tournament.objects.get(tournament_name=tournament_name, userHost=request.user, status=1)
         except Tournament.DoesNotExist:
-            return Response({'error': 'bunkont'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'no-tournament-to-end'}, status=status.HTTP_400_BAD_REQUEST)
         
         tournament.status = 2
+        TournamentInvite.objects.filter(tournament=tournament).delete()
         tournament.save()
 
         return Response({'success': 'Tournament-ended'}, status=status.HTTP_200_OK)
