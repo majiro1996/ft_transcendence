@@ -3,12 +3,11 @@ let tUser1 = null;
 let tUser2 = null;
 let tName = null;
 
-function setupTournament(u1, u2, name)
-{
-	tUser1 = u1;
-	tUser2 = u2;
+function setupTournament(u1, u2, name) {
+    tUser1 = u1;
+    tUser2 = u2;
     tName = name;
-	isTournament = true;
+    isTournament = true;
 }
 
 function showItem(item) {
@@ -294,9 +293,9 @@ async function SendFriendRequest() {
             })
         });
         const data = await response.json();
-        if (data.success) 
+        if (data.success)
             showAlert(data.success);
-        else 
+        else
             showAlert(data.error);
     }
     catch (error) {
@@ -505,8 +504,8 @@ async function LoadTournamentsHome() {
         //if the host has an open tournament redirect to the tournament options page
         if (result.success) {
             if (result.success == 'ongoing-tournament') {
-            changeLocation("#tournament");
-            return;
+                changeLocation("#tournament");
+                return;
             }
             if (result.success == 'ready-tournament') {
                 changeLocation("#tournamentOptions");
@@ -566,7 +565,7 @@ async function acceptTourInvite(tournament, action) {
         });
 
         const result = await response.json();
-        
+
         if (!response.ok) {
             if (response.status === 401) {
                 window.location.hash = '#login';
@@ -808,7 +807,6 @@ async function DeleteTournament() {
 }
 
 async function LoadTournament() {
-    debugger
     try {
         const response = await fetch(apiurl + '/start-tournament/', {
             method: 'GET',
@@ -818,6 +816,10 @@ async function LoadTournament() {
         });
 
         const data = await response.json();
+
+        if (data.matches[6].winner != null) {
+            tournamentEnd(data.matches[6].winner, data.tournament_name);
+        }
 
         if (!response.ok) {
             if (response.status === 401) {
@@ -839,29 +841,94 @@ async function LoadTournament() {
             }
 
             const semiFinals = data.semifinals;
+            let checkSemis = true;
             if (semiFinals.length === 4 && semiFinals.every(player => player === null)) {
-                return
+                checkSemis = false;
             }
 
-            if (semiFinals[0] != null) {
-                document.getElementById('bracket_semi1').querySelector('p').textContent = semiFinals[0];
-            }
-            if (semiFinals[1] != null) {
-                document.getElementById('bracket_semi2').querySelector('p').textContent = semiFinals[1];
-            }
-            if (semiFinals[2] != null) {
-                document.getElementById('bracket_semi3').querySelector('p').textContent = semiFinals[2];
-            }
-            if (semiFinals[3] != null) {
-                document.getElementById('bracket_semi4').querySelector('p').textContent = semiFinals[3];
+            if (checkSemis) {
+                if (semiFinals[0] != null) {
+                    document.getElementById('bracket_semi1').querySelector('p').textContent = semiFinals[0];
+                }
+                if (semiFinals[1] != null) {
+                    document.getElementById('bracket_semi2').querySelector('p').textContent = semiFinals[1];
+                }
+                if (semiFinals[2] != null) {
+                    document.getElementById('bracket_semi3').querySelector('p').textContent = semiFinals[2];
+                }
+                if (semiFinals[3] != null) {
+                    document.getElementById('bracket_semi4').querySelector('p').textContent = semiFinals[3];
+                }
+
+                const final = data.final;
+                if (final[0] != null) {
+                    document.getElementById('bracket_winner').querySelector('p').textContent = final[0] + ' vs ???';
+                }
+                if (final[1] != null) {
+                    document.getElementById('bracket_winner').querySelector('p').textContent = final[0] + ' vs ' + final[1];
+                }
             }
 
-            const final = data.final;
-            if (final[0] != null) {
-                document.getElementById('bracket_winner').querySelector('p').textContent = final[0] + ' vs ???';
-            }
-            if (final[1] != null) {
-                document.getElementById('bracket_winner').querySelector('p').textContent = final[0] + ' vs ' + final[1];
+            for (let i = 0; i < data.matches.length; i++) {
+                if (i < 4) {
+                    const match = data.matches[i];
+                    const player1 = document.getElementById(`bracket_qual${(i * 2) + 1}`).querySelector('p');
+                    const player2 = document.getElementById(`bracket_qual${(i * 2) + 2}`).querySelector('p');
+                    if (match.winner != null) {
+                        if (match.winner === player1.textContent) {
+                            player1.classList.add('bracket_player_win');
+                            player2.classList.add('bracket_player_greyed_out');
+                        } else {
+                            player2.classList.add('bracket_player_win');
+                            player1.classList.add('bracket_player_greyed_out');
+                        }
+                        player1.classList.remove('bracket_player_neutral');
+                        player2.classList.remove('bracket_player_neutral');
+                    }
+                    else {
+                        player1.classList.add('bracket_player_next_up');
+                        player2.classList.add('bracket_player_next_up');
+                        player1.classList.remove('bracket_player_neutral');
+                        player2.classList.remove('bracket_player_neutral');
+                        break;
+                    }
+                }
+                else if (i < 6) {
+                    const match = data.matches[i];
+                    const player1 = document.getElementById(`bracket_semi${(i - 4) * 2 + 1}`).querySelector('p');
+                    const player2 = document.getElementById(`bracket_semi${(i - 4) * 2 + 2}`).querySelector('p');
+                    if (match.winner != null) {
+                        if (match.winner === player1.textContent) {
+                            player1.classList.add('bracket_player_win');
+                            player2.classList.add('bracket_player_greyed_out');
+                        } else {
+                            player2.classList.add('bracket_player_win');
+                            player1.classList.add('bracket_player_greyed_out');
+                        }
+                        player1.classList.remove('bracket_player_neutral');
+                        player2.classList.remove('bracket_player_neutral');
+                    }
+                    else {
+                        player1.classList.add('bracket_player_next_up');
+                        player2.classList.add('bracket_player_next_up');
+                        player1.classList.remove('bracket_player_neutral');
+                        player2.classList.remove('bracket_player_neutral');
+                        break;
+                    }
+                }
+                else {
+                    const match = data.matches[i];
+                    const player1 = document.getElementById('bracket_winner').querySelector('p');
+                    if (match.winner != null) {
+                        player1.textContent = match.winner;
+                        player1.classList.add('bracket_player_win');
+                    }
+                    else
+                    {
+                        player1.classList.add('bracket_player_next_up');
+                        player1.classList.remove('bracket_player_neutral');
+                    }
+                }
             }
 
         }
@@ -928,7 +995,40 @@ function hideAllAlerts() {
     });
 }
 
+async function tournamentEnd(winner, tournament_n) {
+    try {
+        const response = await fetch(apiurl + '/end-tournament/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            },
+            body: JSON.stringify({
+                tournament_name: tournament_n,
+                winner: winner
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok)
+        {
+            showAlert(data.error);
+            return;
+        }
+        if (data.success) {
+            showAlert(data.success);
+            changeLocation("#tournaments");
+        }
+    }
+    catch (error) {
+        showAlert("something-went-wrong");
+    }
+
+}
+
+
 // TEST FUNCTIONS
+
 
 async function TestCreateUsers() {
     try {
@@ -949,7 +1049,7 @@ async function TestCreateUsers() {
         }
 
         const data = await response.json();
-        console.log(data); 
+        console.log(data);
     }
     catch (error) {
         console.error('Error:', error);

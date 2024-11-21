@@ -215,6 +215,9 @@ class ProtectedDataAPIViewJWT(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        user = request.user
+        if not User.objects.filter(username=user.username).exists():
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'You are accessing protected data with JWT'}, status=status.HTTP_200_OK)
 
 
@@ -525,6 +528,8 @@ class GetTournamentView(APIView):
 
         invites_data = []
         for invite in tournament_invites:
+            if invite.accepted:
+                continue
             invites_data.append({
                 'host': invite.userSender.username,
                 'tournament_name': invite.tournament.tournament_name,
@@ -533,6 +538,8 @@ class GetTournamentView(APIView):
 
         tournaments_data = []
         for tournament in tournaments:
+            if tournament in [invite.tournament for invite in tournament_invites]:
+                continue
             tournaments_data.append({
                 'host': tournament.userHost.username,
                 'tournament_name': tournament.tournament_name,
@@ -918,7 +925,14 @@ class StartTournamentView(APIView):
             semifinals = [pending_matches[0].user1.username, pending_matches[0].user2.username, pending_matches[1].user1.username, pending_matches[1].user2.username]
             final = [pending_matches[2].user1.username, pending_matches[2].user2.username]
         
-        
+        all_matches = MatchResult.objects.filter(tournament=tournament).order_by('creation_date')
+        matches = []
+        for match in all_matches:
+            matches.append({
+                'user1': match.user1.username if match.user1 else None,
+                'user2': match.user2.username if match.user2 else None,
+                'winner': match.winner.username if match.winner else None,
+            })
 
         return Response({
             'tournament_name': tournament.tournament_name,
@@ -926,7 +940,9 @@ class StartTournamentView(APIView):
             'players': players_json,
             'semifinals': semifinals,
             'final': final,
-            'success': 'Tournament-started'
+            'success': 'Tournament-started',
+            'matches': matches,
+            'tournament_status': tournament.status
         }, status=status.HTTP_200_OK)
 
 
@@ -969,3 +985,19 @@ class TournamentGame(APIView):
             'game_type': next_match.game_type
         }, status=status.HTTP_200_OK)
 
+class TournamentEndView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        tournament_name = request.data.get('tournament_name')
+        winner = tournament
+        try:
+            tournament = Tournament.objects.get(tournament_name=tournament_name, userHost=request.user, status=1)
+        except Tournament.DoesNotExist:
+            return Response({'error': 'no-tournament-to-end'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        tournament.status = 2
+        TournamentInvite.objects.filter(tournament=tournament).delete()
+        tournament.save()
+
+        return Response({'success': 'Tournament-ended'}, status=status.HTTP_200_OK)
