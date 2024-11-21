@@ -651,16 +651,21 @@ class GameStatsView(APIView):
         match.user1_score = request.data.get('user1_score')
         match.user2_score = request.data.get('user2_score')
         match.save()
-        # match = MatchResult.objects.filter(Q(user1=None) | Q(user2=None), tournament=tournament, pending=True).order_by('creation_date')[0]
-        # if match.user1 is None:
-        #     match.user1 = winner
-        # else:
-        #     match.user2 = winner
-        # match.save()
-        # last_match = MatchResult.objects.filter(tournament=tournament, pending=True).count()
-        # if last_match == 0:
-        #     tournament.status = 2
-        #     tournament.save()
+        match = MatchResult.objects.filter(Q(user1=None) | Q(user2=None), tournament=tournament, pending=True).order_by('creation_date')
+        if match is None or len(match) == 0:
+            update_last_online(User.objects.get(username=user1))
+            update_last_online(User.objects.get(username=user2))
+            return Response({'success': 'Match result recorded'}, status=status.HTTP_201_CREATED)
+        match = match[0]
+        if match.user1 is None:
+            match.user1 = winner
+        else:
+            match.user2 = winner
+        match.save()
+        last_match = MatchResult.objects.filter(tournament=tournament, pending=True).count()
+        if last_match == 0:
+            tournament.status = 2
+            tournament.save()
         update_last_online(User.objects.get(username=user1))
         update_last_online(User.objects.get(username=user2))
         return Response({'success': 'Match result recorded'}, status=status.HTTP_201_CREATED)

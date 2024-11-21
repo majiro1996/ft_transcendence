@@ -53,8 +53,7 @@ async function send_results()
                                                          p_winner = tUser2;
                                         else
 				{
-					changeLocation("#");
-					changeLocation("#tictactoe");
+					changeLocation("#tournament");
 					return;
 				}
                                         const response = await fetch(apiurl + "/game-stats/", {
@@ -113,6 +112,8 @@ board.addEventListener('click', (event) => {
         winnerPlayer = currentPlayer;
         return;
     }
+    if (winnerPlayer)
+        return;
     //If is a Tie...
     if (boardState.every(cell => cell !== ''))
     {
@@ -129,6 +130,10 @@ board.addEventListener('click', (event) => {
 //Check if wins
 function checkWin()
 {
+    if (winnerPlayer === "tie")
+        return false;
+    else if (winnerPlayer === "X" || winnerPlayer === "O")
+        return true;
     for (let i = 0; i < winningConditions.length; i++)
     {
         const [a, b, c] = winningConditions[i];

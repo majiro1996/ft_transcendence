@@ -393,6 +393,9 @@ async function submitProfileSettings(settingType, value) {
 //tic-tac-toe game 
 
 function LoadTicTacToe() {
+    Array.from(document.getElementsByTagName('script')).forEach(script => {
+        script.remove();
+    });
     document.getElementById('two-players').addEventListener('click', () => {
         showGameBoard();
         loadGame('../TicTacToe/tictactoe.js');
@@ -439,6 +442,9 @@ function loadGame(scriptName) {
 // pong game
 
 function LoadPong() {
+    Array.from(document.getElementsByTagName('script')).forEach(script => {
+        script.remove();
+    });
     document.getElementById('two-players').addEventListener('click', () => {
         pong_startTwoPlayerGame();
     });
