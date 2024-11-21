@@ -1,49 +1,56 @@
 <div class="form_container">
-    <div class="form_body_xs">
-        <p class="form_title">Profile Options</p>
+    <div class="form_body_xxl">
+        <p class="form_title">Opciones del Perfil</p>
         <div class="form_field_with_button_container">
-            <input class="form_field_with_button" placeholder="Change name" type="text" id="username"/>
+            <input class="form_field_with_button" placeholder="Cambiar nombre" type="text" id="username"/>
             <button class="form_embedded_submit_button" onclick="submitProfileSettings('username', document.getElementById('username').value)"> -></button>
         </div>
         <div class="form_field_with_button_container">
-            <input class="form_field_with_button" placeholder="Change email" type="text" id="email"/>
+            <input class="form_field_with_button" placeholder="Cambiar email" type="text" id="email"/>
             <button class="form_embedded_submit_button" onclick="submitProfileSettings('email', document.getElementById('email').value)"> -></button>
         </div>
+        <div class="form_field_with_button_container">
+            <input class="form_field_with_button" placeholder="Cambiar contraseña" type="password" id="password"/>
+            <!-- <button class="form_embedded_submit_button" onclick="submitProfileSettings('password', document.getElementById('email').value)"> -></button> -->
+        </div>
+        <div class="form_field_with_button_container">
+            <input class="form_field_with_button" placeholder="Confirmar contraseña" type="password" id="password-confirm"/>
+            <button class="form_embedded_submit_button" onclick="submitProfileSettings('password', [document.getElementById('password').value, document.getElementById('password-confirm').value])"> -></button>
+        </div>
         <div class="form_label_with_checkbox_container">
-            <p class="form_checkbox_label">Enable 2FA</p>
+            <p class="form_checkbox_label">Habilitar 2FA</p>
             <input type="checkbox" class="form_embedded_checkbox" id="2fa_enabled" onchange="submitProfileSettings('2fa_enabled', this.checked)">
         </div>
-        <p class="form_label">Preferred language:</p>
+        <p class="form_label">Idioma preferido:</p>
         <div class="form_field_with_button_container">
             <select class="form_field_with_button" id="language_preference">
-                <option value="en">English</option>
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
+                <option value="en">Inglés</option>
+                <option value="es">Español</option>
+                <option value="fr">Francés</option>
             </select>
             <button class="form_embedded_submit_button" onclick="submitProfileSettings('language_preference', document.getElementById('language_preference').value)"> -></button>
         </div>
-        
-        <button class="form_settings_button">Change profile picture</button>
-        <a href="#friends"><button class="form_settings_button">Add/Remove friends</button></a>
-        <button class="form_settings_button" onclick="showItem('anonymize_confirmation_overlay')">Anonymize account</button>
-        <button class="form_settings_button" onclick="showItem('delete_confirmation_overlay')">Delete account [!]</button>
-        <a href="#profile"><button class="form_main_button">Back</button></a>
-
-        <!-- Delete Account Confirmation Overlay -->
-        <div id="delete_confirmation_overlay" class="overlay" style="display: none;">
-            <div class="overlay_delete">
-                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-                <button class="form_settings_button" onclick="deleteAccount()">Delete</button>
-                <button class="form_settings_button" onclick="hideItem('delete_confirmation_overlay')">Cancel</button>
-            </div>
-        </div>
-        <!-- Anonymizew Account Confirmation Overlay  -->
-        <div id="anonymize_confirmation_overlay" class="overlay" style="display: none;">
-            <div class="overlay_anonymize">
-                <p>Are you sure you want to anonymize your account? This action cannot be undone.</p>
-                <button class="form_settings_button" onclick="anonymizeAccount()">Anonymize</button>
-                <button class="form_settings_button" onclick="hideItem('anonymize_confirmation_overlay')">Cancel</button>
-            </div>
-        </div>
+        <button class="form_settings_button" onclick="document.getElementById('profile_picture').click()">Cambiar foto de perfil</button>
+        <input type="file" id="profile_picture" style="display: none;" onchange="submitProfilePic()" accept="image/*">
+        <a href="#friends"><button class="form_settings_button">Añadir/Eliminar amigos</button></a>
+        <button class="form_settings_button" onclick="showItem('anonymize_confirmation_overlay')">Anonimizar cuenta</button>
+        <button class="form_settings_button" onclick="showItem('delete_confirmation_overlay')">Eliminar cuenta [!]</button>
+        <a href="#profile"><button class="form_main_button">Volver</button></a>
+    </div>
+</div>
+<!-- Delete Account Confirmation Overlay -->
+<div id="delete_confirmation_overlay" class="overlay" style="display: none;">
+    <div class="overlay_delete">
+        <p>¿Estas seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.</p>
+        <button class="form_settings_popup_button" onclick="deleteAccount()">Eliminar</button>
+        <button class="form_settings_popup_button" onclick="hideItem('delete_confirmation_overlay')">Cancelar</button>
+    </div>
+</div>
+<!-- Anonymizew Account Confirmation Overlay  -->
+<div id="anonymize_confirmation_overlay" class="overlay" style="display: none;">
+    <div class="overlay_anonymize">
+        <p>¿Estas seguro de que quieres anonimizar tu cuenta? Esta acción no se puede deshacer.</p>
+        <button class="form_settings_popup_button" onclick="anonymizeAccount()">Anonimizar</button>
+        <button class="form_settings_popup_button" onclick="hideItem('anonymize_confirmation_overlay')">Cancelar</button>
     </div>
 </div>
