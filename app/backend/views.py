@@ -215,6 +215,9 @@ class ProtectedDataAPIViewJWT(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        user = request.user
+        if not User.objects.filter(username=user.username).exists():
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'You are accessing protected data with JWT'}, status=status.HTTP_200_OK)
 
 
