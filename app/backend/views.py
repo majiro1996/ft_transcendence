@@ -651,16 +651,16 @@ class GameStatsView(APIView):
         match.user1_score = request.data.get('user1_score')
         match.user2_score = request.data.get('user2_score')
         match.save()
-        match = MatchResult.objects.filter(Q(user1=None) | Q(user2=None), tournament=tournament, pending=True).order_by('creation_date')[0]
-        if match.user1 is None:
-            match.user1 = winner
-        else:
-            match.user2 = winner
-        match.save()
-        last_match = MatchResult.objects.filter(tournament=tournament, pending=True).count()
-        if last_match == 0:
-            tournament.status = 2
-            tournament.save()
+        # match = MatchResult.objects.filter(Q(user1=None) | Q(user2=None), tournament=tournament, pending=True).order_by('creation_date')[0]
+        # if match.user1 is None:
+        #     match.user1 = winner
+        # else:
+        #     match.user2 = winner
+        # match.save()
+        # last_match = MatchResult.objects.filter(tournament=tournament, pending=True).count()
+        # if last_match == 0:
+        #     tournament.status = 2
+        #     tournament.save()
         update_last_online(User.objects.get(username=user1))
         update_last_online(User.objects.get(username=user2))
         return Response({'success': 'Match result recorded'}, status=status.HTTP_201_CREATED)
@@ -989,7 +989,6 @@ class TournamentEndView(APIView):
 
     def post(self, request):
         tournament_name = request.data.get('tournament_name')
-        winner = tournament
         try:
             tournament = Tournament.objects.get(tournament_name=tournament_name, userHost=request.user, status=1)
         except Tournament.DoesNotExist:
@@ -997,6 +996,7 @@ class TournamentEndView(APIView):
         
         tournament.status = 2
         TournamentInvite.objects.filter(tournament=tournament).delete()
+        Tournament.winner = request.data.get('winner')
         tournament.save()
 
         return Response({'success': 'Tournament-ended'}, status=status.HTTP_200_OK)

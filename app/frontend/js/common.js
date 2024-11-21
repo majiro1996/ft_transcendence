@@ -1009,7 +1009,8 @@ async function tournamentEnd(winner, tournament_n) {
         }
         if (data.success) {
             showAlert(data.success);
-            changeLocation("#tournaments");
+            document.getElementById('tournament_overlay').style.display = 'flex';
+            document.getElementById('winner_username').textContent = winner
         }
     }
     catch (error) {
