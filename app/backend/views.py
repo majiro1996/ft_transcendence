@@ -516,7 +516,7 @@ class GetTournamentView(APIView):
         user = request.user
         update_last_online(user)
         tournament_invites = TournamentInvite.objects.filter(userReceiver=user, accepted=False)
-        tournaments = Tournament.objects.filter(userHost=user, guests=user, status__in=[0, 1])
+        tournaments = Tournament.objects.filter(Q(userHost=user) | Q(guests=user), status__in=[0, 1])
 
         if Tournament.objects.filter(userHost=user, status  = 0).exists():
             return Response({'success': 'ready-tournament'}, status=status.HTTP_200_OK)
