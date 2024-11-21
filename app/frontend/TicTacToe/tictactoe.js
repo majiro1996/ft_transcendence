@@ -41,7 +41,7 @@ async function send_results()
         {
                         if (!isTournament)
                         {
-                                        window.location.hash = "#";
+                                        changeLocation("#");
                                         return;
                         }
                         try
@@ -52,7 +52,11 @@ async function send_results()
                                         else if (winnerPlayer === 'O')
                                                          p_winner = tUser2;
                                         else
-                                                         p_winner = "tie";
+				{
+					changeLocation("#");
+					changeLocation("#tictactoe");
+					return;
+				}
                                         const response = await fetch(apiurl + "/game-stats/", {
                                                         method: "POST",
                                                         headers: {
@@ -66,6 +70,7 @@ async function send_results()
                                                                         game_type: "tic-tac-toe",
                                                                         user1_score: 0,
                                                                         user2_score: 0,
+									tournament_name: tName,
                                                         }),
                                         });
                                         localStorage.removeItem("user1");
@@ -73,10 +78,11 @@ async function send_results()
 					isTournament = false;
 					tUser1 = null;
 					tUser2 = null;
+					tName = null;
                         } catch (error){
                                         console.log(`Error: ${error}`);
                         }
-                        window.location.hash = "#tournaments";
+                        changeLocation("#tournaments");
         }
 
 message.onclick = send_results

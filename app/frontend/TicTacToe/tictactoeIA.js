@@ -21,6 +21,51 @@
         [2, 4, 6]
     ];
 
+	async function send_results()
+        {
+                        if (!isTournament)
+                        {
+                                        window.location.hash = "#";
+                                        return;
+                        }
+                        try
+                        {
+                                        let p_winner = null;
+                                        if (winnerPlayer === 'X')
+                                                         p_winner = tUser1;
+                                        else if (winnerPlayer === 'O')
+                                                         p_winner = tUser2;
+                                        else
+                                                         p_winner = "tie";
+                                        const response = await fetch(apiurl + "/game-stats/", {
+                                                        method: "POST",
+                                                        headers: {
+                                                                        'Content-Type': 'application/json',
+                                                                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                                                        },
+                                                        body: JSON.stringify({
+                                                                        user1: tUser1,
+                                                                        user2: tUser2,
+                                                                        winner: p_winner,
+                                                                        game_type: "tic-tac-toe",
+                                                                        user1_score: 0,
+                                                                        user2_score: 0,
+                                                                        tournament_name: tName,
+                                                        }),
+                                        });
+                                        localStorage.removeItem("user1");
+                                        localStorage.removeItem("user2");
+                                        isTournament = false;
+                                        tUser1 = null;
+                                        tUser2 = null;
+                                        tName = null;
+                        } catch (error){
+                                        console.log(`Error: ${error}`);
+                        }
+                        window.location.hash = "#tournaments";
+        }
+	message.onclick = send_results;
+
     // Difficulty
     const difficulty = localStorage.getItem('tictactoeDifficulty') || 'normal';
     let valor = 0.5;

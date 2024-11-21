@@ -402,6 +402,11 @@ function LoadTicTacToe() {
     document.getElementById('one-player').addEventListener('click', () => {
         showDifficultySelection();
     });
+    if (isTournament && tUser1 != null && tUser2 != null)
+    {
+        showGameBoard();
+        loadGame('../TicTacToe/tictactoe.js');
+    }
 }
 
 
@@ -691,7 +696,10 @@ async function StartMatch() {
             return;
         }
         setupTournament(data.user1, data.user2, document.getElementById('tournament_name').textContent);
-        changeLocation("#pong");
+	if (data.game_type === 'pong')
+            changeLocation("#pong");
+	else
+	    changeLocation("#tictactoe");
     }
     catch (error) {
         if (response.status === 401) {

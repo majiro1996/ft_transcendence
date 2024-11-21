@@ -965,6 +965,7 @@ class TournamentGame(APIView):
 
         return Response({
             'user1': next_match.user1.username,
-            'user2': next_match.user2.username
+            'user2': next_match.user2.username,
+            'game_type': next_match.game_type
         }, status=status.HTTP_200_OK)
 

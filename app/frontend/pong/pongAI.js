@@ -192,8 +192,8 @@ function AiPongGame(){
             if (player1 == undefined || player2 == undefined) return ;
             if (e.key == "w") player1.move_up = true;
             if (e.key == "s") player1.move_down = true;
-            if (e.key == "o") player2.move_up = true;
-            if (e.key == "l") player2.move_down = true;
+            if (e.key == "ArrowUp") player2.move_up = true;
+            if (e.key == "ArrwDown") player2.move_down = true;
     }
     
     function event_keyup(e)
@@ -201,8 +201,8 @@ function AiPongGame(){
             if (player1 == undefined || player2 == undefined) return ;
             if (e.key == "w") player1.move_up = false;
             if (e.key == "s") player1.move_down = false;
-            if (e.key == "o") player2.move_up = false;
-            if (e.key == "l") player2.move_down = false;
+            if (e.key == "ArrowUp") player2.move_up = false;
+            if (e.key == "ArrowDown") player2.move_down = false;
     }
     
     // time.js
@@ -239,7 +239,7 @@ function AiPongGame(){
                 this.lastUpdate = currentTime;
     
                 // Simulate future position
-                this.targetY = this.simulateBallPosition(ball);
+                this.targetY = this.simulateBallPosition(ball) - this.player.height / 2;
             }
     
             // Move AI to the predicted position with margin
