@@ -1,89 +1,20 @@
-<!doctype html>
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ft_trascendence</title>
-    <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/styles.css">
-    <script src='/bootstrap/js/bootstrap.min.js'></script>
-</head>
-<body>
-<video autoplay muted loop id="bg_video">
-    <source src="../media/LANDING_VIDEO.mp4" type="video/mp4">
-</video>
-<div class="tr_header">
-    <div id="h_logo_container"><a href="index.html"><img id="h_logo" src="../media/Transcendence_Logo.svg"></a></div>
-    <div class="h_basic">TORNEOS</div>
-    <a href="scoreboard_logged_in.html"><div class="h_basic">PUNTUACIONES</div></a>
-    <div class="h_basic">PERFIL</div>
-</div>
 <div class="form_container">
     <div class="form_body_xs">
-        <p class="form_title">Editar lista de amigos</p>
+        <p class="form_title">Modifier la liste des amis</p>
         <div class="form_field_with_button_container">
-            <input class="form_field_with_button" placeholder="Nombre del amigo" type="text"/>
-            <button class="form_embedded_submit_button"> +</button>
+            <input id="friend_name" class="form_field_with_button" placeholder="Nom de l'ami" type="text"/>
+            <button class="form_embedded_submit_button" onclick="SendFriendRequest()"> +</button>
         </div>
         <div id="pr_friendbox_editor">
-            <div class="pr_friend_item_editor">
-                <img class="pr_friend_image" src="../media/placeholders/CK.jpg">
+            <div class="pr_friend_item_editor" id="friend_template" hidden>
+                <img id="template_image" class="pr_friend_image" src="../media/placeholders/CK.jpg">
                 <div class="pr_friend_info">
-                    <p class="pr_friend_username">Amigo1</p>
-                    <p class="pr_friend_status_on">Conectado</p>
+                    <p id="template_username" class="pr_friend_username">Ami1</p>
+                    <p id="template_status" class="pr_friend_status_on">En ligne</p>
                 </div>
-                <button class="pr_friend_delete">X</button>
-            </div>
-            <div class="pr_friend_item_editor">
-                <img class="pr_friend_image" src="../media/placeholders/CK.jpg">
-                <div class="pr_friend_info">
-                    <p class="pr_friend_username">Amigo2</p>
-                    <p class="pr_friend_status_off">Desconectado</p>
-                </div>
-                <button class="pr_friend_delete">X</button>
-            </div>
-            <div class="pr_friend_item_editor">
-                <img class="pr_friend_image" src="../media/placeholders/CK.jpg">
-                <div class="pr_friend_info">
-                    <p class="pr_friend_username">Amigo3</p>
-                    <p class="pr_friend_status_on">Conectado</p>
-                </div>
-                <button class="pr_friend_delete">X</button>
-            </div>
-            <div class="pr_friend_item_editor">
-                <img class="pr_friend_image" src="../media/placeholders/CK.jpg">
-                <div class="pr_friend_info">
-                    <p class="pr_friend_username">Amigo4</p>
-                    <p class="pr_friend_status_on">Conectado</p>
-                </div>
-                <button class="pr_friend_delete">X</button>
-            </div>
-            <div class="pr_friend_item_editor">
-                <img class="pr_friend_image" src="../media/placeholders/CK.jpg">
-                <div class="pr_friend_info">
-                    <p class="pr_friend_username">Amigo5</p>
-                    <p class="pr_friend_status_off">Desconectado</p>
-                </div>
-                <button class="pr_friend_delete">X</button>
-            </div>
-            <div class="pr_friend_item_editor">
-                <img class="pr_friend_image" src="../media/placeholders/CK.jpg">
-                <div class="pr_friend_info">
-                    <p class="pr_friend_username">Amigo6</p>
-                    <p class="pr_friend_status_off">Desconectado</p>
-                </div>
-                <button class="pr_friend_delete">X</button>
-            </div>
-            <div class="pr_friend_item_editor">
-                <img class="pr_friend_image" src="../media/placeholders/CK.jpg">
-                <div class="pr_friend_info">
-                    <p class="pr_friend_username">Amigo7</p>
-                    <p class="pr_friend_status_off">Desconectado</p>
-                </div>
-                <button class="pr_friend_delete">X</button>
+                <button class="pr_friend_delete" onclick="DeleteFriend(this.parentNode.id)">X</button>
             </div>
         </div>
-        <a href="settings.html"><button class="form_main_button_fle">Volver</button></a>
+        <a href="#settings"><button class="form_main_button_fle">Sortie</button></a>
     </div>
 </div>
-</body>

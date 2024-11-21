@@ -1,61 +1,173 @@
 <!-- info alerts are sent on success danger alerts are sent on error -->
 
-<div class="alert alert-danger" role="alert" id="form-alert" onclick="hideAlert(this)" style="display: none;"></div>
+<div class="alert text-center alert-danger" role="alert" id="form-alert" onclick="hideAlert(this)" style="display: none;"></div>
 
-<div class="alert alert-danger" role="alert" id="user-exists-alert" onclick="hideAlert(this)" style="display: none;">
-    Username already exists
+<div class="alert text-center alert-danger" role="alert" id="user-exists-alert" onclick="hideAlert(this)" style="display: none;">
+    Le nom existe déjà
 </div>
 
-<div class="alert alert-danger" role="alert" id="email-exists-alert" onclick="hideAlert(this)" style="display: none;">
-    Email already exists
+<div class="alert text-center alert-danger" role="alert" id="email-exists-alert" onclick="hideAlert(this)" style="display: none;">
+    L'e-mail existe déjà
 </div>
 
-<div class="alert alert-danger" role="alert" id="invalid-credentials-alert" onclick="hideAlert(this)" style="display: none;">
-    Invalid credentials
+<div class="alert text-center alert-danger" role="alert" id="invalid-credentials-alert" onclick="hideAlert(this)" style="display: none;">
+    Informations d'identification invalides
 </div>
 
-<div class="alert alert-danger" role="alert" id="deleted-account" onclick="hideAlert(this)" style="display: none;">
-    Account deleted
+<div class="alert text-center alert-danger" role="alert" id="deleted-account" onclick="hideAlert(this)" style="display: none;">
+    Compte supprimé
 </div>
 
-<div class="alert alert-info" role="alert" id="2fa-required" onclick="hideAlert(this)" style="display: none;">
-    Two-factor authentication required
+<div class="alert text-center alert-info" role="alert" id="2fa-required" onclick="hideAlert(this)" style="display: none;">
+    Authentification à deux facteurs requise
 </div>
 
-<div class="alert alert-danger" role="alert" id="invalid-username" onclick="hideAlert(this)" style="display: none;">
-    Invalid username
+<div class="alert text-center alert-danger" role="alert" id="invalid-username" onclick="hideAlert(this)" style="display: none;">
+    Nom invalide
 </div>
 
-<div class="alert alert-danger" role="alert" id="invalid-OTP" onclick="hideAlert(this)" style="display: none;">
-    Invalid OTP
+<div class="alert text-center alert-danger" role="alert" id="Invalid-OTP" onclick="hideAlert(this)" style="display: none;">
+   OTP invalide
 </div>
 
-<div class="alert alert-danger" role="alert" id="OTP-not-set" onclick="hideAlert(this)" style="display: none;">
-    OTP not set
+<div class="alert text-center alert-danger" role="alert" id="OTP-not-set" onclick="hideAlert(this)" style="display: none;">
+    OTP non défini
 </div>
 
-<div class="alert alert-danger" role="alert" id="Already-logged-out" onclick="hideAlert(this)" style="display: none;">
-    Already logged out
+<div class="alert text-center alert-danger" role="alert" id="Already-logged-out" onclick="hideAlert(this)" style="display: none;">
+    Déjà déconnecté
 </div>
 
-<div class="alert alert-info" role="alert" id="Profile-updated" onclick="hideAlert(this)" style="display: none;">
-    Profile updated successfully
+<div class="alert text-center alert-danger" role="alert" id="login-error" onclick="hideAlert(this)" style="display: none;">
+    Impossible de se connecter
 </div>
 
-<div class="alert alert-info" role="alert" id="Account-deleted-success" onclick="hideAlert(this)" style="display: none;">
-    Account deleted successfully
+<div class="alert text-center alert-info" role="alert" id="Profile-updated" onclick="hideAlert(this)" style="display: none;">
+    Profil mis à jour avec succès
 </div>
 
-<div class="alert alert-danger" role="alert" id="Invalid-language-preference" onclick="hideAlert(this)" style="display: none;">
-    Invalid language preference
+<div class="alert text-center alert-info" role="alert" id="Account-deleted-success" onclick="hideAlert(this)" style="display: none;">
+    Compte supprimé avec succès
 </div>
 
+<div class="alert text-center alert-danger" role="alert" id="Invalid-language-preference" onclick="hideAlert(this)" style="display: none;">
+    Préférence linguistique non valide
+</div>
 
+<div class="alert text-center alert-danger" role="alert" id="Unauthorized" onclick="hideAlert(this)" style="display: none;">
+    Non autorisé
+</div>
 
+<div class="alert text-center alert-info" role="alert" id="Account-anonymized-succes" onclick="hideAlert(this)" style="display: none;">
+    Compte anonymisé avec succès
+</div>
 
+<div class="alert text-center alert-danger" role="alert" id="self-request" onclick="hideAlert(this)" style="display: none;">
+    Impossible d'envoyer une demande à soi-même
+</div>
 
+<div class="alert text-center alert-danger" role="alert" id="request-sent" onclick="hideAlert(this)" style="display: none;">
+    Demande déjà envoyée
+</div>
 
+<div class="alert text-center alert-danger" role="alert" id="alredy-friends" onclick="hideAlert(this)" style="display: none;">
+    Vous êtes déjà amis
+</div>
 
+<div class="alert text-center alert-success" role="alert" id="request-sent-ok" onclick="hideAlert(this)" style="display: none;">
+    Demande envoyée
+</div>
 
+<div class="alert text-center alert-danger" role="alert" id="Friendship-does-not-exist" onclick="hideAlert(this)" style="display: none;">
+    L'amitié n'existe pas
+</div>
 
+<div class="alert text-center alert-danger" role="alert" id="Request-does-not-exist" onclick="hideAlert(this)" style="display: none;">
+    La demande n'existe pas
+</div>
 
+<div class="alert text-center alert-danger" role="alert" id="tournament-already-open" onclick="hideAlert(this)" style="display: none;">
+    Vous avez un tournoi inachevé, terminez-le avant d'en créer un nouveau.
+</div>
+
+<div class="alert text-center alert-danger" role="alert" id="tournament-name-taken" onclick="hideAlert(this)" style="display: none;">
+    Nom du tournoi déjà pris
+</div>
+
+<div class="alert text-center alert-danger" role="alert" id="invalid-game-type" onclick="hideAlert(this)" style="display: none;">
+    Type de jeu non valide
+</div>
+
+<div class="alert text-center alert-danger" role="alert" id="not-enough-players" onclick="hideAlert(this)" style="display: none;">
+    Pas assez de joueurs
+</div>
+
+<div class="alert text-center alert-danger" role="alert" id="no-invite" onclick="hideAlert(this)" style="display: none;">
+    L'invitation n'existe pas
+</div>
+
+<div class="alert text-center alert-danger" role="alert" id="file-size" onclick="hideAlert(this)" style="display: none;">
+    La taille du fichier ne doit pas dépasser 8MB
+</div>
+
+<div class="alert text-center alert-danger" role="alert" id="file-type" onclick="hideAlert(this)" style="display: none;">
+    Type de fichier non pris en charge
+</div>
+
+<div class="alert text-center alert-danger" role="alert" id="file-dimensions" onclick="hideAlert(this)" style="display: none;">
+    Les dimensions des fichiers ne doivent pas dépasser 500x500
+</div>
+
+<div class="alert text-center alert-success" role="alert" id="pic-updated" onclick="hideAlert(this)" style="display: none;">
+    Mise à jour de l'image du profil
+</div>
+
+<div class="alert text-center alert-success" role="alert" id="pic-deleted" onclick="hideAlert(this)" style="display: none;">
+    Photo de profil supprimée
+</div><div class="alert alert-danger" role="alert" id="no-tournament" onclick="hideAlert(this)" style="display: none;">
+    Pas de tournoi disponible
+</div>
+
+<div class="alert alert-danger" role="alert" id="duplicated-user" onclick="hideAlert(this)" style="display: none;">
+    Utilisateur dupliqué
+</div>
+
+<div class="alert alert-danger" role="alert" id="user-not-exists" onclick="hideAlert(this)" style="display: none;">
+    L'utilisateur n'existe pas
+</div>
+
+<div class="alert alert-danger" role="alert" id="password-not-match" onclick="hideAlert(this)" style="display: none;">
+    Les mots de passe ne correspondent pas
+</div>
+
+<div class="alert alert-danger" role="alert" id="something-went-wrong" onclick="hideAlert(this)" style="display: none;">
+    Quelque chose n'a pas fonctionné :(
+</div>
+
+<div class="alert alert-danger" role="alert" id="username-too-long" onclick="hideAlert(this)" style="display: none;">
+    Le nom ne peut pas dépasser 16 caractères
+</div>
+
+<div class="alert alert-danger" role="alert" id="invalid-email" onclick="hideAlert(this)" style="display: none;">
+    L'e-mail n'est pas valide
+</div>
+
+<div class="alert alert-danger" role="alert" id="invalid-password" onclick="hideAlert(this)" style="display: none;">
+    Le mot de passe doit contenir au moins 8 caractères, 1 lettre majuscule, 1 lettre minuscule, 1 chiffre et 1 caractère spécial
+</div>
+
+<div class="alert alert-danger" role="alert" id="not-in-tournament" onclick="hideAlert(this)" style="display: none;">
+    Vous n'êtes pas dans le tournoi
+</div>
+
+<div class="alert alert-danger" role="alert" id="no-tournaments" onclick="hideAlert(this)" style="display: none;">
+    Vous n'organisez pas de tournoi en ce moment
+</div>
+
+<div class="alert alert-danger" role="alert" id="invalid-tournament-name" onclick="hideAlert(this)" style="display: none;">
+    Nom de tournoi invalide
+</div>
+
+<div class="alert alert-danger" role="alert" id="no-tournament-to-end" onclick="hideAlert(this)" style="display: none;">
+    Pas de tournoi pour terminer
+</div>

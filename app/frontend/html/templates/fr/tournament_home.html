@@ -1,0 +1,27 @@
+<div class="form_container">
+    <div class="form_body_xl">
+        <p class="form_title">Tournois</p>
+        <!-- <button class="form_main_button_reduced_margin" onclick="changeLocation('#createTournament')">Create New Tournament</button> -->
+        <a href="#createTournament"><button class="form_main_button_reduced_margin">Créer un nouveau tournoi</button></a>
+        <hr class="hr_form_separator">
+        <p class="form_title">Mes Invitations</p>
+        <div id="tournaments_bar" class="tour_home_subscroll">
+            <div class="tour_request_item" id="tour_invite_template" style="display: none;">
+                <img id="img_template" class="pr_friend_image" src="../media/Profile_avatar_placeholder_large">
+                <div class="pr_friend_info">
+                    <p id="tour_hostname_template" class="pr_friend_username">Nom de l'hôte</p>
+                    <p id="tour_name_template" class="tour_name">Nom du tournoi</p>
+                </div>
+                <button id="tour_accept_template" class="pr_friend_accept_button" onclick="acceptTourInvite(this, 'accept')">✓</button>
+                <button id="tour_decline_template" class="pr_friend_decline_button" onclick="acceptTourInvite(this, 'reject')">✕</button>
+            </div>
+            <div class="tour_accepted_item" id = "tour_accepted_template" style="display: none;">
+                <img id="img_template" class="pr_friend_image" src="../media/Profile_avatar_placeholder_large">
+                <div class="pr_friend_info">
+                    <p id="tour_hostname_template" class="pr_friend_username">Nom de l'hôte</p>
+                    <p id="tour_name_template" class="tour_name">Nom du tournoi</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

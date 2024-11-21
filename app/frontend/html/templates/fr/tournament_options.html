@@ -1,0 +1,63 @@
+<!-- 
+</div>
+    <div class="form_container">
+        <div class="form_body_xl">
+            <p class="form_title">Esperando a los jugadores...</p>
+            <div class="tour_options_subscroll">
+                <div class="lobby_player_card">
+                    <img class="lobby_player_image" src="../media/placeholders/CK.jpg">
+                    <p class="lobby_player_username">Jugador_pepe</p>
+                    <p class="lobby_player_status_confirmed">✓</p>
+                </div>
+                <div class="lobby_player_card">
+                    <img class="lobby_player_image" src="../media/placeholders/CK.jpg">
+                    <p class="lobby_player_username">Jugador_antonio</p>
+                    <p class="lobby_player_status_confirmed">✓</p>
+                </div>
+                <div class="lobby_player_card">
+                    <img class="lobby_player_image" src="../media/placeholders/CK.jpg">
+                    <p class="lobby_player_username">Jugador_luis</p>
+                    <p class="lobby_player_status_pending">✕</p>
+                </div>
+                <div class="lobby_player_card">
+                    <img class="lobby_player_image" src="../media/placeholders/CK.jpg">
+                    <p class="lobby_player_username">Jugador_eustaquio</p>
+                    <p class="lobby_player_status_pending">✕</p>
+                </div>
+                <div class="lobby_player_card">
+                    <img class="lobby_player_image" src="../media/placeholders/CK.jpg">
+                    <p class="lobby_player_username">Jugador_manolo</p>
+                    <p class="lobby_player_status_confirmed">✓</p>
+                </div>
+                <div class="lobby_player_card">
+                    <img class="lobby_player_image" src="../media/placeholders/CK.jpg">
+                    <p class="lobby_player_username">Jugador_pedro</p>
+                    <p class="lobby_player_status_pending">✕</p>
+                </div>
+                <div class="lobby_player_card">
+                    <img class="lobby_player_image" src="../media/placeholders/CK.jpg">
+                    <p class="lobby_player_username">Jugador_francisco</p>
+                    <p class="lobby_player_status_confirmed">✓</p>
+                </div>
+            </div>
+            <button class="form_main_button">Iniciar Torneo</button>
+            <button class="form_main_button_reduced_margin">Eliminar Torneo</button>
+        </div>
+    </div>
+</div> -->
+
+
+<div class="form_container">
+    <div class="form_body_xl">
+        <p class="form_title">En attente de joueurs...</p>
+        <p id="tournament_name" class="form_label"></p>
+        <p id="game_type" class="form_label"></p>
+        <div class="tour_options_subscroll" id="player_container">
+            <!-- Player cards will be dynamically inserted here -->
+        </div>
+        <!-- refresh button -->
+        <button class="form_main_button" id="refresh_players" onclick="LoadTournamentOptions()">Actualiser</button>
+        <button class="form_main_button" id="start_tournament" style="display: none;" onclick="changeLocation('#tournament')">Début du tournoi</button>
+        <button class="form_main_button_reduced_margin" onclick="DeleteTournament()">Supprimer le tournoi</button>
+    </div>
+</div>

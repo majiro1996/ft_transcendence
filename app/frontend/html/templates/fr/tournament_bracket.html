@@ -1,12 +1,12 @@
 
 <p id="tournament_name" class="bracket_title"></p>
 <div class="bracket_button_container">
-    <button class="bracket_button" onclick="DeleteTournament()">Abandon</button>
-    <button class="bracket_button" onclick="StartMatch()">Start</button>
+    <button class="bracket_button" onclick="DeleteTournament()">Abandonner</button>
+    <button class="bracket_button" onclick="StartMatch()">Commencer</button>
 </div>
 <div class="bracket_container">
     <div class="bracket_body_outer">
-        <p id="bracket_title">Ranking</p>
+        <p id="bracket_title">Classement</p>
             <div class="bracket_body_inner">
                 <div id="bracket_qual1"><p class="bracket_player_neutral"></p></div>
                 <div id="bracket_qual2"><p class="bracket_player_neutral"></p></div>
@@ -26,7 +26,7 @@
 </div>
 <div id="tournament_overlay" class="overlay" style="display: none;">
     <div class="overlay_winner">
-        <p><span id="winner_username">[USERNAME]</span> has won the tournament!</p>
-        <button class="form_settings_popup_button" onclick="changeLocation('#')">Return to home</button>
+        <p><span id="winner_username">[NOM]</span> a remporté le tournoi!</p>
+        <button class="form_settings_popup_button" onclick="changeLocation('#')">Retourner à l'accueil</button>
     </div>
 </div>
