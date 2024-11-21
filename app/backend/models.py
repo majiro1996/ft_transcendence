@@ -51,16 +51,6 @@ class Tournament(models.Model):
     userHost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userHost')
     guests = models.ManyToManyField(User, related_name='guests')
 
-    # firstMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='firstMatch', null=True, blank=True)
-    # secondMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='secondMatch', null=True, blank=True)
-    # thirdMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='thirdMatch', null=True, blank=True)
-    # fourthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fourthMatch', null=True, blank=True)
-
-    # fifthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='fifthMatch', null=True, blank=True)
-    # sixthMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='sixthMatch', null=True, blank=True)
-
-    # finalMatch = models.ForeignKey('MatchResult', on_delete=models.CASCADE, related_name='finalMatch', null=True, blank=True)
-
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_tournament', null=True, blank=True)
     
     STATUS_CHOICES = [

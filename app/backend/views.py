@@ -925,7 +925,14 @@ class StartTournamentView(APIView):
             semifinals = [pending_matches[0].user1.username, pending_matches[0].user2.username, pending_matches[1].user1.username, pending_matches[1].user2.username]
             final = [pending_matches[2].user1.username, pending_matches[2].user2.username]
         
-        
+        all_matches = MatchResult.objects.filter(tournament=tournament).order_by('creation_date')
+        matches = []
+        for match in all_matches:
+            matches.append({
+                'user1': match.user1.username if match.user1 else None,
+                'user2': match.user2.username if match.user2 else None,
+                'winner': match.winner.username if match.winner else None,
+            })
 
         return Response({
             'tournament_name': tournament.tournament_name,
@@ -933,7 +940,9 @@ class StartTournamentView(APIView):
             'players': players_json,
             'semifinals': semifinals,
             'final': final,
-            'success': 'Tournament-started'
+            'success': 'Tournament-started',
+            'matches': matches,
+            'tournament_status': tournament.status
         }, status=status.HTTP_200_OK)
 
 
