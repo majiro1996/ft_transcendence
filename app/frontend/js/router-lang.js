@@ -131,17 +131,17 @@ const routes = {
     pong: {
         onLoad: LoadPong,
         en: {
-            template: "/pong/pong.html",
+            template: "/html/templates/en/pong.html",
             title: "Pong | " + pageTitle,
             description: "This is Pong.",
         },
         es: {
-            template: "/pong/pong.html",
+            template: "/html/templates/es/pong.html",
             title: "Pong | " + pageTitle,
             description: "This is Pong.",
         },
         fr: {
-            template: "/pong/pong.html",
+            template: "/html/templates/fr/pong.html",
             title: "Pong | " + pageTitle,
             description: "This is Pong.",
         }
@@ -294,6 +294,24 @@ const routes = {
             description: "Ceci est la page de tournoi",
         }
     },
+    profiIe: {
+        onLoad: BackToProfile,
+        en: {
+            template: "/html/templates/en/profile.html",
+            title: "Profile | " + pageTitle,
+            description: "This is the profile page",
+        },
+        es: {
+            template: "/html/templates/es/profile.html",
+            title: "Perfil | " + pageTitle,
+            description: "Esta es la página de perfil",
+        },
+        fr: {
+            template: "/html/templates/fr/profile.html",
+            title: "Profil | " + pageTitle,
+            description: "Ceci est la page de profil",
+        }
+    }
     // Add other routes here
 };
 

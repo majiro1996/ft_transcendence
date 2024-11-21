@@ -64,7 +64,7 @@
                         }
                         window.location.hash = "#tournaments";
         }
-	message.onclick = send_results;
+	message.parentElement.onclick = send_results;
 
     // Difficulty
     const difficulty = localStorage.getItem('tictactoeDifficulty') || 'normal';
@@ -91,7 +91,7 @@
 //Message for the turn
 function updateTurnMessage()
 {
-    currentTurn.textContent = `Turn: Player ${currentPlayer}`;
+    currentTurn.textContent = `${currentPlayer}`;
 }
 
 
@@ -108,8 +108,9 @@ board.addEventListener('click', (event) => {
     if (checkWin())
     {
         gameActive = false;
-        message.textContent = `${currentPlayer} wins!`;
+        message.textContent = `${currentPlayer}`;
         winnerPlayer = currentPlayer;
+        message.parentNode.styles.display = "block";
         return;
     }
     //If is a Tie...
@@ -117,6 +118,7 @@ board.addEventListener('click', (event) => {
     {
         gameActive = false;
         message.textContent = `It's a tie!`;
+        message.parentNode.styles.display = "block";
         return;
     }
     //Change to player. Time between turn
@@ -164,7 +166,7 @@ function aiMove() {
     makeMove(bestMove, 'O');
     if (checkWin()) {
         gameActive = false;
-        message.textContent = `O wins!`;
+        message.textContent = `O!`;
         return;
     }
 

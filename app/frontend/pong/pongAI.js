@@ -336,7 +336,7 @@ function AiPongGame(){
         window.location.hash = "#";
     }
     
-    message.onclick = send_results;
+    message.parentElement.onclick = send_results;
     
     function main_loop()
     {

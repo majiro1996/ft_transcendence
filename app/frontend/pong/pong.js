@@ -332,7 +332,7 @@ function pongGame(){
 					window.location.hash = "#tournaments";
 	}
 
-	message.onclick = send_results
+	message.parentElement.onclick = send_results
 
 	function main_loop()
 	{
@@ -362,13 +362,13 @@ function pongGame(){
 					// Check if any player has won (score >= 10)
 					if (player1.score >= 10) {
 									p_winner = tUser1;
-									message.textContent = "Player 1 wins!";
-									message.style.display = 'block';
+									message.textContent = "1";
+									message.parentElement.style.display = 'block';
 									return;
 					} else if (player2.score >= 10) {
 									p_winner = tUser2;
-									message.textContent = "Player 2 wins!";
-									message.style.display = 'block';
+									message.textContent = "2";
+									message.parentElement.style.display = 'block';
 									return;
 					}
 					requestAnimationFrame(main_loop);

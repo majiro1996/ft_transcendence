@@ -58,6 +58,7 @@ urlpatterns = [
 
 
 	path('users/', views.UsersListView.as_view(), name='users'),
+	path('user-details', views.UserDetailView.as_view(), name='user-detail'),
 	path('leaderboard/', views.LeaderboardView.as_view(), name='leaderboard'),
 
 	#TEST REMOVE

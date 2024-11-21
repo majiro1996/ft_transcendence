@@ -67,7 +67,7 @@ class TournamentInvite(models.Model):
     userSender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userSender_tournament')
     userReceiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userReceiver_tournament')
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
-    accepted = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=True)
 
     def __str__(self):
         return self.userSender.username + ' to ' + self.userReceiver.username + ' for ' + self.tournament.id

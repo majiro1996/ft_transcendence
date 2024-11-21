@@ -750,10 +750,13 @@ class UsersListView(APIView):
                         'user1': match.user1.username,
                         'user2': match.user2.username,
                         'winner': match.winner.username,
-                        'game': match.game_type.capitalize()
+                        'game': match.game_type.capitalize(),
+                        'date': match.creation_date.strftime('%Y-%m-%d'),
+                        'score': f'{match.user1_score}/{match.user2_score}'
+
                     })
             user_json['history'] = match_results
-            user_json['history'] = user_json['history'][-5:]
+            # user_json['history'] = user_json['history'][-5:]
             user_json['history'] = user_json['history'][::-1]
             total_pong = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='pong').count()
             wins_pong = MatchResult.objects.filter(game_type='pong', winner=user).count()
@@ -798,6 +801,83 @@ class LeaderboardView(APIView):
             user['rank'] = i + 1
         return Response({
             'leaderboard': user_data
+        }, status=status.HTTP_200_OK)
+
+class UserDetailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        user = request.GET.get('username')
+        if not user:
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(username=user)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+        user_json = {
+            'user': user.username,
+            'profile_pic': user.profile_picture,
+            'friends': [{"user": f.user2.username, "profile_pic": f.user2.profile_picture, "online": (datetime.datetime.now(tz=datetime.timezone.utc) - f.user2.last_online).total_seconds() < ONLINE_THRESHOLD} for f in FriendShip.objects.filter(user1=user)],
+            'last_online': user.last_online,
+            'time_since_online': int(round((datetime.datetime.now(tz=datetime.timezone.utc) - user.last_online).total_seconds(), 0)),
+            'online': (datetime.datetime.now(tz=datetime.timezone.utc) - user.last_online).total_seconds() < ONLINE_THRESHOLD,
+            'deleted': user.deleted,
+            'history': [],
+            'requests': [],
+            'game_stats': {
+                'pong': {
+                    'wins': 0,
+                    'losses': 0,
+                    'win_rate': 0,
+                    'bar_size': 0
+                },
+                'tic-tac-toe': {
+                    'wins': 0,
+                    'losses': 0,
+                    'win_rate': 0,
+                    'bar_size': 0
+                }
+            }
+        }
+        user_json['friends'].extend([{"user": f.user1.username, "profile_pic": f.user1.profile_picture, "online": (datetime.datetime.now(tz=datetime.timezone.utc) - f.user1.last_online).total_seconds() < ONLINE_THRESHOLD} for f in FriendShip.objects.filter(user2=user)])
+        match_results = []
+        for match in MatchResult.objects.filter(Q(user1=user) | Q(user2=user)):
+            if match.winner is None:
+                continue
+            else:
+                match_results.append({
+                    'user1': match.user1.username,
+                    'user2': match.user2.username,
+                    'winner': match.winner.username,
+                    'game': match.game_type.capitalize(),
+                    'date': match.creation_date.strftime('%Y-%m-%d'),
+                    'score': f'{match.user1_score}/{match.user2_score}'
+
+                })
+        user_json['history'] = match_results
+        user_json['history'] = user_json['history'][::-1]
+        total_pong = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='pong').count()
+        wins_pong = MatchResult.objects.filter(game_type='pong', winner=user).count()
+        losses_pong = total_pong - wins_pong
+        user_json['game_stats']['pong'] = {
+            'wins': wins_pong,
+            'losses': losses_pong,
+            'win_rate': round((wins_pong / total_pong * 100), 2) if total_pong > 0 else 0,
+            'bar_size': int((wins_pong / total_pong) * 600) if total_pong > 0 else 0
+        }
+        total_ttt = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='tic-tac-toe').count()
+        wins_ttt = MatchResult.objects.filter(game_type='tic-tac-toe', winner=user).count()
+        losses_ttt = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='tic-tac-toe').exclude(Q(winner=user) | Q(winner=None)).count()
+        ties_ttt = MatchResult.objects.filter(Q(user1=user) | Q(user2=user), game_type='tic-tac-toe', winner=None).count()
+        user_json['game_stats']['tic-tac-toe'] = {
+            'wins': wins_ttt,
+            'losses': losses_ttt,
+            'ties': ties_ttt,
+            'win_rate': round(wins_ttt / total_ttt * 100, 2) if total_ttt > 0 else 0,
+            'bar_size': int((wins_ttt / total_ttt) * 600) if total_ttt > 0 else 0
+        }
+        return Response({
+            'user': user_json
         }, status=status.HTTP_200_OK)
 
 

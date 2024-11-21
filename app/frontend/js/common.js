@@ -56,14 +56,40 @@ async function getProfileSettings() {
     }
 }
 
-async function LoadProfile() {
+async function BackToProfile() {
+    changeLocation("#profile");
+}
+
+async function LoadProfile(username) {
     try {
-        const response = await fetch(apiurl + '/users/', {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+        let response;
+        if (username === undefined) {
+            response = await fetch(apiurl + '/users/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                }
+            });
+            Array.from(document.getElementsByClassName('pr_sidebar_link')).forEach(item => {
+                item.style.display = 'block';
+            });
+        }
+        else {
+            response = await fetch(apiurl + '/user-details?username=' + username, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                }
+            });
+            if (document.getElementsByClassName('flag').length != 0) {
+                Array.from(document.getElementsByClassName('flag')).forEach(item => {
+                    item.remove();
+                });
             }
-        });
+            Array.from(document.getElementsByClassName('pr_sidebar_link')).forEach(item => {
+                item.style.display = 'none';
+            });
+        }
 
         if (!response.ok) {
             if (response.status === 401) {
@@ -89,6 +115,7 @@ async function LoadProfile() {
             if (request.profile_pic != null)
                 template.querySelector('img').src = "data:image/png;base64," + request.profile_pic;
             template.querySelector('#friend_username_template').textContent = request.user;
+            template.querySelector('#friend_username_template').onclick = function () { LoadProfile(request.user) };
             if (request.online)
                 template.querySelector('#friend_status_template').textContent = 'Online';
             else {
@@ -101,12 +128,14 @@ async function LoadProfile() {
             template.style.display = 'flex';
             template.id = request.user;
             document.getElementById('pr_friendbox').appendChild(template);
+            template.classList.add('flag');
         });
         data.user.friends.forEach(friend => {
             var template = document.getElementById('friend_template').cloneNode(true);
             if (friend.profile_pic != null)
                 template.querySelector('img').src = "data:image/png;base64," + friend.profile_pic;
             template.querySelector('#friend_username_template').textContent = friend.user;
+            template.onclick = function () { LoadProfile(friend.user) };
             if (friend.online)
                 template.querySelector('#friend_status_template').textContent = 'Online';
             else {
@@ -117,39 +146,43 @@ async function LoadProfile() {
             template.style.display = 'flex';
             template.id = friend.user;
             document.getElementById('pr_friendbox').appendChild(template);
+            template.classList.add('flag');
         });
         data.user.history.forEach(game => {
             if (game.winner == data.user.user) {
                 template = document.getElementById('pr_history_template_won').cloneNode(true);
-                template.querySelector('#pr_history_title_template').textContent = game.game;
+                template.querySelector('#pr_history_title_template').textContent = game.game + " - " + game.score + " - " + game.date;
                 template.querySelector('#pr_history_winner_template').textContent = data.user.user;
                 if (game.user1 == data.user.user)
                     template.querySelector('#pr_history_opponent_template').textContent = game.user2;
                 else
                     template.querySelector('#pr_history_opponent_template').textContent = game.user1;
+                template.style.display = 'flex';
             }
             else {
                 template = document.getElementById('pr_history_template_lost').cloneNode(true);
-                template.querySelector('#pr_history_title_template').textContent = game.game;
+                template.querySelector('#pr_history_title_template').textContent = game.game + " - " + game.score + " - " + game.date;
                 if (game.user1 == data.user.user)
                     template.querySelector('#pr_history_opponent_template').textContent = game.user2;
                 else
                     template.querySelector('#pr_history_opponent_template').textContent = game.user1;
                 template.querySelector('#pr_history_loser_template').textContent = data.user.user;
+                template.style.display = 'flex';
             }
             template.id = game.id;
             document.getElementById('pr_history').appendChild(template);
+            template.classList.add('flag');
+            template.style.display = 'flex';
             if (document.getElementById('pr_history').style.display == 'none')
                 document.getElementById('pr_history').style = '';
         });
-        document.getElementById('pr_history_template_won').remove();
-        document.getElementById('pr_history_template_lost').remove();
+        // document.getElementById('pr_history_template_won').remove();
+        // document.getElementById('pr_history_template_lost').remove();
         document.getElementById('pong_wins').textContent = data.user.game_stats["pong"].wins;
         document.getElementById('pong_losses').textContent = data.user.game_stats["pong"].losses;
         document.getElementById('pong_wr_text').textContent = data.user.game_stats["pong"].win_rate + '%';
         document.getElementById('ttt_wins').textContent = data.user.game_stats["tic-tac-toe"].wins;
         document.getElementById('ttt_losses').textContent = data.user.game_stats["tic-tac-toe"].losses;
-        document.getElementById('ttt_ties').textContent = data.user.game_stats["tic-tac-toe"].ties;
         document.getElementById('ttt_wr_text').textContent = data.user.game_stats["tic-tac-toe"].win_rate + '%';
         document.getElementById('pong_wr_bar').style.width = data.user.game_stats["pong"].bar_size + "px";
         document.getElementById('ttt_wr_bar').style.width = data.user.game_stats["tic-tac-toe"].bar_size + "px";
@@ -404,8 +437,7 @@ function LoadTicTacToe() {
     document.getElementById('one-player').addEventListener('click', () => {
         showDifficultySelection();
     });
-    if (isTournament && tUser1 != null && tUser2 != null)
-    {
+    if (isTournament && tUser1 != null && tUser2 != null) {
         showGameBoard();
         loadGame('../TicTacToe/tictactoe.js');
     }
@@ -701,10 +733,10 @@ async function StartMatch() {
             return;
         }
         setupTournament(data.user1, data.user2, document.getElementById('tournament_name').textContent);
-	if (data.game_type === 'pong')
+        if (data.game_type === 'pong')
             changeLocation("#pong");
-	else
-	    changeLocation("#tictactoe");
+        else
+            changeLocation("#tictactoe");
     }
     catch (error) {
         if (response.status === 401) {
@@ -929,8 +961,7 @@ async function LoadTournament() {
                         player1.textContent = match.winner;
                         player1.classList.add('bracket_player_win');
                     }
-                    else
-                    {
+                    else {
                         player1.classList.add('bracket_player_next_up');
                         player1.classList.remove('bracket_player_neutral');
                     }
@@ -954,7 +985,6 @@ async function LoadScores() {
             method: 'GET',
         });
         const data = await response.json();
-        console.log(data);
         data.leaderboard.forEach(user => {
             var template = document.getElementById('template_score').cloneNode(true);
             template.querySelector('#template_rank').textContent = user.rank;
@@ -1016,8 +1046,7 @@ async function tournamentEnd(winner, tournament_n) {
         });
 
         const data = await response.json();
-        if (!response.ok)
-        {
+        if (!response.ok) {
             showAlert(data.error);
             return;
         }
@@ -1056,7 +1085,6 @@ async function TestCreateUsers() {
         }
 
         const data = await response.json();
-        console.log(data);
     }
     catch (error) {
         console.error('Error:', error);

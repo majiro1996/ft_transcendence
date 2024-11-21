@@ -63,12 +63,13 @@
                 background-color: #d95c41;
             }
 
-        #message {
+        #message-box {
             margin-top: 20px;
             font-size: 1.8rem;
             font-weight: bold;
             color: #ffc3ff;
 			cursor: pointer;
+            display: none;
         }
 
         #game-board {
@@ -143,7 +144,7 @@
     </div>
 
     <div id="game-board" class="container">
-        <div id="current-turn">Turn: Player X</div>
+        <div>Turn: Player <span id="current-turn"></span></div>
         <div class="board" id="board">
             <div class="cell" data-index="0"></div>
             <div class="cell" data-index="1"></div>
@@ -155,7 +156,7 @@
             <div class="cell" data-index="7"></div>
             <div class="cell" data-index="8"></div>
         </div>
-        <div id="message"></div>
+        <div id="message-box">Player <span id="message"></span> wins!</div>
     </div>
 
 	<p hidden> {% csrf_token %} </p>

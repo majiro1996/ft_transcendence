@@ -143,7 +143,7 @@
     </div>
 
     <div id="game-board" class="container">
-        <div id="current-turn">Turn: Player X</div>
+        <div>Turn: Player <span id="current-turn"></span></div>
         <div class="board" id="board">
             <div class="cell" data-index="0"></div>
             <div class="cell" data-index="1"></div>
@@ -155,7 +155,7 @@
             <div class="cell" data-index="7"></div>
             <div class="cell" data-index="8"></div>
         </div>
-        <div id="message"></div>
+        <div id="message-box">Player <span id="message"></span> has won!</div>
     </div>
 
 	<p hidden> {% csrf_token %} </p>

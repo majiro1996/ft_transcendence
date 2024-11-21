@@ -1,62 +1,159 @@
-<div class="selection-container" id="selection-screen"></div>
-    <h1>Choisissez votre mode</h1>
-    <div class="selection-buttons">
-        <button id="two-players">2 Joueurs</button>
-        <button id="one-player">1 Joueur</button>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/pong/pong.css">
+    <link rel="stylesheet" href="/pong/JetBrainsMono.css">
+    <title>Pong</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #0f0f11;
+            font-family: 'JetBrains Mono', monospace;
+            color: #ffffff;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .selection-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .selection-buttons, .difficulty-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+            .selection-buttons button, .difficulty-buttons button {
+                padding: 10px 20px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                border: 1px solid #ffffff;
+                border-radius: 5px;
+                background-color: #ff4eff;
+                color: #ffffff;
+                transition: background-color 0.3s;
+            }
+
+                .selection-buttons button:hover, .difficulty-buttons button:hover {
+                    background-color: #c964cc;
+                }
+
+        #difficulty-screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #game-board {
+            display: none;
+            text-align: center;
+        }
+
+        #message-box {
+            position: absolute;
+            top: 75%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffc3ff;
+            display: none; /* Hidden by default */
+            cursor: pointer;
+        }
+        #bg_video {
+            display: none;
+        }
+        #header {
+            display: none;
+        }
+        #footer_container {
+            display: none;
+        }
+        .hr_footer {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="selection-container" id="selection-screen">
+        <h1>Choisissez le mode</h1>
+        <div class="selection-buttons">
+            <button id="two-players">2 Joueurs</button>
+            <button id="one-player">1 Joueur</button>
+        </div>
     </div>
 
-<div class="selection-container" id="difficulty-screen">
-    <h1>Sélectionner la difficulté</h1>
-    <div class="difficulty-buttons">
-        <button onclick="startGameWithDifficulty('easy')">Facile</button>
-        <button onclick="startGameWithDifficulty('normal')">Normal</button>
-        <button onclick="startGameWithDifficulty('hard')">Difficile</button>
-        <button onclick="startGameWithDifficulty('extreme')">Extrême</button>
+    <div class="selection-container" id="difficulty-screen">
+        <h1>Choisissez la difficulté</h1>
+        <div class="difficulty-buttons">
+            <button onclick="pong_startGameWithDifficulty('easy')">Facile</button>
+            <button onclick="pong_startGameWithDifficulty('normal')">Normal</button>
+            <button onclick="pong_startGameWithDifficulty('hard')">Difficile</button>
+            <button onclick="pong_startGameWithDifficulty('extreme')">Extrême</button>
+        </div>
     </div>
-</div>
 
-<div id="game-board">
-    <canvas id="game_display" class="crt"></canvas>
-    <div id="message"></div>
-</div>
+    <div id="game-board">
+        <canvas id="game_display" class="crt"></canvas>
+        <div id="message-box">Joueur <span id="message"></span> a gagné!</div>
+    </div>
 
-<p hidden> {% csrf_token %} </p>
+    <p hidden> {% csrf_token %} </p>
 
-<script>
-    document.getElementById('two-players').addEventListener('click', () => {
-        startTwoPlayerGame();
-    });
+    <script>
+        document.getElementById('two-players').addEventListener('click', () => {
+            pong_startTwoPlayerGame();
+        });
 
-    document.getElementById('one-player').addEventListener('click', () => {
-        showDifficultySelection();
-    });
+        document.getElementById('one-player').addEventListener('click', () => {
+            pong_showDifficultySelection();
+        });
 
-    function showDifficultySelection() {
-        document.getElementById('selection-screen').style.display = 'none';
-        document.getElementById('difficulty-screen').style.display = 'flex';  // Show the difficulty selection screen
-    }
+        function pong_showDifficultySelection() {
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('difficulty-screen').style.display = 'flex';  // Show the difficulty selection screen
+        }
 
-    function startTwoPlayerGame() {
-        document.getElementById('selection-screen').style.display = 'none';
-        document.getElementById('game-board').style.display = 'block';  // Show the game area for 2 players
+        function pong_startTwoPlayerGame() {
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('game-board').style.display = 'block';  // Show the game area for 2 players
 
-        // Load the game script for two players (pong.js)
-        const script = document.createElement('script');
-        script.src = 'pong.js';  // Make sure pong.js is in the same directory
-        document.body.appendChild(script);
-    }
+            // Load the game script for two players (pong.js)
+            const script = document.createElement('script');
+            script.src = 'pong.js';  // Make sure pong.js is in the same directory
+            document.body.appendChild(script);
+        }
 
-    function startGameWithDifficulty(difficulty) {
-        // Save the difficulty in localStorage
-        localStorage.setItem('pongDifficulty', difficulty);
+        function pong_startGameWithDifficulty(difficulty) {
+            // Save the difficulty in localStorage
+            localStorage.setItem('pongDifficulty', difficulty);
 
-        // Hide the difficulty screen and show the game board
-        document.getElementById('difficulty-screen').style.display = 'none';
-        document.getElementById('game-board').style.display = 'block';
+            // Hide the difficulty screen and show the game board
+            document.getElementById('difficulty-screen').style.display = 'none';
+            document.getElementById('game-board').style.display = 'block';
 
-        // Load the game for single player with AI (pongAI.js)
-        const script = document.createElement('script');
-        script.src = 'pongAI.js';
-        document.body.appendChild(script);
-    }
-</script>
+            // Load the game for single player with AI (pongAI.js)
+            const script = document.createElement('script');
+            script.src = 'pongAI.js';
+            document.body.appendChild(script);
+        }
+    </script>
+</body>
+</html>

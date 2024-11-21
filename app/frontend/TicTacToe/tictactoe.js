@@ -84,12 +84,12 @@ async function send_results()
                         changeLocation("#tournaments");
         }
 
-message.onclick = send_results
+message.parentElement.onclick = send_results
 
 //Message for the turn
 function updateTurnMessage()
 {
-    currentTurn.textContent = `Turn: Player ${currentPlayer}`;
+    currentTurn.textContent = `${currentPlayer}`;
 }
 
 
@@ -108,8 +108,9 @@ board.addEventListener('click', (event) => {
     if (checkWin())
     {
         gameActive = false;
-        message.textContent = `${currentPlayer} wins!`;
+        message.textContent = `${currentPlayer}`;
         winnerPlayer = currentPlayer;
+        message.parentElement.style.display = 'block';
         return;
     }
     if (winnerPlayer)
@@ -120,6 +121,7 @@ board.addEventListener('click', (event) => {
         gameActive = false;
         message.textContent = `It's a tie!`;
         winnerPlayer = "tie"
+        message.parentElement.style.display = 'block';
         return;
     }
      //Change to polayer X or player O
