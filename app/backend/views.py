@@ -215,6 +215,9 @@ class ProtectedDataAPIViewJWT(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        user = request.user
+        if not User.objects.filter(username=user.username).exists():
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'You are accessing protected data with JWT'}, status=status.HTTP_200_OK)
 
 
@@ -525,6 +528,8 @@ class GetTournamentView(APIView):
 
         invites_data = []
         for invite in tournament_invites:
+            if invite.accepted:
+                continue
             invites_data.append({
                 'host': invite.userSender.username,
                 'tournament_name': invite.tournament.tournament_name,
@@ -533,6 +538,8 @@ class GetTournamentView(APIView):
 
         tournaments_data = []
         for tournament in tournaments:
+            if tournament in [invite.tournament for invite in tournament_invites]:
+                continue
             tournaments_data.append({
                 'host': tournament.userHost.username,
                 'tournament_name': tournament.tournament_name,
