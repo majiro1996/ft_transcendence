@@ -921,6 +921,8 @@ class DeleteTournamentView(APIView):
             return Response({'error': 'Invalid-tournament'}, status=status.HTTP_400_BAD_REQUEST)
         if tournament.userHost != user:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        if tournamnet.status == 2:
+            return Response({'error':'something-went-wrong'}, status=status.HTTP_400_BAD_REQUEST)
         TournamentInvite.objects.filter(tournament=tournament).delete()   
         tournament.delete()
         return Response({'success': 'Tournament-deleted'}, status=status.HTTP_200_OK)
