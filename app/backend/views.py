@@ -16,7 +16,6 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import authenticate
-from django.contrib.postgres.fields import ArrayField 
 from django.db.models import Q
 import pyotp
 import logging
@@ -1031,23 +1030,6 @@ class StartTournamentView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-# create test users api view #remove
-class TestUsersAPIView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        if(User.objects.filter(username='user1').exists()):
-            return Response({'error': 'Test users already created'}, status=status.HTTP_400_BAD_REQUEST)
-
-        for i in range(1, 11):
-            user = User.objects.create_user(
-                username=f'user{i}',
-                password=f'pass{i}',
-                email=f'user{i}@test.42'
-            )
-            user.save()
-        return Response({'success': 'Test users created'}, status=status.HTTP_201_CREATED)
-
 class TournamentGame(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1082,6 +1064,12 @@ class TournamentEndView(APIView):
         
         tournament.status = 2
         TournamentInvite.objects.filter(tournament=tournament).delete()
+
+        last_match = MatchResult.objects.filter(tournament=tournament).order_by('creation_date').last()
+        if last_match is not None and last_match.winner is not None:
+            if last_match.winner.username != request.data.get('winner'):
+                return Response({'error': 'winner-not-in-tournament?'}, status=status.HTTP_400_BAD_REQUEST)
+    
         Tournament.winner = request.data.get('winner')
         tournament.save()
 

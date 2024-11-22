@@ -177,8 +177,6 @@ async function LoadProfile(username) {
             if (document.getElementById('pr_history').style.display == 'none')
                 document.getElementById('pr_history').style = '';
         });
-        // document.getElementById('pr_history_template_won').remove();
-        // document.getElementById('pr_history_template_lost').remove();
         document.getElementById('pong_wins').textContent = data.user.game_stats["pong"].wins;
         document.getElementById('pong_losses').textContent = data.user.game_stats["pong"].losses;
         document.getElementById('pong_wr_text').textContent = data.user.game_stats["pong"].win_rate + '%';
@@ -397,9 +395,8 @@ async function submitProfileSettings(settingType, value) {
         const data = await response.json();
 
         if (data.success) {
-            // show success alert
             showAlert(data.success);
-            // reset the jwt tokens if provided
+
             if (data.access_token) {
                 localStorage.setItem('access_token', data.access_token);
             }
@@ -1068,34 +1065,4 @@ async function goToProfile() {
         changeLocation("#profile");
     else
         LoadProfile();
-}
-
-
-// TEST FUNCTIONS
-
-
-async function TestCreateUsers() {
-    try {
-        const response = await fetch(apiurl + '/test-users/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-
-        if (!response.ok) {
-            if (response.status === 401) {
-                window.location.hash = '#login';
-            }
-            else
-                showAlert("something-went-wrong");
-            return;
-        }
-
-        const data = await response.json();
-    }
-    catch (error) {
-        console.error('Error:', error);
-    }
-
 }

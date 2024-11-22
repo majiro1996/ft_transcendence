@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.contrib.postgres.fields import ArrayField
 
 
 class Person(models.Model):
@@ -14,7 +13,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     is_2fa_enabled = models.BooleanField(default=False)
-    otp_secret = models.CharField(max_length=64, blank=True, null=True)  # OTP secret
+    otp_secret = models.CharField(max_length=64, blank=True, null=True) 
     last_online = models.DateTimeField(auto_now=True)
     language_preference = models.CharField(max_length=2, default='en')
     profile_picture = models.TextField(null=True, blank=True)
@@ -23,7 +22,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-# for custom jwt blacklist
 class BlackListedToken(models.Model):
     token = models.TextField(unique=True)
     blacklisted_at = models.DateTimeField(auto_now_add=True)

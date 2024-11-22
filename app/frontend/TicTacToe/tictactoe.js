@@ -119,9 +119,14 @@ board.addEventListener('click', (event) => {
     if (boardState.every(cell => cell !== ''))
     {
         gameActive = false;
-        message.textContent = `It's a tie!`;
+        message.parentNode.style.display = "block";
+        if (currentLang == 'en')
+            message.parentNode.innerHTML = `It's a tie!`;
+        else if (currentLang == 'es')
+            message.parentNode.innerHTML = `Empate!`;
+        else
+            message.parentNode.innerHTML = `C'est un match nul!`;
         winnerPlayer = "tie"
-        message.parentElement.style.display = 'block';
         return;
     }
      //Change to polayer X or player O

@@ -1,4 +1,3 @@
-# urls.py
 from django.urls import path
 from . import views
 from django.contrib import admin
@@ -29,7 +28,6 @@ from .views import (
 
 urlpatterns = [
     
-	### API jwt ###
     path('signup/', SignUpAPIViewJWT.as_view(), name='signup'),
     path('login/', LoginAPIViewJWT.as_view(), name='login'),
     path('login-2fa/', Login2fViewJWT.as_view(), name='login-2fa'),
@@ -37,7 +35,6 @@ urlpatterns = [
     path('logout/', LogoutAPIViewJWT.as_view(), name='logout'),
     path('protected/', ProtectedDataAPIViewJWT.as_view(), name='protected'),
     path('profile-settings/', ProfileSettingsView.as_view(), name='profile-settings'),
-	# path('profile/', ProfileView.as_view(), name='profile'),
 	
 	path('friend-request/', FriendRequestView.as_view(), name='friend-request'),
 	path('friend-request-accept/', FriendRequestAcceptView.as_view(), name='friend-request-accept'),
@@ -61,6 +58,4 @@ urlpatterns = [
 	path('user-details', views.UserDetailView.as_view(), name='user-detail'),
 	path('leaderboard/', views.LeaderboardView.as_view(), name='leaderboard'),
 
-	#TEST REMOVE
-	path('test-users/', TestUsersAPIView.as_view(), name='test-users'),
 ]
