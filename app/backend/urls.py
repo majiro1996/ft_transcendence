@@ -19,7 +19,6 @@ from .views import (
 	GetTournamenReadyView,
 	GetTournamentView,
 	tournamentInviteAcceptView,
-	TestUsersAPIView,
 	TournamentOptionsView,
 	DeleteTournamentView,
 	TournamentEndView

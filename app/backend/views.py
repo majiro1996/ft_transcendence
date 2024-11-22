@@ -55,6 +55,10 @@ class SignUpAPIViewJWT(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
 
+        #trim username and email to avoid spaces
+        username = username.strip()
+        email = email.strip()
+
         #checks if the username is a combination of anon and a number
         if username[:4] == 'anon' and username[4:].isdigit():
             return Response({'error': 'invalid-username'}, status=status.HTTP_400_BAD_REQUEST)
@@ -63,6 +67,10 @@ class SignUpAPIViewJWT(APIView):
         if len(username) > 16:
             return Response({'error': 'username-too-long'}, status=status.HTTP_400_BAD_REQUEST)
         
+        #checks if username has special characters
+        if not username.isalnum():
+            return Response({'error': 'invalid-username'}, status=status.HTTP_400_BAD_REQUEST)
+
         #checks if password is shorter than 8 characters, doesn't have a number, a capital letter and a special character
         if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isupper() for char in password) or not any(not char.isalnum() for char in password) or not any(char.islower() for char in password):
             return Response({'error': 'invalid-password'}, status=status.HTTP_400_BAD_REQUEST)
@@ -409,7 +417,7 @@ class CreateTournamentView(APIView):
 
         update_last_online(user)
 
-        if not tournament_name.isalnum() or len(tournament_name) < 1:
+        if not tournament_name.isalnum() or len(tournament_name) < 1 or len(tournament_name) > 16:
             return Response({'error': 'invalid-tournament-name'}, status=status.HTTP_400_BAD_REQUEST)
 
         if game_type not in ['pong', 'tic-tac-toe']:
@@ -638,13 +646,15 @@ class GameStatsView(APIView):
                 winner = None
             else:
                 winner = User.objects.get(username=request.data.get('winner'))
-            if winner is not None and winner not in [user1, user2] or (user1 not tournament.guests.all() or user2 not tournament.guests.all()):
+            if winner is not None and winner not in [user1, user2]:
                 return Response({'error': 'winner-not-in-tournament?'}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({'error': f'Invalid user {request.data.get("user1")} - {request.data.get("user2")}'}, status=status.HTTP_400_BAD_REQUEST)
         except Tournament.DoesNotExist:
             return Response({'error': f'Invalid tournament {request.data.get("tournament_name")}'}, status=status.HTTP_400_BAD_REQUEST)
         match = MatchResult.objects.filter(Q(user1=user1, user2=user2) | Q(user1=user2, user2=user1), tournament=tournament, pending=True)[0]
+        if match is None:
+            return Response({'error': 'something-went-wrong'}, status=status.HTTP_400_BAD_REQUEST)
         match.winner = winner
         match.pending = False
         match.user1_score = request.data.get('user1_score')
