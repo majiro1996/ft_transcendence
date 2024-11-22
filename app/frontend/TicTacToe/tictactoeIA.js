@@ -110,15 +110,20 @@ board.addEventListener('click', (event) => {
         gameActive = false;
         message.textContent = `${currentPlayer}`;
         winnerPlayer = currentPlayer;
-        message.parentNode.styles.display = "block";
+        message.parentNode.style.display = "block";
         return;
     }
     //If is a Tie...
     if (boardState.every(cell => cell !== ''))
     {
         gameActive = false;
-        message.textContent = `It's a tie!`;
-        message.parentNode.styles.display = "block";
+        message.parentNode.style.display = "block";
+        if (currentLang == 'en')
+            message.parentNode.innerHTML = `It's a tie!`;
+        else if (currentLang == 'es')
+            message.parentNode.innerHTML = `Empate!`;
+        else
+            message.parentNode.innerHTML = `C'est un match nul!`;
         return;
     }
     //Change to player. Time between turn
@@ -167,13 +172,20 @@ function aiMove() {
     if (checkWin()) {
         gameActive = false;
         message.textContent = `O!`;
+        message.parentNode.style.display = "block";
         return;
     }
 
     if (boardState.every(cell => cell !== ''))
     {
         gameActive = false;
-        message.textContent = `It's a tie!`;
+        message.parentNode.style.display = "block";
+        if (currentLang == 'en')
+            message.parentNode.innerHTML = `It's a tie!`;
+        else if (currentLang == 'es')
+            message.parentNode.innerHTML = `Empate!`;
+        else
+            message.parentNode.innerHTML = `C'est un match nul!`;
         return;
     }
 
