@@ -345,7 +345,13 @@ class FriendRequestView(APIView):
         if FriendRequest.objects.filter(userSender=user_sender, userReceiver=user_receiver).exists():
             return Response({'error': 'request-sent'}, status=status.HTTP_400_BAD_REQUEST)
 
+        if FriendRequest.objects.filter(userSender=user_receiver, userReceiver=user_sender).exists():
+            return Response({'error': 'request-sent'}, status=status.HTTP_400_BAD_REQUEST)
+
         if FriendShip.objects.filter(user1=user_sender, user2=user_receiver).exists():
+            return Response({'error': 'alredy-friends'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if FriendShip.objects.filter(user2=user_sender, user1=user_receiver).exists():
             return Response({'error': 'alredy-friends'}, status=status.HTTP_400_BAD_REQUEST)
 
         FriendRequest.objects.create(userSender=user_sender, userReceiver=user_receiver)
@@ -931,7 +937,7 @@ class DeleteTournamentView(APIView):
             return Response({'error': 'Invalid-tournament'}, status=status.HTTP_400_BAD_REQUEST)
         if tournament.userHost != user:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        if tournamnet.status == 2:
+        if tournament.status == 2:
             return Response({'error':'something-went-wrong'}, status=status.HTTP_400_BAD_REQUEST)
         TournamentInvite.objects.filter(tournament=tournament).delete()   
         tournament.delete()

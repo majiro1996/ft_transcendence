@@ -7,7 +7,6 @@ let apiurl = "//" + backendUrl;
 
 window.apiurl = apiurl;
 
-
 async function register() {
     const data = {
         username: document.getElementById('username').value,
@@ -242,7 +241,7 @@ async function refreshToken() {
 async function isLoggedIn() {
     try {
         const token = localStorage.getItem('access_token');
-        if (!token) {
+        if (token === null) {
             return false;
         }
 

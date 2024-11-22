@@ -371,7 +371,6 @@ async function submitProfilePic() {
 // Function to handle POST request when form is submitted
 async function submitProfileSettings(settingType, value) {
     const payload = {};
-    debugger;
     payload[settingType] = value;
 
     if (settingType === 'password') {

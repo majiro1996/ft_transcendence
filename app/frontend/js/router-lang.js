@@ -5,6 +5,14 @@ const languages = {
     fr: 'Français'
 };
 
+async function registerRedirect() {
+    const logged = await isLoggedIn();
+    if (logged) {
+        changeLocation('#tournaments');
+        return;
+    }
+}
+
 // Default language
 let currentLang = localStorage.getItem('lang') || navigator.language.slice(0, 2) || 'en';
 
@@ -56,7 +64,7 @@ const routes = {
     },
 
     register: {
-        onLoad: null,
+        onLoad: registerRedirect,
         en: {
             template: "/html/templates/en/register.html",
             title: "Register | " + pageTitle,
