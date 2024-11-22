@@ -639,8 +639,8 @@ class GameStatsView(APIView):
                 winner = None
             else:
                 winner = User.objects.get(username=request.data.get('winner'))
-            if winner is not None and winner not in [user1, user2]:
-                return Response({'error': 'Invalid winner'}, status=status.HTTP_400_BAD_REQUEST)
+            if winner is not None and winner not in [user1, user2] or (user1 not tournament.guests.all() or user2 not tournament.guests.all()):
+                return Response({'error': 'winner-not-in-tournament?'}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({'error': f'Invalid user {request.data.get("user1")} - {request.data.get("user2")}'}, status=status.HTTP_400_BAD_REQUEST)
         except Tournament.DoesNotExist:
@@ -751,7 +751,7 @@ class UsersListView(APIView):
                         'user2': match.user2.username,
                         'winner': match.winner.username,
                         'game': match.game_type.capitalize(),
-                        'date': match.creation_date.strftime('%Y-%m-%d'),
+                        'date': match.creation_date.strftime('%d/%m/%Y'),
                         'score': f'{match.user1_score}/{match.user2_score}'
 
                     })
@@ -850,7 +850,7 @@ class UserDetailView(APIView):
                     'user2': match.user2.username,
                     'winner': match.winner.username,
                     'game': match.game_type.capitalize(),
-                    'date': match.creation_date.strftime('%Y-%m-%d'),
+                    'date': match.creation_date.strftime('%d/%m/%Y'),
                     'score': f'{match.user1_score}/{match.user2_score}'
 
                 })

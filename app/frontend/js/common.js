@@ -56,51 +56,46 @@ async function getProfileSettings() {
     }
 }
 
-async function BackToProfile() {
-    changeLocation("#profile");
-}
-
 async function LoadProfile(username) {
     try {
-        let response;
-        if (username === undefined) {
-            response = await fetch(apiurl + '/users/', {
+        let response = await fetch(apiurl + '/users/', {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access_token')
                 }
             });
-            Array.from(document.getElementsByClassName('pr_sidebar_link')).forEach(item => {
-                item.style.display = 'block';
-            });
-        }
-        else {
-            response = await fetch(apiurl + '/user-details?username=' + username, {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
-                }
-            });
-            if (document.getElementsByClassName('flag').length != 0) {
-                Array.from(document.getElementsByClassName('flag')).forEach(item => {
-                    item.remove();
-                });
-            }
-            Array.from(document.getElementsByClassName('pr_sidebar_link')).forEach(item => {
-                item.style.display = 'none';
-            });
-        }
+        Array.from(document.getElementsByClassName('pr_sidebar_link')).forEach(item => {
+            item.style.display = 'block';
+        });
 
         if (!response.ok) {
             if (response.status === 401) {
                 window.location.hash = '#login';
+                showAlert("something-went-wrong");
             }
             else
                 showAlert("something-went-wrong");
             return;
         }
 
-        const data = await response.json();
+        let data = await response.json();
+        if (username != data.user.user && username !== undefined) {
+            response = await fetch(apiurl + '/user-details?username=' + username, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                }
+            });
+            Array.from(document.getElementsByClassName('pr_sidebar_link')).forEach(item => {
+                item.style.display = 'none';
+            });
+            data = await response.json();
+        }
+        if (document.getElementsByClassName('flag').length != 0) {
+            Array.from(document.getElementsByClassName('flag')).forEach(item => {
+                item.remove();
+            });
+        }
         document.getElementById('pr_username').textContent = data.user.user;
         if (data.user.profile_pic != null)
             document.getElementById('pr_user_image').src = "data:image/png;base64," + data.user.profile_pic;
@@ -158,6 +153,7 @@ async function LoadProfile(username) {
                 else
                     template.querySelector('#pr_history_opponent_template').textContent = game.user1;
                 template.style.display = 'flex';
+                
             }
             else {
                 template = document.getElementById('pr_history_template_lost').cloneNode(true);
@@ -171,6 +167,11 @@ async function LoadProfile(username) {
             }
             template.id = game.id;
             document.getElementById('pr_history').appendChild(template);
+            var hr = document.createElement(`hr`);
+            hr.classList.add('hr_stats');
+            hr.classList.add('flag');
+            template.appendChild(hr);
+            document.getElementById('pr_history').appendChild(hr);
             template.classList.add('flag');
             template.style.display = 'flex';
             if (document.getElementById('pr_history').style.display == 'none')
@@ -1060,6 +1061,13 @@ async function tournamentEnd(winner, tournament_n) {
         showAlert("something-went-wrong");
     }
 
+}
+
+async function goToProfile() {
+    if (window.location.hash !== '#profile')
+        changeLocation("#profile");
+    else
+        LoadProfile();
 }
 
 

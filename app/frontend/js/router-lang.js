@@ -294,24 +294,6 @@ const routes = {
             description: "Ceci est la page de tournoi",
         }
     },
-    profiIe: {
-        onLoad: BackToProfile,
-        en: {
-            template: "/html/templates/en/profile.html",
-            title: "Profile | " + pageTitle,
-            description: "This is the profile page",
-        },
-        es: {
-            template: "/html/templates/es/profile.html",
-            title: "Perfil | " + pageTitle,
-            description: "Esta es la página de perfil",
-        },
-        fr: {
-            template: "/html/templates/fr/profile.html",
-            title: "Profil | " + pageTitle,
-            description: "Ceci est la page de profil",
-        }
-    }
     // Add other routes here
 };
 
