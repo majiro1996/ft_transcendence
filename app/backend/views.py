@@ -1082,6 +1082,12 @@ class TournamentEndView(APIView):
         
         tournament.status = 2
         TournamentInvite.objects.filter(tournament=tournament).delete()
+
+        last_match = MatchResult.objects.filter(tournament=tournament).order_by('creation_date').last()
+        if last_match is not None and last_match.winner is not None:
+            if last_match.winner.username != request.data.get('winner'):
+                return Response({'error': 'winner-not-in-tournament?'}, status=status.HTTP_400_BAD_REQUEST)
+    
         Tournament.winner = request.data.get('winner')
         tournament.save()
 
